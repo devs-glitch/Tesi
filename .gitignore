@@ -1,0 +1,9 @@
+data/
+models/*.pt
+models/*.pth
+__pycache__/
+.pio/
+*.pdf
+*.aux
+*.log
+.vscode/
