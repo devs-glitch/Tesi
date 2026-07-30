@@ -1,0 +1,32 @@
+1. Analisi delle Distribuzioni Univariate (diagonale principale)
+Le curve di densità (KDE) sulla diagonale ci dicono come si distribuisce ogni singola feature indipendentemente dalle altre:
+
+duration (1° riquadro): Il 95% del dataset è impulsivo (durata vicina a 0 secondi). Le code che si estendono verso destra (fino a 60 secondi) indicano la presenza di rumori a lunga durata, fisiologici degli interferometri (es. fluttuazioni sismiche o Scattered Light).
+
+peak_frequency (2° riquadro): È il grafico più rivelatore. Oltre all'enorme concentrazione a basse frequenze (tipica dei rumori sismici), emerge uno "spillo" isolatissimo, quasi privo di varianza, esattamente poco sopra i 1000 Hz. Questa è la firma inconfondibile della classe 1080Lines.
+
+snr (3° riquadro): La distribuzione del Rapporto Segnale/Rumore è asimmetrica estrema. Quasi tutte le classi hanno un SNR basso (fisiologico, altrimenti coprirebbero le onde gravitazionali). Tuttavia, la curva non si azzera subito: esiste una classe (i punti grigi di Extremely_Loud) che raggiunge ordini di grandezza anomali.
+
+bandwidth (4° riquadro): La distribuzione è marcatamente bimodale. Abbiamo un cluster di glitch a banda strettissima (picco vicino a 0) e un cluster a banda larghissima (picco tra 7500 e 8000 Hz). Quest'ultimo è dominato dai Blip, che coprono istantaneamente tutto lo spettro frequenziale.
+
+2. Analisi delle Relazioni Bivariate (grafici a dispersione)
+Incrociando le feature a due a due, isoliamo i cluster:
+
+peak_frequency vs duration: Notiamo una riga orizzontale perfetta a circa 1080 Hz. Questo dimostra che la classe 1080Lines mantiene la sua frequenza di picco indipendentemente da quanto dura il glitch. È un comportamento meccanico/strumentale chiarissimo.
+
+bandwidth vs duration: Esiste una densa nuvola di punti (principalmente azzurri/arancioni) incollata all'asse Y (durata 0) ma che copre tutto l'asse Y (banda larghissima). Un segnale che ha durata nulla ma occupa tutte le frequenze è un "impulso di Dirac" perfetto, corrispondente morfologicamente alla "goccia" verticale dei Blip.
+
+snr vs tutte le altre: I punti grigi (Extremely_Loud) si distaccano dal "minestrone" centrale in ogni singolo grafico in cui è coinvolto l'SNR.
+
+Le 4 Classi Selezionate
+Sulla base di queste evidenze matematiche, la tua tesi giustificherà la selezione di questo sottoinsieme di classi (Golden Subset) perché massimizza la varianza morfologica, coprendo i 4 "angoli" estremi dello spazio delle feature:
+
+1080Lines: L'anomalia in Frequenza (banda stretta, altissima frequenza fissa).
+
+Extremely_Loud: L'anomalia in Energia (SNR fuori scala).
+
+Blip: L'anomalia Impulsiva (brevissima durata, larghissima banda).
+
+Scattered_Light / Low_Frequency_Lines: L'anomalia Temporale (lunga durata, bassa frequenza costante). Scegline una delle due, sono quelle che si allungano sull'asse X della durata.
+
+Sostituiremo "1080Lines" con "..." data l'anomalia frequente nel dataset... è stato infatti osservato che spesso gli spettrogrammi sono mancanti per questa classe.
