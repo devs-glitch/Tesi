@@ -49,7 +49,7 @@ for name in file_names:
 
 df = pd.concat(all_data_list, ignore_index=True)
 
-df.head
+df.head()
 print(f"Dataset shape: {df.shape}")
 df.info()
 
@@ -145,11 +145,11 @@ We will also pass our selected features to have our final df
 selected_classes = ["Scattered_Light", "Blip", "Extremely_Loud", "Violin_Mode"]
 
 columns_to_keep = [
-    'gravityspy_id',                                   # measurements ID
-    'duration', 'peak_frequency', 'snr', 'bandwidth', # numeric features
-    'ml_label',                                       # labels
-    'url1', 'url2', 'url3', 'url4',                   # spectrograms
-    'Scattered_Light', 'Blip', 'Extremely_Loud', 'Violin_Mode' # confidence scores
+    'gravityspy_id',                                            # measurements ID
+    'duration', 'peak_frequency', 'snr', 'bandwidth',           # numeric features
+    'ml_label',                                                 # labels
+    'url1',                                                     # spectrograms
+    'Scattered_Light', 'Blip', 'Extremely_Loud', 'Violin_Mode'  # confidence scores
 ]
 
 mask = df["ml_label"].isin(selected_classes)
@@ -160,6 +160,20 @@ print(f"Dimensions selected dataset: {selected_df.shape}")
 print("\nClass counts:")
 print(selected_df["ml_label"].value_counts())
 print(selected_df.head())
+
+'''
+Handle url=? values
+'''
+
+mask1 = selected_df["url1"] != "?"
+selected_df = selected_df.loc[mask1].reset_index(drop=True)
+
+'''
+Handle class imbalance
+'''
+min_samples = selected_df['ml_label'].value_counts().min()
+selected_df = selected_df.groupby('ml_label').sample(n=min_samples, random_state=42).reset_index(drop=True)
+
 
 '''
     Clustering
@@ -196,3 +210,6 @@ plt.title('UMAP projection on in the 4 selected_classes', fontsize=14)
 plt.legend(bbox_to_anchor=(1.05, 1), loc='upper left')
 plt.tight_layout()
 plt.show()
+
+'''Save new df'''
+selected_df.to_csv("data/processed/selected_dataset.csv", index=False)

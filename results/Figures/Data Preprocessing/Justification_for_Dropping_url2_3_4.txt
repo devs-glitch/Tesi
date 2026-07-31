@@ -1,0 +1,20 @@
+1. La morfologia dei Glitch (Fisica del segnale)
+Il progetto originario di Gravity Spy (Zevin et al., 2017) fornisce 4 finestre temporali (0.5s, 1.0s, 2.0s, 4.0s) principalmente per aiutare i volontari umani ad avere un contesto visivo più ampio. Tuttavia, analizziamo le tue classi specifiche:
+
+Un Blip è un transiente ad altissima frequenza che dura una frazione minuscola di secondo (spesso meno di 0.05s).
+
+Se passi a una Rete Neurale uno spettrogramma da 4.0 secondi (url4), il Blip si ridurrà a una singola, sottilissima linea verticale spessa un pixel. Il 95% dell'immagine sarà puro rumore di fondo.
+
+Nella finestra da 0.5 secondi (url1), il glitch occupa la maggior parte dello spazio visivo. Questo permette ai filtri convoluzionali della CNN di estrarre la "forma a goccia" del Blip in modo ottimale, massimizzando il rapporto segnale/rumore visivo.
+
+2. Compatibilità con il Transfer Learning (Il collo di bottiglia dei 3 canali)
+Questa è la motivazione informatica più forte. Reti neurali famose come ResNet, VGG o MobileNet sono state pre-addestrate su milioni di immagini standard (ImageNet) e si aspettano un input a 3 canali (RGB).
+
+Se unisci 4 immagini diverse, otterresti un input a 12 canali.
+
+Per processarlo, dovresti alterare il primo livello della rete neurale, distruggendo i pesi pre-addestrati (che sanno già riconoscere bordi, curve e texture).
+
+Dal momento che stiamo per bilanciare il dataset riducendo i campioni a circa 2.000 per classe, allenare una rete complessa da zero su così pochi dati porterebbe quasi certamente a un fenomeno di overfitting. Usare una singola immagine ti permette di sfruttare la potenza del Transfer Learning out-of-the-box.
+
+3. Complessità Computazionale vs. Guadagno Marginale
+Per usare 4 immagini potresti teoricamente costruire 4 reti neurali parallele che si uniscono alla fine (Multi-branch CNN). Tuttavia, questo quadruplica il tempo di addestramento, l'uso della RAM e l'impronta di carbonio del tuo esperimento. La letteratura dimostra che per le classi che hai selezionato (che sono visivamente molto distinte a livello locale), il minuscolo aumento di accuratezza garantito da finestre temporali più ampie non giustifica l'enorme costo computazionale.
