@@ -1,20 +1,13 @@
-1. La morfologia dei Glitch (Fisica del segnale)
-Il progetto originario di Gravity Spy (Zevin et al., 2017) fornisce 4 finestre temporali (0.5s, 1.0s, 2.0s, 4.0s) principalmente per aiutare i volontari umani ad avere un contesto visivo più ampio. Tuttavia, analizziamo le tue classi specifiche:
+Glitch morphology
 
-Un Blip è un transiente ad altissima frequenza che dura una frazione minuscola di secondo (spesso meno di 0.05s).
+In the 0.5-second window (url1), the glitch occupies most of the visual space. This allows the CNN's convolutional filters to optimally extract the Blip's "teardrop shape," maximizing the visual signal-to-noise ratio.
 
-Se passi a una Rete Neurale uno spettrogramma da 4.0 secondi (url4), il Blip si ridurrà a una singola, sottilissima linea verticale spessa un pixel. Il 95% dell'immagine sarà puro rumore di fondo.
+Compatibility with transfer learning - 3 channel bottleneck
+Famous neural networks like ResNet, VGG, or MobileNet were pre-trained on millions of standard images and expect a 3-channel (RGB) input.
 
-Nella finestra da 0.5 secondi (url1), il glitch occupa la maggior parte dello spazio visivo. Questo permette ai filtri convoluzionali della CNN di estrarre la "forma a goccia" del Blip in modo ottimale, massimizzando il rapporto segnale/rumore visivo.
+If you combined four different images, you would end up with a 12-channel input.
 
-2. Compatibilità con il Transfer Learning (Il collo di bottiglia dei 3 canali)
-Questa è la motivazione informatica più forte. Reti neurali famose come ResNet, VGG o MobileNet sono state pre-addestrate su milioni di immagini standard (ImageNet) e si aspettano un input a 3 canali (RGB).
+To process that, you would have to alter the neural network's first layer, thereby destroying the pre-trained weights (which already know how to recognize edges, curves, and textures).
 
-Se unisci 4 immagini diverse, otterresti un input a 12 canali.
-
-Per processarlo, dovresti alterare il primo livello della rete neurale, distruggendo i pesi pre-addestrati (che sanno già riconoscere bordi, curve e texture).
-
-Dal momento che stiamo per bilanciare il dataset riducendo i campioni a circa 2.000 per classe, allenare una rete complessa da zero su così pochi dati porterebbe quasi certamente a un fenomeno di overfitting. Usare una singola immagine ti permette di sfruttare la potenza del Transfer Learning out-of-the-box.
-
-3. Complessità Computazionale vs. Guadagno Marginale
-Per usare 4 immagini potresti teoricamente costruire 4 reti neurali parallele che si uniscono alla fine (Multi-branch CNN). Tuttavia, questo quadruplica il tempo di addestramento, l'uso della RAM e l'impronta di carbonio del tuo esperimento. La letteratura dimostra che per le classi che hai selezionato (che sono visivamente molto distinte a livello locale), il minuscolo aumento di accuratezza garantito da finestre temporali più ampie non giustifica l'enorme costo computazionale.
+Since we are balancing the dataset by reducing the samples to approximately 2,000 per class, training a complex network from scratch on such limited data would almost certainly lead to overfitting. Using a single image allows you to leverage the power of Transfer Learning right out of the box. 3. Computational Complexity vs. Marginal Gain
+To use four images, you could theoretically build four parallel neural networks that merge at the end (a multi-branch CNN). However, this quadruples the training time, RAM usage, and carbon footprint of your experiment. The literature shows that for the classes you have selected—which are visually very distinct at a local level—the tiny increase in accuracy provided by wider time windows does not justify the enormous computational cost.
