@@ -4,52 +4,51 @@
 \setlength{\parskip}{1em}
 %-------------------------------------------------------------------------------
 
-Machine learning has become a fundamental tool in astrophysics, notably in the analysis of data from ground-based gravitational waves detectors, like the Advanced LIGO (Laser Interferometer Gravitational Wave Observatory) and the Advanced Virgo.
-
-A main application in this field is the detection and analysis of ``glitches'' -- short, complex noise transients that disrupt the identification of true wave signals.
-Researchers currently successfully implement Deep Convolutional Neural Networks (CNNs) trained on the citizen science Gravity Spy's dataset, a public project that combines human intuition and pattern recognition with advanced machine learning algorithms to characterize and classify the diverse noise transients based on 2D transformations.
-
-While standard deep learning models provide high classification accuracy, they face two significant limitations in this domain: a lack of transparency and massive computa- tional requirements.
-
-First, scientific applications as a whole demand a profound and rigorous understanding of the underlying physical mechanisms behind observed data. Gravitational waves observatories in particular record tens of thousands of auxiliary channels monitoring instrumental and environmental conditions, enlarging significantly the volume of data to be processed.
-This vast amount of data, paired with traditional neural networks opaque ``black boxes'', explain the need for more transparent and efficient models. In this context, Explainable AI (XAI) has emerged as a pivotal solution, managing to trace predictions back to physical root causes, ensuring that automated discoveries are reliable and free from instrumental biases.
-
-Second, traditional Deep Neural Networks require significant power and computational resources due to multiply-and-accumulate (MAC) operations.
-To
-overcome this energetic bottleneck, neuromorphic computing and Spiking Neural Networks (SNNs) offer an efficient alternative.
-Inspired by biological systems, SNNs process information through sparse, asynchronous binary spikes, utilizing low-cost accumulate (AC) operations, which are ideal for low-power neuromorphic hardware platforms.
-
-Despite their theoretical energy advantage, deploying SNNs on memory-constrained edge devices presents a critical architectural challenge. SNNs are indeed memory-intensive, since they must store both synaptic weights and the temporal states of each Leaky Integrate-and-Fire (LIF) neuron, known as membrane potentials.
-As synaptic weights are quantized to lower precisions to preserve space constraints, membrane potentials can consume up to 98\% of the total memory footprint during batch processing.
-Therefore, successfully deploying high-performance SNNs on resource-constrained systems requires hardware-friendly compression techniques that can quantize both weights and membrane potentials without collapsing the network's predictive accuracy and performance.
 %------------------------------------------------------------
-\section{Problem Formulation}
+\section{Background and Context}
+\label{sec:background}
+%------------------------------------------------------------
+
+Machine learning has become a fundamental tool in astrophysics, notably in the analysis of data from ground-based gravitational-wave detectors, like the Advanced LIGO (Laser Interferometer Gravitational Wave Observatory) and the Advanced Virgo.
+
+A main application in this field is the detection and analysis of ``glitches'' -- short, complex noise transients that disrupt the identification of true wave signals. Researchers currently successfully implement Deep Convolutional Neural Networks (CNNs) trained on the citizen-science Gravity Spy dataset, a public project that combines human intuition and pattern recognition with advanced machine learning algorithms to characterize and classify the diverse noise transients based on 2D time-frequency representations.
+
+While standard deep learning models provide high classification accuracy, they face two significant limitations in this domain: a lack of transparency and massive computational requirements.
+
+First, scientific applications as a whole demand a profound and rigorous understanding of the underlying physical mechanisms behind observed data. Gravitational-wave observatories in particular record tens of thousands of auxiliary channels monitoring instrumental and environmental conditions, enlarging significantly the volume of data to be processed. This vast amount of data, paired with traditional neural networks' opaque ``black boxes'', explains the need for more transparent and efficient models. In this context, Explainable AI (XAI) has emerged as a pivotal solution, managing to trace predictions back to physical root causes, ensuring that automated discoveries are reliable and free from instrumental biases.
+
+Second, traditional Deep Neural Networks require significant power and computational resources due to multiply-and-accumulate (MAC) operations. To overcome this energetic bottleneck, neuromorphic computing and Spiking Neural Networks (SNNs) offer an efficient alternative. Inspired by biological systems, SNNs process information through sparse, asynchronous binary spikes, utilizing low-cost accumulate (AC) operations, which are ideal for low-power neuromorphic hardware platforms.
+
+Despite their theoretical energy advantage, deploying SNNs on memory-constrained edge devices presents a critical architectural challenge, generally referred to as the \emph{memory wall}. SNNs are indeed memory-intensive, since they must store both synaptic weights and the temporal states of each Leaky Integrate-and-Fire (LIF) neuron, known as membrane potentials. As synaptic weights are quantized to lower precisions to preserve space constraints, membrane potentials can consume up to 98\% of the total memory footprint during batch processing. Therefore, successfully deploying high-performance SNNs on resource-constrained systems requires hardware-friendly compression techniques that can quantize both weights and membrane potentials without collapsing the network's predictive accuracy and, as this thesis argues, without silently collapsing the reliability of its explanations.
+
+%------------------------------------------------------------
+\section{Problem Statement}
 \label{sec:problem}
 %------------------------------------------------------------
 
-\subsection*{Problem Statement}
-
-The deployment of Spiking Neural Networks (SNNs) on memory-constrained edge devices necessitates severe quantization of both synaptic weights and membrane potentials. While converting these parameters from high-precision floating-point representations to ultra-low bit-width integers (e.g., 2-bit or 4-bit) drastically reduces memory footprints and eliminates the need for power-intensive multipliers, it simultaneously risks altering the spatiotemporal dynamics that govern the network's decision-making process. 
+The deployment of Spiking Neural Networks (SNNs) on memory-constrained edge devices necessitates severe quantization of both synaptic weights and membrane potentials. While converting these parameters from high-precision floating-point representations to ultra-low bit-width integers (e.g., 2-bit or 4-bit) drastically reduces memory footprints and eliminates the need for power-intensive multipliers, it simultaneously risks altering the spatiotemporal dynamics that govern the network's decision-making process.
 
 Currently, the evaluation of quantization techniques for SNNs is predominantly conducted through software simulations or on specialized Field-Programmable Gate Array (FPGA) accelerators \cite{liu2026hardfsnn}. Consequently, a significant research gap exists regarding the physical interpretability of these highly compressed models when deployed on commodity microcontrollers. Although explainability is critical in scientific applications such as astrophysics, existing literature focuses heavily on optimizing accuracy and energy efficiency rather than understanding how quantization distorts internal feature representations. Furthermore, the provided literature does not cover the physical correlation of theoretical explainability maps with real-time execution metrics. Specifically, there is a lack of methodology to prove whether the theoretical temporal spike attributions generated in software accurately correspond to the physical, real-time latency of the neuromorphic hardware.
 
-\subsection*{Research Objectives}
-
-This thesis aims to bridge the gap between theoretical software-based Explainable AI (XAI) and the physical execution of highly compressed SNNs on resource-constrained hardware. By focusing on the complex time-frequency morphologies of the Gravity Spy dataset, this research systematically investigates how extreme quantization impacts the physical interpretability of neuromorphic models. 
-
-The primary objectives and contributions of this work are three-fold:
-\begin{itemize}
-    \item \textbf{Hardware-Friendly Quantization for Astrophysical Data:} To implement and train an SNN classifier on a subset of the Gravity Spy dataset, applying extreme, integer-only quantization to both synaptic weights and membrane potentials (e.g., 2-bit or 4-bit precision) to simulate the strict memory constraints of neuromorphic chips.
-    \item \textbf{Extraction of Temporal Explainability Maps:} To apply and evaluate temporal XAI algorithms—specifically Temporal Spike Attribution (TSA) and Spike Activation Maps (SAM)—comparing the high-precision baseline model against the quantized model to mathematically determine if the network continues to classify astrophysical glitches based on identical physical features.
-    \item \textbf{Physical Validation of XAI Metrics:} To deploy the heavily quantized SNN onto a microcontroller and physically validate the theoretical temporal XAI predictions. This involves utilizing an oscilloscope to correlate the real-time execution latency and physical spike occurrences with the theoretical explainability maps generated in the software simulation.
-\end{itemize}
+This thesis aims to bridge the gap between theoretical software-based Explainable AI (XAI) and the physical execution of highly compressed SNNs on resource-constrained hardware. By focusing on the complex time-frequency morphologies of the Gravity Spy dataset, this research systematically investigates how extreme quantization impacts the physical interpretability of neuromorphic models.
 
 %------------------------------------------------------------
-\section{Outline}
+\section{Research Objectives and Contributions}
+\label{sec:objectives}
+%------------------------------------------------------------
+
+The primary objectives and contributions of this work are three-fold:
+\begin{enumerate}
+    \item \textbf{Hardware-Friendly Quantization for Astrophysical Data:} To implement and train an SNN classifier on a subset of the Gravity Spy dataset, applying extreme, integer-only quantization to both synaptic weights and membrane potentials (e.g., 2-bit or 4-bit precision) to simulate the strict memory constraints of neuromorphic chips.
+    \item \textbf{Extraction of Temporal Explainability Maps:} To apply and evaluate temporal XAI algorithms -- specifically Spike-CAM and Temporal Spike Attribution -- comparing the high-precision baseline model against the quantized model, in order to determine at which timestep $t$ each network identifies the physical features of a glitch, and whether that timestep is consistent between the two models.
+    \item \textbf{Physical Validation of Temporal XAI Metrics:} To deploy the heavily quantized SNN onto a microcontroller (ESP32/Teensy) and physically validate the theoretical temporal XAI predictions. This involves toggling a GPIO pin on the first output spike and reading it with an oscilloscope/logic analyzer, correlating the real-time execution latency (physical Time-to-First-Spike) with the theoretical explainability maps generated in software.
+\end{enumerate}
+
+Taken together, these three objectives make it possible to answer this thesis' central question: \emph{does a severely quantized SNN still classify gravitational-wave glitches based on genuine physical features, and does the timing of its physical response on real hardware match what its software-generated explanation predicted?}
+
+%------------------------------------------------------------
+\section{Thesis Structure}
 \label{sec:outline}
 %------------------------------------------------------------
 
-
-The remainder of this thesis is organized as follows. Chapter 2 establishes the theoretical framework, reviewing the state of the art in spiking neural networks (SNNs) for edge AI, temporal explainability paradigms, and the astrophysical significance of the Gravity Spy dataset. Chapter 3 details the software methodology, encompassing dataset preprocessing, quantization-aware training (QAT) strategies, and the programmatic extraction of temporal spike activation maps to identify decision-making at specific timesteps ($t$). Chapter 4 describes the hardware implementation, outlining the translation of quantized weights for embedded deployment and the hardware-in-the-loop (HIL) measurement protocol utilized to capture physical inference latency. Chapter 5 presents the experimental results, rigorously comparing theoretical software explainability against physical oscilloscope traces, while evaluating the trade-offs between memory compression and XAI fidelity on constrained devices. Finally, Chapter 6 summarizes the primary findings, acknowledges the architectural limitations of the experimental setup, and proposes avenues for future neuromorphic applications.
-
-\end{description}
+The remainder of this thesis is organized as follows. Chapter~\ref{ch:sota} establishes the theoretical framework, reviewing the state of the art in spiking neural networks (SNNs) for edge AI, temporal explainability paradigms, Hardware-in-the-Loop profiling standards, and the astrophysical significance of the Gravity Spy dataset. Chapter~\ref{ch:methodology} details the software methodology, encompassing dataset preprocessing, the baseline SNN architecture and training procedure, the Quantization-Aware Training (QAT) strategy, and the programmatic extraction of Temporal Spike Activation Maps used to identify decision-making at specific timesteps ($t$). Chapter~\ref{ch:hardware} describes the hardware implementation, outlining the translation of quantized weights for embedded deployment, the Hardware-in-the-Loop (HIL) architecture, and the logic-analyzer measurement protocol used to capture physical inference latency. Chapter~\ref{ch:results} presents the experimental results, comparing the classification performance of the baseline and quantized models, contrasting their software explainability maps, and rigorously comparing theoretical software explainability against physical oscilloscope traces, while evaluating the trade-offs between memory compression and XAI fidelity on constrained devices. Finally, Chapter~\ref{ch:conclusions} summarizes the primary findings, acknowledges the architectural limitations of the experimental setup, and proposes avenues for future neuromorphic applications.

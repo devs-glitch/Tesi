@@ -1,16 +1,31 @@
 \contentsline {chapter}{\numberline {1}Introduction}{3}{chapter.1}%
-\contentsline {section}{\numberline {1.1}Problem Formulation}{4}{section.1.1}%
-\contentsline {section}{\numberline {1.2}Outline}{5}{section.1.2}%
-\contentsline {chapter}{\numberline {2}Using This Template}{6}{chapter.2}%
-\contentsline {section}{\numberline {2.1}Front Matter}{6}{section.2.1}%
-\contentsline {section}{\numberline {2.2}Main Matter}{7}{section.2.2}%
-\contentsline {section}{\numberline {2.3}Back Matter}{8}{section.2.3}%
-\contentsline {chapter}{\numberline {3}Guidelines}{10}{chapter.3}%
-\contentsline {section}{\numberline {3.1}The Thesis}{10}{section.3.1}%
-\contentsline {section}{\numberline {3.2}The Advisor}{11}{section.3.2}%
-\contentsline {section}{\numberline {3.3}General Advice}{11}{section.3.3}%
-\contentsline {chapter}{\numberline {4}Conclusions}{12}{chapter.4}%
-\contentsline {section}{\numberline {4.1}Review of Project Goals}{12}{section.4.1}%
-\contentsline {section}{\numberline {4.2}Context}{12}{section.4.2}%
-\contentsline {section}{\numberline {4.3}Future Works}{12}{section.4.3}%
-\contentsline {chapter}{References}{13}{section*.8}%
+\contentsline {section}{\numberline {1.1}Background and Context}{3}{section.1.1}%
+\contentsline {section}{\numberline {1.2}Problem Statement}{4}{section.1.2}%
+\contentsline {section}{\numberline {1.3}Research Objectives and Contributions}{4}{section.1.3}%
+\contentsline {section}{\numberline {1.4}Thesis Structure}{5}{section.1.4}%
+\contentsline {chapter}{\numberline {2}State of the Art and Theoretical Framework}{6}{chapter.2}%
+\contentsline {section}{\numberline {2.1}Spiking Neural Networks and Edge AI}{6}{section.2.1}%
+\contentsline {section}{\numberline {2.2}Temporal Explainability in SNNs}{7}{section.2.2}%
+\contentsline {section}{\numberline {2.3}Hardware-in-the-Loop Validation Profiling}{8}{section.2.3}%
+\contentsline {section}{\numberline {2.4}The Gravity Spy Dataset}{8}{section.2.4}%
+\contentsline {chapter}{\numberline {3}Software Methodology: SNN Design and Explainability}{9}{chapter.3}%
+\contentsline {section}{\numberline {3.1}Dataset Preparation and Preprocessing}{9}{section.3.1}%
+\contentsline {section}{\numberline {3.2}Baseline Model Architecture and Training}{10}{section.3.2}%
+\contentsline {section}{\numberline {3.3}Quantization-Aware Training (QAT) Strategy}{10}{section.3.3}%
+\contentsline {section}{\numberline {3.4}Extraction of Temporal Spike Activation Maps}{11}{section.3.4}%
+\contentsline {chapter}{\numberline {4}Hardware Implementation: Physical Validation Setup}{12}{chapter.4}%
+\contentsline {section}{\numberline {4.1}Model Porting and Embedded Deployment}{12}{section.4.1}%
+\contentsline {section}{\numberline {4.2}Hardware-in-the-Loop (HIL) Architecture}{13}{section.4.2}%
+\contentsline {section}{\numberline {4.3}Logic Analyzer Measurement Protocol}{13}{section.4.3}%
+\contentsline {chapter}{\numberline {5}Results and Discussion}{15}{chapter.5}%
+\contentsline {section}{\numberline {5.1}Impact of Severe Quantization on Accuracy}{15}{section.5.1}%
+\contentsline {section}{\numberline {5.2}Software Explainability Analysis}{16}{section.5.2}%
+\contentsline {section}{\numberline {5.3}Physical Validation of Temporal Maps}{16}{section.5.3}%
+\contentsline {section}{\numberline {5.4}Trade-offs and Neuromorphic Feasibility}{17}{section.5.4}%
+\contentsline {chapter}{\numberline {6}Conclusions and Future Work}{19}{chapter.6}%
+\contentsline {section}{\numberline {6.1}Summary of Key Findings}{19}{section.6.1}%
+\contentsline {section}{\numberline {6.2}Limitations of the Study}{19}{section.6.2}%
+\contentsline {section}{\numberline {6.3}Future Directions}{20}{section.6.3}%
+\contentsline {chapter}{References}{22}{section*.6}%
+\contentsline {chapter}{\numberline {A}Hardware Schematics and Pinouts}{24}{appendix.A}%
+\contentsline {chapter}{\numberline {B}Embedded Inference Code}{25}{appendix.B}%

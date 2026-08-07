@@ -13,10 +13,9 @@ class GWGlitchSNN(torch.nn.Module):
     Init method
     '''
 
-    def __init__(self):
+    def __init__(self, beta=0.85):
         super().__init__()
 
-        beta = 0.85
         # Address non-differentiability by defining a surrogate gradient with arctan for the BBP
         spike_grad = snn.surrogate.atan()
 

@@ -1,21 +1,85 @@
-\begin{thebibliography}{1}
+\begin{thebibliography}{10}
 
-\bibitem{ChenZH23}
-Ting Chen, Ruixiang Zhang, and Geoffrey~E. Hinton.
-\newblock Analog bits: Generating discrete data using diffusion models with
-  self-conditioning.
-\newblock In {\em The Eleventh International Conference on Learning
-  Representations, {ICLR} 2023, Kigali, Rwanda, May 1-5, 2023}. OpenReview.net,
-  2023.
+\bibitem{banbury2021mlperftiny}
+C.~Banbury, V.~J. Reddi, P.~Torelli, J.~Holleman, N.~Jeffries, C.~Kiraly,
+  P.~Montino, D.~Kanter, S.~Ahmed, D.~Pau, U.~Thakker, A.~Torrini, P.~Warden,
+  J.~Cordaro, G.~D. Guglielmi, J.~Duarte, S.~Gibellini, V.~Parekh, H.~Tran, and
+  N.~Tran.
+\newblock Mlperf tiny benchmark, 2021.
 
-\bibitem{latex2e}
-Leslie Lamport.
-\newblock {\em {\LaTeX}: a Document Preparation System}.
-\newblock Addison Wesley, Massachusetts, 2 edition, 1994.
+\bibitem{davies2018loihi}
+M.~Davies, N.~Srinivasa, T.-H. Lin, G.~Chinya, Y.~Cao, S.~H. Choday, G.~Dimou,
+  P.~Joshi, N.~Imam, S.~Jain, Y.~Liao, C.-K. Lin, A.~Lines, R.~Liu,
+  D.~Mathaikutty, S.~McCoy, A.~Paul, J.~Tse, G.~Venkataramanan, Y.-H. Weng,
+  A.~Wild, Y.~Yang, and H.~Wang.
+\newblock Loihi: A neuromorphic manycore processor with on-chip learning.
+\newblock {\em IEEE Micro}, 38(1):82--99, 2018.
 
-\bibitem{LiVR22}
-Jianwen Li, Moshe~Y. Vardi, and Kristin~Y. Rozier.
-\newblock Satisfiability checking for mission-time {LTL} {(MLTL)}.
-\newblock {\em Inf. Comput.}, 289(Part):104923, 2022.
+\bibitem{eshraghian2021training}
+J.~K. Eshraghian, M.~Ward, E.~Neftci, X.~Wang, G.~Lenz, G.~Dwivedi,
+  M.~Bennamoun, D.~S. Jeong, and W.~D. Lu.
+\newblock Training spiking neural networks using lessons from deep learning,
+  2021.
+\newblock snnTorch library, \url{https://snntorch.readthedocs.io}.
+
+\bibitem{jacob2018quantization}
+B.~Jacob, S.~Kligys, B.~Chen, M.~Zhu, M.~Tang, A.~Howard, H.~Adam, and
+  D.~Kalenichenko.
+\newblock Quantization and training of neural networks for efficient
+  integer-arithmetic-only inference.
+\newblock In {\em Proceedings of the IEEE Conference on Computer Vision and
+  Pattern Recognition (CVPR)}, pages 2704--2713, 2018.
+
+\bibitem{kim2021visual}
+Y.~Kim and P.~Panda.
+\newblock Visual explanations from spiking neural networks using inter-spike
+  intervals.
+\newblock {\em Scientific Reports}, 11:19037, 2021.
+
+\bibitem{abbott2016observation}
+{LIGO Scientific Collaboration and Virgo Collaboration}.
+\newblock Observation of gravitational waves from a binary black hole merger.
+\newblock {\em Physical Review Letters}, 116:061102, 2016.
+
+\bibitem{liu2026hardfsnn}
+H.~Liu, K.~Shi, J.~Zhang, Y.~Shan, J.~Wu, W.~Chen, and M.~Zhang.
+\newblock Hardf-snn: Hardware-friendly quantization for spiking neural networks
+  with efficient integer-arithmetic-only inference.
+\newblock {\em Proceedings of the AAAI Conference on Artificial Intelligence},
+  40(3):1937--1945, 2026.
+
+\bibitem{mostafa2017supervised}
+H.~Mostafa.
+\newblock Supervised learning based on temporal coding in spiking neural
+  networks.
+\newblock {\em IEEE Transactions on Neural Networks and Learning Systems},
+  29(7):3227--3235, 2018.
+
+\bibitem{neftci2019surrogate}
+E.~O. Neftci, H.~Mostafa, and F.~Zenke.
+\newblock Surrogate gradient learning in spiking neural networks: Bringing the
+  power of gradient-based optimization to spiking neural networks.
+\newblock {\em IEEE Signal Processing Magazine}, 36(6):51--63, 2019.
+
+\bibitem{roy2019towards}
+K.~Roy, A.~Jaiswal, and P.~Panda.
+\newblock Towards spike-based machine intelligence with neuromorphic computing.
+\newblock {\em Nature}, 575:607--617, 2019.
+
+\bibitem{selvaraju2017gradcam}
+R.~R. Selvaraju, M.~Cogswell, A.~Das, R.~Vedantam, D.~Parikh, and D.~Batra.
+\newblock Grad-cam: Visual explanations from deep networks via gradient-based
+  localization.
+\newblock In {\em Proceedings of the IEEE International Conference on Computer
+  Vision (ICCV)}, pages 618--626, 2017.
+
+\bibitem{zevin2017gravityspy}
+M.~Zevin, S.~Coughlin, S.~Bahaadini, E.~Besler, N.~Rohani, S.~Allen, M.~Cabero,
+  K.~Crowston, A.~K. Katsaggelos, S.~L. Larson, T.~K. Lee, C.~Lintott, T.~B.
+  Littenberg, A.~Lundgren, C.~{\O}sterlund, J.~R. Smith, L.~Trouille, and
+  V.~Kalogera.
+\newblock Gravity spy: integrating advanced ligo detector characterization,
+  machine learning, and citizen science.
+\newblock {\em Classical and Quantum Gravity}, 34(6):064003, 2017.
 
 \end{thebibliography}

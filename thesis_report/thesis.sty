@@ -18,6 +18,10 @@
 \usepackage{lscape}
 \usepackage{booktabs}
 \usepackage{makeidx}
+\usepackage{tikz}
+\usetikzlibrary{arrows.meta, positioning, shapes.geometric}
+\usepackage{listings}
+\usepackage{xcolor}
 \makeindex
 
 %This needs to be before hyperref
@@ -90,6 +94,23 @@
 
 % Used to set a minimum height for rows in tables
 \newcommand{\rowheight}[1]{\rule{-1pt}{#1}}
+
+% Listing style for embedded C/C++ code snippets
+\lstdefinestyle{embeddedc}{
+  language=C++,
+  basicstyle=\ttfamily\small,
+  keywordstyle=\bfseries,
+  commentstyle=\itshape,
+  stringstyle=\ttfamily,
+  numbers=left,
+  numberstyle=\tiny,
+  numbersep=8pt,
+  breaklines=true,
+  showstringspaces=false,
+  frame=single,
+  tabsize=2
+}
+\lstset{style=embeddedc}
 
 %----------------------------------------------------------------------
 

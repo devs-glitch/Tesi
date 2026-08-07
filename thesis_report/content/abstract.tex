@@ -1,10 +1,13 @@
 
 
 
-\begin{abstract}
-Abstract is a short overview of the content of the work. The main goal of abstract is to give a reader an idea about the work, without the need to read it all. Thus, the abstract should be concise, but at the same time concrete on the content of the work.
 
-Typically, abstract is not more than one page long, and presents the work in a brief and concise way. Often abstract follows the outline of the work presents a problem, method, and results.
+\begin{abstract}
+Spiking Neural Networks (SNNs) promise a low-power alternative to conventional Deep Neural Networks for deploying explainable classifiers on memory-constrained edge devices. Applying this promise to a scientific domain, this thesis investigates whether a severely quantized SNN can retain its ability to identify the physical features of gravitational-wave detector glitches from the Gravity Spy dataset, and whether the temporal explanations produced by the software model are corroborated by the physical behaviour of the hardware that finally runs it.
+
+An SNN classifier is trained on spectrogram representations of a subset of Gravity Spy glitch classes using surrogate-gradient backpropagation, and then compressed through Quantization-Aware Training (QAT) applied to both synaptic weights and membrane potentials. Temporal Spike Activation Maps are extracted from the baseline and quantized models to identify, at the timestep level, when and on which time-frequency regions each network bases its decision, following a Time-to-First-Spike (TTFS) coding scheme. The quantized model is then ported to a C/C++ inference loop on a microcontroller (ESP32/Teensy), and a Hardware-in-the-Loop (HIL) protocol is used to physically measure the inference latency: an output GPIO pin is toggled on the first output spike and captured with an oscilloscope/logic analyzer, isolating the physical TTFS from operating-system and software-simulation artefacts.
+
+This work contributes (i) a hardware-friendly quantization pipeline for an SNN trained on astrophysical spectrogram data, (ii) a temporal, per-timestep explainability method for comparing baseline and quantized models, and (iii) a physical validation protocol that correlates software-predicted spike timing with oscilloscope-measured GPIO latency. The resulting comparison between theoretical and physically measured temporal explanations is intended to clarify whether extreme quantization preserves not only classification accuracy but also the physical faithfulness of temporal explainability maps, informing the trade-offs relevant to future neuromorphic deployments in gravitational-wave observatories.
 \end{abstract}
 
-\keywords{Template, BSc, Thesis, Artificial Intelligence}
+\keywords{Spiking Neural Networks, Explainable AI, Quantization-Aware Training, Time-to-First-Spike, Hardware-in-the-Loop, Gravity Spy, Neuromorphic Computing, Edge AI}

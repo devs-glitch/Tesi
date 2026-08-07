@@ -1,0 +1,76 @@
+%-------------------------------------------------------------------------------
+\chapter{Hardware Implementation: Physical Validation Setup}
+\label{ch:hardware}
+\setlength{\parskip}{1em}
+%-------------------------------------------------------------------------------
+
+This chapter describes the engineering pipeline that turns the quantized software model of Chapter~\ref{ch:methodology} into a physical, measurable system. Section~\ref{sec:porting} covers the porting of the quantized PyTorch model to embedded C/C++. Section~\ref{sec:hil-architecture} describes the Hardware-in-the-Loop (HIL) architecture, including the microcontroller and the GPIO instrumentation. Section~\ref{sec:measurement-protocol} details the logic-analyzer measurement protocol used to capture the physical Time-to-First-Spike.
+
+%------------------------------------------------------------
+\section{Model Porting and Embedded Deployment}
+\label{sec:porting}
+%------------------------------------------------------------
+
+The output of Quantization-Aware Training (Section~\ref{sec:qat}) is a set of PyTorch tensors: per-layer integer weight matrices and their associated quantization scale/zero-point factors, together with the quantized LIF hyperparameters (decay $\beta$, threshold $V_{th}$) shared by all neurons in a layer. Deploying this model on a microcontroller with no PyTorch runtime requires re-expressing it as a self-contained embedded program, following three steps:
+
+\begin{enumerate}
+    \item \textbf{Weight export.} A Python export script traverses the trained, quantized model's \texttt{state\_dict}, flattens each quantized weight tensor in row-major order, and writes it as a static \texttt{const int8\_t} (or \texttt{int4}-packed) C array, together with a header exposing the corresponding scale factors and layer shapes (kernel size, stride, channel counts). This mirrors the standard microcontroller deployment pattern used for compressed CNNs, adapted here to also export the quantized LIF decay and threshold constants layer-by-layer.
+    \item \textbf{Inference loop.} A lightweight, dependency-free C/C++ inference loop re-implements, layer by layer, the same integer arithmetic simulated during QAT: strided integer convolution/fully-connected accumulation, followed by the quantized LIF membrane update and spike/reset logic, executed once per input timestep. No floating-point operations are used on the critical path, so that the arithmetic executed on the microcontroller matches, operation for operation, what QAT trained the network to expect.
+    \item \textbf{Input feeding.} Because the microcontroller has no access to a live gravitational-wave data stream, the rate-coded spike train produced by the same encoding procedure as Section~\ref{sec:dataset-prep} is precomputed offline for each test spectrogram and stored on-device (or streamed over serial/SPI), so that the exact same input the software model was evaluated on is replayed to the physical device.
+\end{enumerate}
+
+The result is a firmware image whose numerical behaviour is, by construction, intended to reproduce the quantized model's simulated spike trains; any divergence between the two is itself diagnostic evidence of a porting or fixed-point-arithmetic discrepancy, and is checked for before any timing measurement is trusted.
+
+%------------------------------------------------------------
+\section{Hardware-in-the-Loop (HIL) Architecture}
+\label{sec:hil-architecture}
+%------------------------------------------------------------
+
+The physical setup follows the classic Hardware-in-the-Loop pattern of Section~\ref{sec:hil}: the microcontroller executes the real, deployed firmware while all measurement is performed by an external, independent instrument, so that the measurement itself never perturbs the timing of the system under test.
+
+\begin{itemize}
+    \item \textbf{Microcontroller.} An ESP32 or Teensy board is used as the target device, chosen for its widely available toolchain, adequate SRAM/Flash budget for the quantized weight arrays of Section~\ref{sec:porting}, and a clock frequency high enough to resolve sub-millisecond, per-timestep inference latency.
+    \item \textbf{Memory budget.} The Flash and SRAM footprint of the quantized firmware (weights, activation buffers, and the input spike-train buffer) is measured directly from the compiled binary and compared, in Chapter~\ref{ch:results}, against the equivalent full-precision footprint, quantifying in kilobytes the memory saved by QAT.
+    \item \textbf{GPIO mapping.} A single general-purpose digital output pin is reserved as the ``spike pin''. Firmware logic monitors the membrane potential of the winning output neuron at every simulated timestep and drives the spike pin high on the exact clock cycle at which that neuron's membrane potential first crosses $V_{th}$ -- i.e., at the physical occurrence of the event that Section~\ref{sec:xai-extraction} calls $t^{*}$ in software. A second GPIO pin is toggled at the moment the input spike train begins replaying, providing a $t=0$ reference edge.
+\end{itemize}
+
+Figure~\ref{fig:hil-architecture} summarizes the resulting signal chain, from spike-encoded input replay, through on-device quantized inference, to the two instrumented GPIO edges that are captured externally in Section~\ref{sec:measurement-protocol}.
+
+\begin{figure}[tb]
+\centering
+\begin{tikzpicture}[
+    node distance=1.1cm and 1.6cm,
+    box/.style={draw, rounded corners, align=center, minimum height=1.1cm, minimum width=2.6cm, font=\small},
+    inst/.style={draw, rounded corners, align=center, minimum height=1.1cm, minimum width=2.6cm, font=\small, fill=gray!12},
+    arr/.style={-{Latex[length=2mm]}, thick}
+]
+\node[box] (host) {Host PC\\(encoded spike train)};
+\node[box, right=of host] (mcu) {Microcontroller\\quantized inference loop};
+\node[inst, right=of mcu] (scope) {Oscilloscope /\\logic analyzer};
+
+\node[box, below=of mcu, yshift=-0.2cm] (pins) {GPIO pins:\\\texttt{t0\_start}, \texttt{spike\_out}};
+
+\draw[arr] (host) -- node[above, font=\scriptsize]{serial/SPI} (mcu);
+\draw[arr] (mcu) -- (pins);
+\draw[arr] (pins.east) -| (scope.south);
+\end{tikzpicture}
+\caption[HIL architecture]{Hardware-in-the-Loop architecture. The host PC replays the precomputed spike-encoded input; the microcontroller executes the quantized inference loop and toggles the \texttt{t0\_start} and \texttt{spike\_out} GPIO pins; the oscilloscope/logic analyzer captures both edges independently of the microcontroller's own clock.}
+\label{fig:hil-architecture}
+\end{figure}
+
+%------------------------------------------------------------
+\section{Logic Analyzer Measurement Protocol}
+\label{sec:measurement-protocol}
+%------------------------------------------------------------
+
+For each test sample, the measurement protocol proceeds as follows:
+
+\begin{enumerate}
+    \item The precomputed spike-encoded spectrogram is transferred to the microcontroller and buffered on-device.
+    \item The oscilloscope/logic analyzer is armed in single-shot or repeated-trigger mode, with both instrumented channels (\texttt{t0\_start} and \texttt{spike\_out}) connected via probes to the corresponding GPIO pins, and the trigger condition set on the rising edge of \texttt{t0\_start}.
+    \item Inference is started: the firmware raises \texttt{t0\_start} for one clock cycle at the beginning of timestep $t=1$, then executes the quantized inference loop of Section~\ref{sec:porting} timestep by timestep, feeding the buffered input.
+    \item The instant the winning output neuron's membrane potential first crosses $V_{th}$, the firmware raises \texttt{spike\_out}.
+    \item The oscilloscope/logic analyzer records the time delta $\Delta t_{\text{phys}}$ between the rising edges of \texttt{t0\_start} and \texttt{spike\_out}. This $\Delta t_{\text{phys}}$ is the \emph{physical} Time-to-First-Spike for that sample, to be compared directly, in Section~\ref{sec:physical-validation}, against the \emph{theoretical} first-spike timestep $t^{*}$ produced by the same sample in the software simulation of Section~\ref{sec:xai-extraction}.
+\end{enumerate}
+
+The procedure is repeated across the full test subset used for the software explainability analysis (Section~\ref{sec:xai-comparison}), for both the fully quantized firmware and, where the memory budget of the microcontroller allows a reduced-scale comparison, a less aggressively quantized variant, so that the relationship between quantization severity and physical-software timing agreement can be assessed rather than observed on a single operating point.

@@ -1,18 +1,45 @@
 %-------------------------------------------------------------------------------
-\chapter{Conclusions}
+\chapter{Conclusions and Future Work}
 \label{ch:conclusions}
+\setlength{\parskip}{1em}
 %-------------------------------------------------------------------------------
 
-These are conclusions. Here you can look at the problem, method, results, and reflect on the overall project outcomes, particular objectives and other aspects.
+%------------------------------------------------------------
+\section{Summary of Key Findings}
+\label{sec:summary}
+%------------------------------------------------------------
 
-\section{Review of Project Goals}
+This thesis set out to answer a single question: does a severely quantized Spiking Neural Network still classify gravitational-wave detector glitches based on genuine physical features, and does the physical, hardware-measured timing of its response match what its software-generated temporal explanation predicted? Chapters~\ref{ch:methodology} through~\ref{ch:results} pursued this question through the three objectives set out in Section~\ref{sec:objectives}.
 
-If you provided clear and detailed goals and objectives in the introductory part of your thesis, then it is a good idea to review them here and outline how (ir if, or to what extent) each of them has been achieved.
+First, an SNN classifier was trained on a distinct subset of Gravity Spy glitch classes and compressed through Quantization-Aware Training applied jointly to synaptic weights and membrane potentials, down to 4-bit and 2-bit precision (Sections~\ref{sec:baseline-model}--\ref{sec:qat}), and the resulting accuracy retention -- or loss -- relative to the full-precision baseline was quantified in Section~\ref{sec:accuracy-results}. Second, Temporal Spike Activation Maps were extracted for both the baseline and quantized models (Section~\ref{sec:xai-extraction}) and compared in Section~\ref{sec:xai-comparison} to establish whether extreme quantization preserves the spatial and temporal locus of the network's decision. Third, and central to this thesis' contribution, the quantized model was ported to a microcontroller and its physical Time-to-First-Spike was measured through the Hardware-in-the-Loop, GPIO-toggling protocol of Chapter~\ref{ch:hardware}, and directly compared against the software-predicted timestep $t^{*}$ in Section~\ref{sec:physical-validation}.
 
-\section{Context}
+Once the experimental campaign described in Chapter~\ref{ch:results} is completed, this section will state, explicitly and in relation to the objectives of Section~\ref{sec:objectives}: (i) the quantitative accuracy cost of each tested bit-width; (ii) whether the quantized model's software explanation remained aligned with the baseline's, or drifted toward different, potentially spurious features; and (iii) whether the physically measured hardware latency corroborated the theoretical software timestep within the resolution of the instrumentation, which is the physical validation -- or refutation -- of software-only temporal XAI claims for quantized SNNs that motivated this work (Section~\ref{sec:problem}).
 
-It is important to be able to put your work in the environmental, societal, ethical, and enterprise context. Of course, not all works contribute significantly to each of the aspects, however it is important to provide critical review of your work.
+%------------------------------------------------------------
+\section{Limitations of the Study}
+\label{sec:limitations}
+%------------------------------------------------------------
 
-\section{Future Works}
+This work is subject to several limitations that should be considered when interpreting its results, and that are acknowledged here with academic honesty rather than glossed over.
 
-In most cases, the completed work open new opportunities. Or it might be that not all possible ways to solve the problem could be explored. In this section you can outline possible directions of future work that you find the most relevant given your knowledge and experiences in this project.
+\begin{itemize}
+    \item \textbf{Von Neumann emulation, not a native neuromorphic substrate.} The microcontroller used in Chapter~\ref{ch:hardware} (ESP32/Teensy) is a conventional Von Neumann architecture that \emph{emulates} spiking, event-driven computation through a sequential instruction stream; it does not possess the asynchronous, event-driven circuitry of a true neuromorphic Application-Specific Integrated Circuit (ASIC) such as Intel's Loihi \cite{davies2018loihi}. The physical latencies measured in Section~\ref{sec:physical-validation} therefore reflect the timing of a software emulation of spiking dynamics on general-purpose silicon, not the timing of a genuinely event-driven neuromorphic processor, and the absolute energy and latency figures obtained here should not be extrapolated to native neuromorphic hardware without qualification.
+    \item \textbf{I/O bottlenecks in feeding data to the board.} The HIL protocol of Section~\ref{sec:measurement-protocol} replays a precomputed, offline spike-encoded input to the microcontroller over a serial or SPI link. This transfer is itself a potential source of latency and jitter that is deliberately excluded from the measured $\Delta t_{\text{phys}}$ window (which starts only at \texttt{t0\_start}, after the input is already buffered on-device), but it means the reported timings do not capture the additional, and non-negligible, cost of streaming a live signal from a real gravitational-wave data-acquisition pipeline to the edge device in a genuinely online deployment.
+    \item \textbf{Reduced dataset scope.} The experiments target a deliberately narrow, curated subset of Gravity Spy classes (Section~\ref{sec:dataset-prep}), chosen for morphological separability rather than full taxonomic coverage; the reported accuracy and explainability results should be understood as evidence for the specific classes tested, not as a claim of coverage across the entire Gravity Spy taxonomy.
+    \item \textbf{Instrumentation resolution and clock jitter.} The physical validation of Section~\ref{sec:physical-validation} is bounded by the sampling resolution of the oscilloscope/logic analyzer and by clock jitter intrinsic to the microcontroller, both of which set a lower bound on the timing resolution at which software and physical predictions can be meaningfully distinguished.
+    \item \textbf{Single-device generalization.} All hardware measurements are collected on one microcontroller model; timing behaviour, and therefore the degree of physical/software agreement, may differ on other embedded targets with different clock speeds, memory hierarchies, or compiler toolchains.
+\end{itemize}
+
+%------------------------------------------------------------
+\section{Future Directions}
+\label{sec:future-work}
+%------------------------------------------------------------
+
+The findings and limitations above suggest several directions for follow-up work.
+
+\begin{itemize}
+    \item \textbf{Deployment on true neuromorphic hardware.} Repeating the exact HIL validation protocol of Chapter~\ref{ch:hardware} on a native, asynchronous neuromorphic ASIC (e.g., Intel Loihi \cite{davies2018loihi} or an equivalent research platform) would remove the Von Neumann emulation limitation identified in Section~\ref{sec:limitations} and test whether the software/physical timing agreement observed in this thesis holds, strengthens, or weakens on genuinely event-driven silicon.
+    \item \textbf{XAI-driven dynamic early exit.} If Section~\ref{sec:physical-validation} confirms that the software-predicted first-spike timestep $t^{*}$ reliably anticipates physical decision latency, this signal could be exploited at inference time rather than only post-hoc: a dynamic \emph{early-exit} mechanism could terminate simulation once the network's running confidence indicates $t^{*}$ has likely already occurred, saving the energy and time otherwise spent simulating the remaining $T - t^{*}$ timesteps, directly turning this thesis' explainability method into a practical power-saving feature for edge deployments.
+    \item \textbf{Broader dataset and class coverage.} Extending the pipeline to the full Gravity Spy taxonomy, and to auxiliary-channel data beyond spectrograms, would test whether the quantization/explainability trade-offs identified in Section~\ref{sec:tradeoffs} generalize beyond the curated subset used in this work.
+    \item \textbf{Online, streaming HIL validation.} Addressing the I/O-bottleneck limitation by feeding the microcontroller a live or near-live simulated strain-data stream, rather than a precomputed offline buffer, would extend the physical validation of this thesis toward the conditions of an actual real-time detector-characterization deployment.
+\end{itemize}

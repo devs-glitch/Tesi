@@ -1,10 +1,4 @@
 %---------------------------------------
-% Appendix
-%---------------------------------------
-%\appendix
-
-
-%---------------------------------------
 % References
 %---------------------------------------
 \clearpage
@@ -14,6 +8,104 @@
 \bibliography{references}
 
 %---------------------------------------
-% Index
+% Appendices
 %---------------------------------------
-%\printindex
+\appendix
+
+\chapter{Hardware Schematics and Pinouts}
+\label{app:hardware}
+
+This appendix details the physical wiring between the microcontroller and the measurement instrumentation described in Section~\ref{sec:hil-architecture}.
+
+\begin{figure}[H]
+\centering
+\begin{tikzpicture}[
+    node distance=1.2cm and 3.0cm,
+    box/.style={draw, rounded corners, align=center, minimum height=1.2cm, minimum width=3.2cm, font=\small},
+    inst/.style={draw, rounded corners, align=center, minimum height=1.2cm, minimum width=3.2cm, font=\small, fill=gray!12},
+    arr/.style={-{Latex[length=2mm]}, thick}
+]
+\node[box] (mcu) {Microcontroller\\(ESP32 / Teensy)};
+\node[inst, right=of mcu] (la) {Logic analyzer /\\oscilloscope};
+\node[box, below=1.6cm of mcu] (host) {Host PC (UART/USB)};
+
+\draw[arr] (mcu.north east) -- node[midway, above, font=\scriptsize]{GPIO\,A -- \texttt{t0\_start}} (la.north west);
+\draw[arr] (mcu.south east) -- node[midway, below, font=\scriptsize]{GPIO\,B -- \texttt{spike\_out}} (la.south west);
+\draw[arr] (host) -- node[left, font=\scriptsize, align=center]{serial / SPI\\(input spike train)} (mcu);
+\node[font=\scriptsize, below=0.1cm of host] {GND -- common reference shared with all instruments};
+\end{tikzpicture}
+\caption[Hardware wiring schematic]{Wiring schematic between the host PC, the microcontroller, and the logic analyzer/oscilloscope. \texttt{t0\_start} marks the beginning of inference; \texttt{spike\_out} marks the first output spike (physical TTFS event). A common ground reference is shared by all instruments.}
+\label{fig:hw-schematic}
+\end{figure}
+
+\begin{table}[H]
+\centering
+\caption[Pinout summary]{Summary of instrumented microcontroller pins.}
+\label{tab:pinout}
+\small
+\begin{tabular}{@{}llp{7.2cm}@{}}
+\toprule
+\textbf{Signal} & \textbf{Direction} & \textbf{Function} \\
+\midrule
+\texttt{t0\_start} & Output & Rising edge at the start of inference (timestep $t=1$) \\
+\texttt{spike\_out} & Output & Rising edge on first spike of the winning output neuron \\
+UART/SPI RX & Input  & Reception of the precomputed spike-encoded input tensor \\
+GND         & --     & Common reference shared with the logic analyzer/oscilloscope \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\chapter{Embedded Inference Code}
+\label{app:code}
+
+This appendix reports the most critical fragments of the embedded firmware described in Section~\ref{sec:porting}: the quantized LIF membrane update and the GPIO-toggling inference loop.
+
+\begin{lstlisting}[caption={Quantized LIF membrane update (fixed-point arithmetic).}, label={lst:qlif}]
+// Quantized Leaky Integrate-and-Fire update.
+// weights, mem, and beta_q are pre-quantized integers exported
+// from the QAT model; shift implements the fixed-point
+// scale factor of the membrane decay.
+int32_t update_lif_neuron(int32_t mem, int32_t input_current,
+                           int32_t beta_q, int32_t shift,
+                           int32_t v_th_q, uint8_t *spike_out) {
+    // Leak: mem = beta_q * mem (fixed-point, right-shifted)
+    mem = (int32_t)(((int64_t)beta_q * mem) >> shift);
+
+    // Integrate weighted input current for this timestep
+    mem += input_current;
+
+    // Fire and soft-reset (subtract threshold, retain residual)
+    if (mem >= v_th_q) {
+        *spike_out = 1;
+        mem -= v_th_q;
+    } else {
+        *spike_out = 0;
+    }
+    return mem;
+}
+\end{lstlisting}
+
+\begin{lstlisting}[caption={GPIO-instrumented inference loop for the Hardware-in-the-Loop protocol (Section~\ref{sec:measurement-protocol}).}, label={lst:gpio-loop}]
+#define PIN_T0_START   GPIO_NUM_A
+#define PIN_SPIKE_OUT  GPIO_NUM_B
+
+void run_hil_inference(const uint8_t spike_train[T][N_IN]) {
+    reset_network_state();               // clear all membrane potentials
+
+    gpio_set_level(PIN_T0_START, 1);      // t = 0 reference edge
+    gpio_set_level(PIN_T0_START, 0);
+
+    for (int t = 0; t < T; t++) {
+        forward_step(spike_train[t]);     // quantized conv/fc + LIF layers
+
+        uint8_t winner_spiked = 0;
+        int winner_class = argmax_readout_spike(&winner_spiked);
+
+        if (winner_spiked && !decision_latched) {
+            gpio_set_level(PIN_SPIKE_OUT, 1);   // physical TTFS event
+            gpio_set_level(PIN_SPIKE_OUT, 0);
+            decision_latched = 1;               // record t* implicitly
+        }
+    }
+}
+\end{lstlisting}

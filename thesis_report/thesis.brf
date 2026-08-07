@@ -1,3 +1,23 @@
-\backcite {liu2026hardfsnn}{{4}{1.1}{section*.6}}
-\backcite {latex2e}{{6}{2}{chapter.2}}
-\backcite {latex2e,LiVR22,ChenZH23}{{7}{2.2}{section.2.2}}
+\backcite {liu2026hardfsnn}{{4}{1.2}{section.1.2}}
+\backcite {roy2019towards}{{6}{2.1}{section.2.1}}
+\backcite {roy2019towards, davies2018loihi}{{6}{2.1}{section.2.1}}
+\backcite {neftci2019surrogate}{{6}{2.1}{section.2.1}}
+\backcite {eshraghian2021training}{{6}{2.1}{section.2.1}}
+\backcite {mostafa2017supervised}{{6}{2.1}{section.2.1}}
+\backcite {liu2026hardfsnn}{{7}{2.1}{section.2.1}}
+\backcite {jacob2018quantization}{{7}{2.1}{section.2.1}}
+\backcite {liu2026hardfsnn}{{7}{2.1}{section.2.1}}
+\backcite {selvaraju2017gradcam}{{7}{2.2}{section.2.2}}
+\backcite {roy2019towards, kim2021visual}{{7}{2.2}{section.2.2}}
+\backcite {banbury2021mlperftiny}{{8}{2.3}{section.2.3}}
+\backcite {abbott2016observation}{{8}{2.4}{section.2.4}}
+\backcite {zevin2017gravityspy}{{8}{2.4}{section.2.4}}
+\backcite {neftci2019surrogate}{{10}{3.2}{section.3.2}}
+\backcite {eshraghian2021training}{{10}{3.2}{section.3.2}}
+\backcite {liu2026hardfsnn}{{10}{3.3}{section.3.3}}
+\backcite {jacob2018quantization}{{10}{3.3}{section.3.3}}
+\backcite {liu2026hardfsnn}{{11}{3.3}{section.3.3}}
+\backcite {selvaraju2017gradcam}{{11}{1}{Item.4}}
+\backcite {liu2026hardfsnn}{{15}{5.1}{table.5.1}}
+\backcite {davies2018loihi}{{20}{6.2}{section.6.2}}
+\backcite {davies2018loihi}{{20}{6.3}{section.6.3}}

@@ -1,62 +1,55 @@
-This is BibTeX, Version 0.99e
+This is BibTeX, Version 0.99d (TeX Live 2023/Debian)
 Capacity: max_strings=200000, hash_size=200000, hash_prime=170003
 The top-level auxiliary file: thesis.aux
-Reallocating 'name_of_file' (item size: 1) to 21 items.
 A level-1 auxiliary file: content/abstract.aux
-Reallocating 'name_of_file' (item size: 1) to 13 items.
 A level-1 auxiliary file: contents.aux
-Reallocating 'name_of_file' (item size: 1) to 25 items.
 A level-1 auxiliary file: content/introduction.aux
-Reallocating 'name_of_file' (item size: 1) to 18 items.
-A level-1 auxiliary file: content/usage.aux
-Reallocating 'name_of_file' (item size: 1) to 23 items.
-A level-1 auxiliary file: content/guidelines.aux
-Reallocating 'name_of_file' (item size: 1) to 24 items.
+A level-1 auxiliary file: content/state_of_the_art.aux
+A level-1 auxiliary file: content/methodology.aux
+A level-1 auxiliary file: content/hardware.aux
+A level-1 auxiliary file: content/results.aux
 A level-1 auxiliary file: content/conclusions.aux
-Reallocating 'name_of_file' (item size: 1) to 15 items.
 A level-1 auxiliary file: backmatter.aux
-Reallocating 'name_of_file' (item size: 1) to 6 items.
 The style file: plain.bst
-Reallocating 'name_of_file' (item size: 1) to 11 items.
 Database file #1: references.bib
-You've used 3 entries,
+You've used 12 entries,
             2118 wiz_defined-function locations,
-            526 strings with 4642 characters,
-and the built_in function-call counts, 906 in all, are:
-= -- 84
-> -- 43
-< -- 0
-+ -- 17
-- -- 14
-* -- 61
-:= -- 162
-add.period$ -- 10
-call.type$ -- 3
-change.case$ -- 16
+            579 strings with 7453 characters,
+and the built_in function-call counts, 6388 in all, are:
+= -- 557
+> -- 539
+< -- 2
++ -- 214
+- -- 202
+* -- 581
+:= -- 1109
+add.period$ -- 35
+call.type$ -- 12
+change.case$ -- 137
 chr.to.int$ -- 0
-cite$ -- 3
-duplicate$ -- 37
-empty$ -- 77
-format.name$ -- 14
-if$ -- 188
+cite$ -- 12
+duplicate$ -- 150
+empty$ -- 339
+format.name$ -- 202
+if$ -- 1233
 int.to.chr$ -- 0
-int.to.str$ -- 3
-missing$ -- 4
-newline$ -- 18
-num.names$ -- 6
-pop$ -- 19
+int.to.str$ -- 12
+missing$ -- 10
+newline$ -- 62
+num.names$ -- 24
+pop$ -- 137
 preamble$ -- 1
-purify$ -- 13
+purify$ -- 125
 quote$ -- 0
-skip$ -- 19
+skip$ -- 114
 stack$ -- 0
-substring$ -- 33
-swap$ -- 4
-text.length$ -- 0
+substring$ -- 308
+swap$ -- 34
+text.length$ -- 2
 text.prefix$ -- 0
 top$ -- 0
-type$ -- 10
+type$ -- 48
 warning$ -- 0
-while$ -- 7
-width$ -- 4
-write$ -- 36
+while$ -- 43
+width$ -- 14
+write$ -- 130

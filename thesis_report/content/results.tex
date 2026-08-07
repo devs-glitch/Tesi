@@ -1,0 +1,113 @@
+%-------------------------------------------------------------------------------
+\chapter{Results and Discussion}
+\label{ch:results}
+\setlength{\parskip}{1em}
+%-------------------------------------------------------------------------------
+
+This chapter reports the outcome of the pipeline described in Chapters~\ref{ch:methodology} and~\ref{ch:hardware}. Section~\ref{sec:accuracy-results} quantifies the accuracy cost of severe quantization. Section~\ref{sec:xai-comparison} compares the software Temporal Spike Activation Maps of the baseline and quantized models. Section~\ref{sec:physical-validation} presents the core contribution of this thesis: the side-by-side comparison of theoretical software timesteps against physically measured oscilloscope latencies. Section~\ref{sec:tradeoffs} discusses the resulting memory/explainability trade-off and its implications for real astrophysical deployments.
+
+\emph{The tables and figures in this chapter are laid out with the exact structure, columns, and captions that the final experimental campaign will populate; numerical placeholders are marked accordingly and are to be replaced with measured values once training, quantization, and HIL data collection (Chapters~\ref{ch:methodology}--\ref{ch:hardware}) have been executed to completion.}
+
+%------------------------------------------------------------
+\section{Impact of Severe Quantization on Accuracy}
+\label{sec:accuracy-results}
+%------------------------------------------------------------
+
+Table~\ref{tab:accuracy-comparison} compares the classification performance of the full-precision baseline SNN against the QAT models at each target bit-width (Section~\ref{sec:qat}), on the held-out Gravity Spy test split. Reported metrics are overall accuracy, macro-averaged precision/recall/F1-score, and the on-device memory footprint measured from the compiled firmware of Section~\ref{sec:porting}.
+
+\begin{table}[tb]
+\centering
+\caption[Baseline vs.\ quantized accuracy]{Classification performance and memory footprint of the full-precision baseline model versus the 4-bit and 2-bit Quantization-Aware Trained models, on the held-out Gravity Spy test split.}
+\label{tab:accuracy-comparison}
+\begin{tabular}{lcccccc}
+\toprule
+\textbf{Model} & \textbf{Bit-width} & \textbf{Accuracy} & \textbf{Precision} & \textbf{Recall} & \textbf{F1} & \textbf{Memory (KB)} \\
+\midrule
+Baseline (float32)   & 32-bit & TBD & TBD & TBD & TBD & TBD \\
+QAT (weights + $U$)  & 4-bit  & TBD & TBD & TBD & TBD & TBD \\
+QAT (weights + $U$)  & 2-bit  & TBD & TBD & TBD & TBD & TBD \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+The expected outcome, consistent with prior hardware-friendly SNN quantization results \cite{liu2026hardfsnn}, is a graceful accuracy degradation at 4-bit precision and a more pronounced drop at 2-bit precision, particularly for glitch classes whose distinguishing feature is a subtle or low-amplitude time-frequency structure. Per-class confusion matrices for the baseline and each quantized variant are reported to identify whether accuracy loss is uniform across classes or concentrated in specific glitch morphologies, which is a necessary precondition for interpreting the explainability results of Section~\ref{sec:xai-comparison}.
+
+%------------------------------------------------------------
+\section{Software Explainability Analysis}
+\label{sec:xai-comparison}
+%------------------------------------------------------------
+
+For every test sample that both the baseline and the quantized model classify correctly, the Temporal Spike Activation Maps $(M_{t^{*}}, t^{*})$ of Section~\ref{sec:xai-extraction} are computed for each model and overlaid on the corresponding input spectrogram, as sketched in Figure~\ref{fig:xai-overlay-placeholder}.
+
+\begin{figure}[tb]
+\centering
+\begin{tikzpicture}
+\draw[dashed, thick, gray] (0,0) rectangle (13,5.2);
+\node[align=center, font=\small\itshape, text width=11cm] at (6.5,2.6)
+  {Figure placeholder: side-by-side spectrogram overlays of the baseline-model and quantized-model Temporal Spike Activation Maps ($M_{t^{*}}$) for representative samples of each selected Gravity Spy class, to be inserted once QAT training and XAI extraction (Sections~\ref{sec:qat}, \ref{sec:xai-extraction}) are complete.};
+\end{tikzpicture}
+\caption[Software XAI overlay comparison]{Comparison of baseline and quantized Temporal Spike Activation Maps overlaid on representative Gravity Spy spectrograms.}
+\label{fig:xai-overlay-placeholder}
+\end{figure}
+
+Two outcomes are possible and are discussed explicitly once data is available. The quantized model may (i) \emph{preserve focus}, continuing to attribute its decision to the same physically meaningful time-frequency region as the baseline model, indicating that quantization compresses the representation without discarding the discriminative physical feature; or it may (ii) \emph{lose or shift focus}, attributing its decision to a different, potentially spurious region -- for instance, a quantization artefact or a region correlated with the class label only in the training distribution. The two cases are distinguished quantitatively using an overlap metric (e.g., Intersection-over-Union or normalized cross-correlation) between the baseline and quantized attribution maps $M_{t^{*}}$, aggregated per class, together with a comparison of the first-spike timestep $t^{*}$ itself: a large shift in $t^{*}$ between the baseline and the quantized model, even when the spatial map is preserved, indicates that quantization altered \emph{when} the network commits to a decision without altering \emph{what} it attends to, which is directly relevant to the physical validation of Section~\ref{sec:physical-validation}.
+
+%------------------------------------------------------------
+\section{Physical Validation of Temporal Maps}
+\label{sec:physical-validation}
+%------------------------------------------------------------
+
+This section presents the central contribution of the thesis: the comparison between the theoretical, software-predicted first-spike timestep $t^{*}$ (Section~\ref{sec:xai-extraction}) and the physically measured oscilloscope latency $\Delta t_{\text{phys}}$ (Section~\ref{sec:measurement-protocol}), obtained by running the quantized firmware through the HIL protocol of Chapter~\ref{ch:hardware} on the same test samples analyzed in Section~\ref{sec:xai-comparison}.
+
+\begin{table}[tb]
+\centering
+\caption[Software vs.\ physical TTFS]{Representative samples: software-predicted first-spike timestep $t^{*}$ versus physically measured Time-to-First-Spike $\Delta t_{\text{phys}}$, and the resulting timing residual.}
+\label{tab:physical-validation}
+\small
+\begin{tabular}{@{}lp{1.9cm}p{2.3cm}p{2.3cm}p{1.6cm}@{}}
+\toprule
+\textbf{Sample / Class} & \textbf{$t^{*}$ (software)} & \textbf{$\Delta t_{\text{phys}}$ (measured)} & \textbf{Expected $\Delta t$ (theoretical)} & \textbf{Residual} \\
+\midrule
+Sample 1 -- Class TBD & TBD & TBD & TBD & TBD \\
+Sample 2 -- Class TBD & TBD & TBD & TBD & TBD \\
+Sample 3 -- Class TBD & TBD & TBD & TBD & TBD \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\begin{figure}[tb]
+\centering
+\begin{tikzpicture}
+\draw[dashed, thick, gray] (0,0) rectangle (13,5.2);
+\node[align=center, font=\small\itshape, text width=11cm] at (6.5,2.6)
+  {Figure placeholder: captured oscilloscope/logic-analyzer traces of the \texttt{t0\_start} and \texttt{spike\_out} GPIO pins, annotated with the corresponding software-predicted timestep $t^{*}$ converted to wall-clock time, to be inserted once HIL data collection (Section~\ref{sec:measurement-protocol}) is complete.};
+\end{tikzpicture}
+\caption[Physical TTFS oscilloscope traces]{Oscilloscope traces of the instrumented GPIO pins, annotated with the software-predicted decision timestep.}
+\label{fig:oscilloscope-placeholder}
+\end{figure}
+
+The theoretical expected physical delay is obtained by converting the software timestep $t^{*}$ into wall-clock time using the per-timestep execution time of the deployed inference loop (measured independently by profiling a fixed number of simulation steps on the microcontroller). Agreement between $\Delta t_{\text{phys}}$ and this theoretical expectation, within the timing resolution of the instrumentation and the jitter introduced by the microcontroller's own clock, would constitute physical validation of the software XAI method: it would demonstrate that the temporal explanation is not merely a simulation artefact, but a faithful description of the hardware's real-time decision-making process. Conversely, a systematic residual (e.g., a constant physical offset attributable to fixed per-layer execution overhead, or a residual that grows with $t^{*}$) would indicate that the software timestep is a directionally correct but not perfectly calibrated proxy for physical latency, a distinction that is discussed in relation to the limitations of Section~\ref{sec:limitations}.
+
+%------------------------------------------------------------
+\section{Trade-offs and Neuromorphic Feasibility}
+\label{sec:tradeoffs}
+%------------------------------------------------------------
+
+Finally, the memory savings quantified in Section~\ref{sec:accuracy-results} (Table~\ref{tab:accuracy-comparison}) are weighed against the degradation, if any, observed in both software explainability fidelity (Section~\ref{sec:xai-comparison}) and physical explainability agreement (Section~\ref{sec:physical-validation}). Table~\ref{tab:tradeoffs} summarizes this three-way trade-off across the tested bit-widths.
+
+\begin{table}[tb]
+\centering
+\caption[Memory vs.\ explainability trade-off]{Summary trade-off between memory footprint, classification accuracy, and physical explainability fidelity across quantization levels.}
+\label{tab:tradeoffs}
+\small
+\begin{tabular}{@{}lp{3.2cm}p{2cm}p{3.4cm}@{}}
+\toprule
+\textbf{Bit-width} & \textbf{Memory saved vs.\ baseline} & \textbf{Accuracy drop} & \textbf{Physical/software timing agreement} \\
+\midrule
+4-bit & TBD KB (TBD\%) & TBD pp & TBD \\
+2-bit & TBD KB (TBD\%) & TBD pp & TBD \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+The discussion frames this trade-off in terms of real deployment feasibility for astrophysical instrumentation: a quantization level is considered acceptable for a real Gravity Spy-adjacent deployment (e.g., an auxiliary real-time glitch triage system at a detector site) only if it preserves both classification accuracy above the threshold required for operational use and a physically faithful temporal explanation, since an explanation that cannot be trusted to reflect the hardware's actual behaviour undermines the very purpose of deploying an explainable model in a scientific pipeline. Where the two objectives conflict, this section identifies the Pareto-optimal bit-width for this specific microcontroller and dataset, and discusses whether a less aggressive quantization target, or a partially quantized network (e.g., full precision only in the earliest layers, where Section~\ref{sec:xai-comparison} is expected to show the discriminative feature is first extracted), offers a better compromise.
