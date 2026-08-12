@@ -31,7 +31,7 @@ def get_layer_spikes(net, image, time_steps, device, layer_index):
     image_batched = image_batched.to(device)
     encoded_x = direct_encode(image_batched, time_steps=time_steps)
 
-    with torch.no_grad():  # niente gradiente, siamo in puro forward/inferenza
+    with torch.no_grad(): 
         spike_out, spike1, spike2, spike3, spike4 = net(encoded_x)
 
     spikes_by_layer = {1: spike1, 2: spike2, 3: spike3, 4: spike4}
@@ -50,7 +50,7 @@ def compute_ncs(spikes, gamma, t):
     """
     T_total = spikes.shape[0]
 
-    ncs = torch.zeros_like(spikes[0])  # [C, H, W], parte da zero
+    ncs = torch.zeros_like(spikes[0])
 
     for t_prime in range(t + 1):
         tscs = math.exp(-gamma * abs((t - t_prime)))
@@ -78,23 +78,62 @@ def compute_sam(spikes, gamma):
     return sam_maps_stacked
 
 def denormalize_image(image, mean, std):
-    """
-    image: tensore [3, H, W], normalizzato (output diretto del dataloader)
-    mean, std: le stesse liste usate in dataloader.py
-    ritorna: immagine con valori riportati in [0,1] circa, pronta per imshow
-    """
-    # TODO 1: converti mean e std (liste di 3 float) in tensori PyTorch di forma
-    # [3, 1, 1] — il motivo del reshape a 3 dimensioni: image ha forma [3, H, W],
-    # e vuoi che ogni canale (indice 0) venga moltiplicato/sommato per il SUO
-    # valore di mean/std, non un valore scalare uguale per tutti i canali
-    mean_t = ___
-    std_t = ___
+    mean_t = torch.tensor(mean).view(3, 1, 1)
+    std_t = torch.tensor(std).view(3, 1, 1)
 
     image_denorm = image * std_t + mean_t
-
-    # TODO 2: i valori numerici potrebbero uscire leggermente fuori da [0,1]
-    # per via di arrotondamenti — quale funzione torch "schiaccia" un tensore
-    # dentro un intervallo min/max senza cambiarne la forma?
-    image_denorm = ___
+    image_denorm = torch.clamp(image_denorm, 0, 1)
 
     return image_denorm
+
+def main():
+    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+
+    net, time_steps = load_trained_model(device)
+
+    # take a sample from the test set
+    from src_python.dataloader import test_dataloader
+    images, labels = next(iter(test_dataloader))
+    sample_image = images[0]
+    sample_label = labels[0].item()
+
+    class_names = test_dataloader.dataset.dataset.classes
+    sample_class_name = class_names[sample_label]
+
+    # SAM parameters
+    layer_index = 2   # second layer
+    gamma = 0.5       # temporal window
+
+    # SAM computation
+    spikes = get_layer_spikes(net, sample_image, time_steps, device, layer_index)
+    sam_maps = compute_sam(spikes, gamma)
+
+    # original image
+    mean = [0.485, 0.456, 0.406]
+    std = [0.229, 0.224, 0.225]
+    image_vis = denormalize_image(sample_image, mean, std).permute(1, 2, 0).cpu().numpy()
+
+    vmin, vmax = sam_maps.min().item(), sam_maps.max().item()
+
+    T = sam_maps.shape[0]
+    fig, axes = plt.subplots(1, T, figsize=(3 * T, 3))
+
+    for t in range(T):
+        ax = axes[t] if T > 1 else axes
+        ax.imshow(image_vis)
+        heatmap = sam_maps[t].cpu().numpy()
+        im = ax.imshow(heatmap, cmap="jet", alpha=0.5, vmin=vmin, vmax=vmax,
+                        extent=(0, image_vis.shape[1], image_vis.shape[0], 0))
+        ax.set_title(f"t={t}")
+        ax.axis("off")
+
+    fig.suptitle(f"SAM - layer {layer_index}, class: {sample_label} ({sample_class_name})")
+    fig.colorbar(im, ax=axes, shrink=0.6, label="SAM score")
+    plt.savefig("sam_visualization.png", dpi=150, bbox_inches="tight")
+    plt.show()
+
+    print(f"SAM computed on layer {layer_index}, {T} time-step, class: {sample_label}")
+
+
+if __name__ == "__main__":
+    main()
