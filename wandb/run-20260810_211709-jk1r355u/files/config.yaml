@@ -1,0 +1,63 @@
+_wandb:
+    value:
+        cli_version: 0.28.1
+        e:
+            ck7h0c0ddqb8tqtmi5vmsds5d1dornmo:
+                codePath: models\tune.py
+                codePathLocal: models\tune.py
+                cpu_count: 10
+                cpu_count_logical: 16
+                cudaVersion: "12.7"
+                disk:
+                    /:
+                        total: "487960080384"
+                        used: "199291920384"
+                email: devamucaj@gmail.com
+                executable: C:\Users\devam\AppData\Local\Programs\Python\Python312\python.exe
+                git:
+                    commit: 65b573f7d539c51f60600aa33748d9adff1dfe69
+                    remote: https://github.com/devs-glitch/Tesi.git
+                gpu: NVIDIA GeForce RTX 4050 Laptop GPU
+                gpu_count: 1
+                gpu_nvidia:
+                    - architecture: Ada
+                      cudaCores: 2560
+                      memoryTotal: "6439305216"
+                      name: NVIDIA GeForce RTX 4050 Laptop GPU
+                      uuid: GPU-b964094e-4512-7c41-ca17-6a4a18d8b0fa
+                host: MSI
+                memory:
+                    total: "16866521088"
+                os: Windows-11-10.0.26200-SP0
+                program: c:\Users\devam\OneDrive\Tesi\models\tune.py
+                python: CPython 3.12.3
+                root: C:\Users\devam\OneDrive\Tesi
+                startedAt: "2026-08-10T19:17:09.602164Z"
+                writerId: ck7h0c0ddqb8tqtmi5vmsds5d1dornmo
+        m: []
+        python_version: 3.12.3
+        t:
+            "1":
+                - 1
+                - 35
+                - 41
+            "2":
+                - 1
+                - 35
+                - 41
+            "3":
+                - 2
+                - 13
+                - 16
+            "4": 3.12.3
+            "5": 0.28.1
+            "8":
+                - 3
+            "12": 0.28.1
+            "13": windows-amd64
+beta:
+    value: 0.35304273775118655
+learning_rate:
+    value: 0.000703198712106177
+time_steps:
+    value: 8

@@ -59,21 +59,29 @@ class GWGlitchSNN(torch.nn.Module):
         mem_out = self.lif_out.init_leaky()
 
         spike_out = []  # list to accumulated fired spiekes
+        spike1_out = []
+        spike2_out = []
+        spike3_out = []
+        spike4_out = []
 
         # Iterate through time
         for step in range(x.size(0)):
 
             cur1 = self.conv1(x[step])
             spike1, mem1 = self.lif1(cur1, mem1)
+            spike1_out.append(spike1)
 
             cur2 = self.conv2(spike1) 
             spike2, mem2 = self.lif2(cur2, mem2)
+            spike2_out.append(spike2)
 
             cur3 = self.conv3(spike2) 
             spike3, mem3 = self.lif3(cur3, mem3)
+            spike3_out.append(spike3)
 
             cur4 = self.conv4(spike3) 
             spike4, mem4 = self.lif4(cur4, mem4)
+            spike4_out.append(spike4)
 
             flat = self.flatten(spike4)
 
@@ -83,7 +91,13 @@ class GWGlitchSNN(torch.nn.Module):
 
             spike_out.append(spike_final)
 
-        return torch.stack(spike_out, dim=0)
+        spike_out_stacked = torch.stack(spike_out, dim=0)
+        spike1_stacked = torch.stack(spike1_out, dim=0)
+        spike2_stacked = torch.stack(spike2_out, dim=0)
+        spike3_stacked = torch.stack(spike3_out, dim=0)
+        spike4_stacked = torch.stack(spike4_out, dim=0)
+
+        return spike_out_stacked, spike1_stacked, spike2_stacked, spike3_stacked, spike4_stacked
 
 '''
 Sanity check: should give 10 time step, for 8 images, and 4 class probabilities
@@ -94,8 +108,8 @@ if __name__ == "__main__":
 
     print("Initialize forward pass")
     try:
-        output = net(dummy)
-        print(f"Chek completed - output shapes:{output.shape}")
+        output_tot, output1, output2, output3, output4 = net(dummy)
+        print(f"Check completed - output shapes: {output_tot.shape}")
     except Exception as e:
         print("Dimensional error")
         print(e)
