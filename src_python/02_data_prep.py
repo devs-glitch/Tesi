@@ -85,14 +85,20 @@ FEATURE SELECTION
 
 numeric_columns = ['event_time', 'peak_time', 'peak_time_ns', 'start_time', 'start_time_ns', 'duration', 'peak_frequency', 'central_freq', 'amplitude', 'snr', 'bandwidth', 'q_value']
 
-fig, axes = plt.subplots(nrows=3, ncols=4, figsize=(15, 15))
+fig, axes = plt.subplots(nrows=3, ncols=4, figsize=(20, 16))
 axes = axes.flatten()
 
 for i, col in enumerate(numeric_columns):
     sns.boxplot(y=df[col], ax=axes[i])
-    axes[i].set_title(f'{col}')
+    axes[i].set_title(col, fontsize=12, pad=20)
+    axes[i].set_ylabel("")
+    axes[i].tick_params(axis='y', labelsize=9)
 
-plt.tight_layout()
+    axes[i].yaxis.get_offset_text().set_fontsize(8)
+    axes[i].yaxis.get_offset_text().set_y(1.02)
+
+plt.tight_layout(pad=3.0, h_pad=4.0, w_pad=2.5)
+plt.savefig("Feature_Box_Plots.png", dpi=150, bbox_inches="tight")
 plt.show()
 
 
@@ -106,43 +112,46 @@ plt.title("Feature Correleation Matrix")
 plt.tight_layout()
 plt.show()
 
-
-# We want to visualize the relationship between different feature wrt the class label
-selected_features = ['duration', 'peak_frequency', 'snr', 'bandwidth', 'ml_label']
-df_pairplot = df[selected_features]
-
-g = sns.pairplot(
-    data=df_pairplot, 
-    hue="ml_label",       
-    palette="tab20",        
-    corner=True,            
-    height=3.5,             
-    plot_kws={
-        'alpha': 0.5,       
-        's': 15,            
-        'linewidth': 0      
-    },
-    diag_kws={
-        'fill': True,       
-        'alpha': 0.3        
-    }
-)
-
-sns.move_legend(g, "center right", bbox_to_anchor=(1.02, 0.5), ncol=1, title="Classe labels")
-
-g.fig.subplots_adjust(right=0.85)
-g.fig.subplots_adjust(top=0.95)
-
-plt.suptitle("Multivariate global analysis: selected features vs class labels", y=1.02, fontsize=16)
-plt.show()
-
 '''
 We now select only our most distiguisable classes, derived from the analysis above.
 we will select: Scattered_Light, Blip, Extremely_Loud, and Violin_Mode.
-We will also pass our selected features to have our final df
 '''
-
 selected_classes = ["Scattered_Light", "Blip", "Extremely_Loud", "Violin_Mode"]
+
+# We want to visualize the relationship between different feature wrt the class label
+selected_features = ['duration', 'peak_frequency', 'snr', 'bandwidth', 'ml_label']
+
+df_pairplot = df[df["ml_label"].isin(selected_classes)][selected_features].copy()
+df_pairplot["snr"] = np.log1p(df_pairplot["snr"])
+df_pairplot["duration"] = np.log1p(df_pairplot["duration"])
+
+g = sns.pairplot(
+    data=df_pairplot,
+    hue="ml_label",
+    palette="Set1",
+    corner=True,
+    height=3.5,
+    plot_kws={'alpha': 0.5, 's': 15, 'linewidth': 0},
+    diag_kws={'fill': True, 'alpha': 0.3}
+)
+
+for ax in g.axes.flatten():
+    if ax is None:
+        continue
+    if ax.get_xlabel() in ("snr", "duration"):
+        ax.set_xlabel(f"log({ax.get_xlabel()} + 1)")
+    if ax.get_ylabel() in ("snr", "duration"):
+        ax.set_ylabel(f"log({ax.get_ylabel()} + 1)")
+
+sns.move_legend(g, "center right", bbox_to_anchor=(1.02, 0.5), title="Class labels", fontsize=10)
+plt.suptitle("Multivariate analysis: duration, peak_frequency, snr, bandwidth vs class labels",
+             y=1.02, fontsize=16)
+plt.savefig("Figure_4_Feature_Pairplots_Selected_Classes.png", dpi=150, bbox_inches="tight")
+plt.show()
+
+'''
+We will pass our selected features to have our final df
+'''
 
 columns_to_keep = [
     'gravityspy_id',                                            # measurements ID

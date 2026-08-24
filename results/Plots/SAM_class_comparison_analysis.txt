@@ -1,0 +1,27 @@
+Questo è un risultato molto più solido di quanto avessimo prima — e, cosa importante, la struttura statistica **conferma** i pattern visti sul singolo campione, invece di smentirli. Questo è precisamente il tipo di validazione che serviva.
+
+## Riga superiore (media su 25 campioni): il pattern regge
+
+Confrontando con i singoli esempi visti prima: **Blip** mantiene la stessa macchia verticale compatta, **Extremely_Loud** conferma l'attivazione ampia e diffusa (qui ancora più chiaramente strutturata, con un picco centrale e un alone decrescente verso l'esterno — informazione che il singolo campione non poteva mostrare), **Scattered_Light** conferma le bande orizzontali ripetute, **Violin_Mode** conferma una localizzazione piccola e concentrata, sebbene più debole in valore assoluto delle altre tre — coerente con quanto osservato prima. Il fatto che questi pattern **sopravvivano alla media su 25 campioni indipendenti** è la vera prova che non erano un caso fortunato del singolo esempio, ma comportamenti sistematici della rete per quella classe — esattamente quello che serviva per rendere l'affermazione scientificamente difendibile.
+
+## Riga inferiore (deviazione standard): qui emerge l'informazione nuova e più interessante
+
+Nota bene che le zone di **massima deviazione standard coincidono quasi esattamente con le zone di massima media**, in tutte e 4 le classi (soprattutto evidente in Extremely_Loud e Violin_Mode). Questo è un pattern statisticamente atteso e coerente: dove il modello si attiva fortemente, la variabilità assoluta tra campioni è maggiore semplicemente perché c'è più "spazio" per variare (un'attivazione vicina a zero ha poco margine per oscillare, un'attivazione alta ne ha di più). Non indica necessariamente incertezza nel senso di "posizione instabile" — per interpretarlo rigorosamente in termini di *affidabilità relativa* del pattern, servirebbe guardare il **coefficiente di variazione** (deviazione standard / media), non la deviazione standard assoluta da sola — stesso principio che abbiamo già usato per il CV-ISI nel Giorno 4.
+
+## Un'osservazione da riportare esplicitamente: Scattered_Light è il pattern più consistente
+
+Guarda la riga di deviazione standard di **Scattered_Light**: è nettamente la più "scura" (bassa variabilità assoluta) tra le quattro classi, nonostante la media non sia trascurabile. Questo suggerisce che le bande orizzontali sono una feature **estremamente stabile e affidabile** per questa classe — la rete la localizza in modo quasi identico indipendentemente dal campione specifico. È un risultato forte da evidenziare: potresti dire che, tra le quattro classi, Scattered_Light è quella con la spiegazione SAM più consistente statisticamente.
+
+Ottimo, il coefficiente di variazione ha funzionato esattamente come previsto — ed emerge un'informazione qualitativamente diversa dalle prime due righe, questo è il punto centrale.
+
+## L'inversione interessante: il CV racconta una storia diversa dalla deviazione standard assoluta
+
+Guarda **Scattered_Light**: nella riga di deviazione standard assoluta era la classe più "scura" (bassa variabilità), ma nella riga CV mostra valori relativamente alti (verde-giallo) esattamente sulle bande orizzontali — cioè proprio dove la media è più forte. Questo sembra contraddittorio a prima vista, ma in realtà è informativo: significa che sebbene la variabilità *assoluta* di quella zona sia bassa in termini assoluti rispetto alle altre classi, è comunque **proporzionalmente significativa** rispetto al valore medio relativamente modesto della classe stessa (guarda la scala della riga media: Scattered_Light non supera mai il verde/giallo scuro, mentre Extremely_Loud arriva al rosso pieno). Il CV sta correttamente "normalizzando via" l'effetto scala che rendeva Extremely_Loud visivamente dominante nelle prime due righe.
+
+## Il pattern più chiaro: Extremely_Loud ha CV sistematicamente più alto ovunque
+
+Il pannello di Extremely_Loud mostra un CV elevato (verde-blu chiaro) diffuso su **tutta** l'immagine, non solo nella zona di picco — diversamente da Blip e Scattered_Light, dove il CV alto resta concentrato nelle stesse zone della media. Questo è coerente con la natura fisica della classe: essendo un evento che "riempie" ampiamente lo spettrogramma con intensità molto variabile da caso a caso (per definizione, "extremely loud" può manifestarsi con ampiezze molto diverse tra glitch diversi), è plausibile che anche la risposta della rete sia proporzionalmente più incostante — un'osservazione fisicamente sensata, non solo un artefatto statistico.
+
+## Un'osservazione da segnalare onestamente sul fondo dell'immagine
+
+Come previsto, il fondo (dove la media è vicina all'epsilon) resta rumoroso in tutte e 4 le mappe CV — specialmente visibile in Blip e Violin_Mode, dove piccole variazioni sparse appaiono come "rumore verde" isolato lontano dalla zona di interesse reale. Questo è il limite intrinseco della metrica che avevamo anticipato: **il CV in quelle zone non è interpretabile**, va scritto esplicitamente questo caveat in tesi accanto alla figura, per evitare che un lettore interpreti erroneamente quel rumore di fondo come "zone di forte incertezza rilevante".

@@ -1,0 +1,23 @@
+Ho trovato un buon inquadramento per questo tipo di analisi — si colloca in un filone di letteratura più ampio di quanto pensassimo, quello della **robustezza delle spiegazioni** (explanation robustness), non solo un dettaglio tecnico isolato.
+
+## Il riferimento fondativo del campo: "Sanity Checks for Saliency Maps" (Adebayo et al., 2018)
+
+Questo è il paper di riferimento più citato sul tema della sensibilità dei metodi di attribuzione — gli autori hanno investigato se i metodi di saliency siano insensibili al modello e ai dati, sottolineando che l'insensibilità sarebbe altamente indesiderabile, perché significherebbe che la "spiegazione" non è legata né al modello né ai dati. È importante notare la direzione opposta rispetto a quello che hai appena dimostrato tu: loro cercano **cattiva robustezza** (metodi che restano identici anche quando modello/dati cambiano drasticamente — un difetto). Tu invece hai dimostrato **buona robustezza** rispetto a un iperparametro interno del metodo stesso (gamma), non rispetto al modello o ai dati — è un test concettualmente diverso e più specifico, ma si inserisce nello stesso genere di "verifica di validità" che il campo richiede prima di fidarsi di un metodo XAI.
+
+## Il precedente più diretto: lo stesso paper SAM
+
+Come avevamo già trovato, Kim & Panda misurano l'effetto del leak factor λ sull'errore di localizzazione — è esattamente la stessa categoria di analisi che hai fatto tu (sensibilità a un parametro del metodo), solo che loro misurano l'impatto su una metrica di errore assoluto, mentre tu hai misurato la **stabilità relativa** tramite correlazione. Il tuo approccio è più informativo in un certo senso: non ti dice solo "l'errore cambia di X", ma "la forma spaziale della spiegazione resta identica al 99%+, indipendentemente da gamma" — una dichiarazione più forte e più utile per giustificare la scelta di un valore specifico.
+
+## Un framework metodologico che formalizza esattamente quello che hai fatto
+
+Il paper **COSE** (Consistency-Sensitivity metric) definisce una metrica di "consistency" che misura quanto restano simili le spiegazioni quando si applica una trasformazione controllata, usando la similarità tra mappe (loro usano SSIM, tu hai usato la correlazione di Pearson — entrambe metriche di similarità strutturale valide, scelte diverse ma stesso principio). La formula concettuale è identica alla tua: confrontare $\Phi(f, x)$ con $\Phi(f, x')$ dove $x'$ è una versione "perturbata" — nel loro caso perturbano l'input, nel tuo caso perturbi l'iperparametro del metodo stesso, ma il principio di validazione (misurare quantitativamente la stabilità tramite una metrica di similarità, non solo ispezione visiva) è lo stesso.
+
+## Come posizionare questo nella tua tesi
+
+Puoi scrivere qualcosa come: *"Coerentemente con la pratica di validazione della robustezza delle spiegazioni proposta in letteratura (Adebayo et al., 2018; framework di consistency di [COSE]), e specificamente ispirata all'analisi di sensibilità al leak factor condotta nel paper originale di SAM (Kim & Panda, 2021), abbiamo quantificato la stabilità della mappa SAM rispetto al parametro γ tramite la correlazione di Pearson tra mappe medie calcolate a valori diversi di γ, su tutte le classi del dataset."* Questo colloca la tua scelta metodologica (misurare quantitativamente, non solo mostrare qualitativamente) dentro una tradizione di ricerca riconosciuta, invece di sembrare un controllo isolato e ad hoc.
+
+## Una nota onesta da includere
+
+Il tuo test è più ristretto di quello di Adebayo et al. — loro testano la sensibilità al **modello** e ai **dati** (un test più severo e fondamentale), tu hai testato solo la sensibilità a un **iperparametro interno** del metodo. Vale la pena scrivere esplicitamente questa distinzione di scope, per non sovra-vendere il risultato: hai dimostrato che SAM è ben calibrato rispetto alla scelta di γ, non che SAM supera i test di sanità più generali del campo (che richiederebbero, ad esempio, verificare che la mappa cambi sensatamente se si randomizzano i pesi del modello — un test diverso, che potresti eventualmente aggiungere se vuoi spingerti oltre).
+
+Con questo, hai anche un solido inquadramento bibliografico per il punto 2 della roadmap. Procediamo con il punto 3 (metrica di correttezza, framework Co-12) o il punto 4 (confronto tra layer)?
