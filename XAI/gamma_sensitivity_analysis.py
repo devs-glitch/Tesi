@@ -74,7 +74,7 @@ def plot_gamma_sensitivity(maps_per_gamma, corr_matrix, gamma_values, class_name
 def main():
     from XAI.sam import load_trained_model
     from XAI.SAM_class_comparison import get_n_samples_per_class
-    from src_python.dataloader import test_dataloader
+    from src_python.old_dataloader import test_dataloader
 
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     net, time_steps = load_trained_model(device)

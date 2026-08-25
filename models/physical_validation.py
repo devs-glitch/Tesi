@@ -12,7 +12,7 @@ from sklearn.metrics import confusion_matrix, ConfusionMatrixDisplay
 
 sys.path.append(os.path.abspath('C:/Users/devam/OneDrive/Tesi'))
 from XAI.sam import load_trained_model, direct_encode
-from src_python.dataloader import test_dataloader
+from src_python.old_dataloader import test_dataloader
 
 
 # literature based threshold: near-zero firing rate -> dead neuron

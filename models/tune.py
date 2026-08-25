@@ -11,7 +11,7 @@ import torch
 
 sys.path.append(os.path.abspath('C:/Users/devam/OneDrive/Tesi'))
 from models.snn_model import GWGlitchSNN
-from src_python.dataloader import train_dataloader, val_dataloader
+from src_python.old_dataloader import train_dataloader, val_dataloader
 
 
 def direct_encode(x, time_steps):

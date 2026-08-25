@@ -92,7 +92,7 @@ def main():
     net, time_steps = load_trained_model(device)
 
     # take a sample from the test set
-    from src_python.dataloader import test_dataloader
+    from src_python.old_dataloader import test_dataloader
     images, labels = next(iter(test_dataloader))
     sample_image = images[0]
     sample_label = labels[0].item()

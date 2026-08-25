@@ -10,7 +10,7 @@ import matplotlib.pyplot as plt
 
 sys.path.append(os.path.abspath('C:/Users/devam/OneDrive/Tesi'))
 from XAI.sam import load_trained_model, get_layer_spikes, compute_sam, denormalize_image
-from src_python.dataloader import test_dataloader
+from src_python.old_dataloader import test_dataloader
 
 
 def get_n_samples_per_class(test_dataloader, n_classes, n_per_class):

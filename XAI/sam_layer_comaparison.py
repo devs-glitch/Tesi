@@ -90,7 +90,7 @@ def plot_layer_comparison_for_class(net, image_list, time_steps, device, class_n
 
 def main():
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-    from src_python.dataloader import test_dataloader
+    from src_python.old_dataloader import test_dataloader
 
     net, time_steps = load_trained_model(device)
     class_names = test_dataloader.dataset.dataset.classes
