@@ -1,4 +1,5 @@
-'''Takes clean data and transforms them into tensors
+'''
+Takes clean data and transforms them into tensors
 '''
 
 import csv
@@ -14,12 +15,19 @@ SPLIT_FILE = Path('data/split_assignment.csv')
 BATCH_SIZE = 32
 SPLIT_NAMES = ('train', 'val', 'test')
 
-tranformations = transforms.Compose([
-    transforms.CenterCrop((470, 550)),
-    transforms.Resize((224, 224)),
-    transforms.ToTensor(),
-    transforms.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225])
-])
+INPUT_SIZE = int(os.environ.get('SNN_INPUT_SIZE', 224))
+CROP = (470, 550)
+
+def build_transforms(input_size=INPUT_SIZE):
+    return transforms.Compose([
+        transforms.CenterCrop(CROP),
+        transforms.Resize((input_size, input_size)),
+        transforms.ToTensor(),
+        transforms.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225])
+    ])
+ 
+ 
+tranformations = build_transforms()
 
 
 def load_frozen_split(dataset, split_file=SPLIT_FILE, verbose=True):
@@ -54,6 +62,15 @@ def load_frozen_split(dataset, split_file=SPLIT_FILE, verbose=True):
 
     return tuple(Subset(dataset, sorted(buckets[name])) for name in SPLIT_NAMES)
 
+def build_dataloaders(input_size=INPUT_SIZE, batch_size=BATCH_SIZE, verbose=True):
+    dataset = datasets.ImageFolder(root=DATA_DIR, transform=build_transforms(input_size))
+    train_ds, val_ds, test_ds = load_frozen_split(dataset, verbose=verbose)
+    return (
+        dataset,
+        DataLoader(train_ds, batch_size=batch_size, shuffle=True),
+        DataLoader(val_ds, batch_size=batch_size, shuffle=False),
+        DataLoader(test_ds, batch_size=batch_size, shuffle=False),
+    )
 
 def split_report(dataset, subsets):
     lines = []
@@ -70,23 +87,24 @@ def split_report(dataset, subsets):
     return '\n'.join(lines)
 
 
-my_dataset = datasets.ImageFolder(root=DATA_DIR, transform=tranformations)
-train_ds, val_ds, test_ds = load_frozen_split(my_dataset)
-
+print(f'[dataloader] INPUT_SIZE = {INPUT_SIZE} ')
+ 
+my_dataset, train_dataloader, val_dataloader, test_dataloader = build_dataloaders()
+ 
+train_ds, val_ds, test_ds = (train_dataloader.dataset,
+                             val_dataloader.dataset,
+                             test_dataloader.dataset)
+ 
 total_size = len(my_dataset)
 train_size, val_size, test_size = len(train_ds), len(val_ds), len(test_ds)
-
-train_dataloader = DataLoader(train_ds, batch_size=BATCH_SIZE, shuffle=True)
-val_dataloader = DataLoader(val_ds, batch_size=BATCH_SIZE, shuffle=False)
-test_dataloader = DataLoader(test_ds, batch_size=BATCH_SIZE, shuffle=False)
-
+ 
 if __name__ == '__main__':
     print(f"Total # images: {total_size}")
     print(f"Train: {train_size} | Validation: {val_size} | Test: {test_size}")
     print()
     print(split_report(my_dataset, (train_ds, val_ds, test_ds)))
-
+ 
     images, tags = next(iter(train_dataloader))
-
+ 
     print(f"\nDimension batch images: {images.shape}")
     print(f"Dimension batch tags: {tags.shape}")

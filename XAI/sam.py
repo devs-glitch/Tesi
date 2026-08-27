@@ -10,7 +10,7 @@ import torch
 import matplotlib.pyplot as plt
 
 sys.path.append(os.path.abspath('C:/Users/devam/OneDrive/Tesi'))
-from models.snn_model import GWGlitchSNN
+from models.snn_model1 import GWGlitchSNN
 from models.tune import direct_encode
 
 
@@ -43,16 +43,15 @@ def get_layer_spikes(net, image, time_steps, device, layer_index):
 
 def compute_ncs(spikes, gamma, t):
     """
-    spikes: [T, C, H, W], spike train completo del layer
-    gamma: iperparametro del kernel esponenziale
-    t: il tempo target per cui vuoi calcolare NCS
-    ritorna: NCS al tempo t, forma [C, H, W]
+    spikes: [T, C, H, W], complete spike train of layer
+    gamma: hyperparameter of the exponential kernel
+    t: time target of NCS computation
+    returns: NCS at time t, shape [C, H, W]
     """
-    T_total = spikes.shape[0]
 
     ncs = torch.zeros_like(spikes[0])
 
-    for t_prime in range(t + 1):
+    for t_prime in range(t):
         tscs = math.exp(-gamma * abs((t - t_prime)))
         ncs += spikes[t_prime] * tscs
 
@@ -61,21 +60,24 @@ def compute_ncs(spikes, gamma, t):
 def compute_sam(spikes, gamma):
     """
     spikes: [T, C, H, W]
-    ritorna: SAM per ogni time-step, forma [T, H, W]
+    returns: SAM at each time-step, shape [T, H, W]
     """
     T_total, C, H, W = spikes.shape
-
+ 
+    decay = math.exp(-gamma)
+    ncs = torch.zeros_like(spikes[0])
     sam_maps = []
-
+ 
     for t in range(T_total):
-        ncs_t = compute_ncs(spikes, gamma, t)  # [C, H, W]
-
-        sam_t = (ncs_t * spikes[t]).sum(dim = 0)
-
+        sam_t = (ncs * spikes[t]).sum(dim=0)
         sam_maps.append(sam_t)
+        ncs = decay * (ncs + spikes[t])
+ 
+    return torch.stack(sam_maps, dim=0)
 
-    sam_maps_stacked = torch.stack(sam_maps, dim=0)
-    return sam_maps_stacked
+def compute_sam_reference(spikes, gamma):
+    return torch.stack([(compute_ncs(spikes, gamma, t) * spikes[t]).sum(dim=0)
+                        for t in range(spikes.shape[0])], dim=0)
 
 def denormalize_image(image, mean, std):
     mean_t = torch.tensor(mean).view(3, 1, 1)
@@ -108,6 +110,10 @@ def main():
     spikes = get_layer_spikes(net, sample_image, time_steps, device, layer_index)
     sam_maps = compute_sam(spikes, gamma)
 
+    reference = compute_sam_reference(spikes, gamma)
+    max_diff = (sam_maps - reference).abs().max().item()
+    assert max_diff < 1e-5, f'recursion and explicit sum diverge: {max_diff}'
+
     # original image
     mean = [0.485, 0.456, 0.406]
     std = [0.229, 0.224, 0.225]
@@ -124,7 +130,7 @@ def main():
         heatmap = sam_maps[t].cpu().numpy()
         im = ax.imshow(heatmap, cmap="jet", alpha=0.5, vmin=vmin, vmax=vmax,
                         extent=(0, image_vis.shape[1], image_vis.shape[0], 0))
-        ax.set_title(f"t={t}")
+        ax.set_title(f"t={t}" + (" (no history)" if t == 0 else ""))
         ax.axis("off")
 
     fig.suptitle(f"SAM - layer {layer_index}, class: {sample_label} ({sample_class_name})")
@@ -133,7 +139,7 @@ def main():
     plt.show()
 
     print(f"SAM computed on layer {layer_index}, {T} time-step, class: {sample_label}")
-
+    print(f"SAM range: [{vmin:.4f}, {vmax:.4f}] | t=0 null by definition")
 
 if __name__ == "__main__":
     main()

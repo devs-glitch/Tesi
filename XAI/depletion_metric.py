@@ -12,7 +12,7 @@ import matplotlib.pyplot as plt
 
 sys.path.append(os.path.abspath('C:/Users/devam/OneDrive/Tesi'))
 from XAI.sam import load_trained_model, get_layer_spikes, compute_sam, direct_encode
-from XAI.SAM_class_comparison import get_n_samples_per_class
+from XAI.sam_class_comparison import get_n_samples_per_class
 
 FRACTIONS = np.arange(0, 1.01, 0.05)
 N_PER_CLASS = 15

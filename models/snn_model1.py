@@ -8,13 +8,33 @@ from snntorch import spikeplot as splt
 Instantiate and construct main class: GWGlitchSNN
 '''
 
+
+def conv_output_size(size, kernel_size=5, stride=2, padding=2):
+    return (size + 2 * padding - kernel_size) // stride + 1
+
+
+def flattened_features(input_size, n_conv_layers=4, out_channels=128):
+    side = input_size
+    for _ in range(n_conv_layers):
+        side = conv_output_size(side)
+    # la formula satura a 1 e non arriva mai a 0, quindi il controllo utile e'
+    # sulla degenerazione: una feature map finale 1x1 ha perso ogni struttura
+    # spaziale, e le mappe SAM diventerebbero un singolo pixel.
+    if side < 2:
+        raise ValueError(
+            f'input_size={input_size} too small {n_conv_layers} ')
+    return side * side * out_channels, side
+
+
 class GWGlitchSNN(torch.nn.Module):
     '''
     Init method
     '''
 
-    def __init__(self, beta=0.5):
+    def __init__(self, beta=0.5, input_size=224):
         super().__init__()
+
+        self.input_size = input_size
 
         # Address non-differentiability by defining a surrogate gradient with arctan for the BBP
         spike_grad = snn.surrogate.atan()
@@ -28,21 +48,15 @@ class GWGlitchSNN(torch.nn.Module):
 
         self.conv3 = nn.Conv2d(in_channels = 32, out_channels = 64, kernel_size = 5, stride = 2, padding = 2)
         self.lif3 = snn.Leaky(beta=beta, spike_grad=spike_grad)
-    
+
         self.conv4 = nn.Conv2d(in_channels = 64, out_channels = 128, kernel_size = 5, stride = 2, padding = 2)
         self.lif4 = snn.Leaky(beta=beta, spike_grad=spike_grad)
 
         self.flatten = nn.Flatten()
 
-        '''
-        Spectrograms of 224 x 224 pixel.
-        4 conv layer, stride = 2 meaning halfing the image dimension at each step
-        therefore: 224 → 112 → 56 → 28 → 14.
-        The last convolusion has output of 128 channels (feature maps)
-        multiplying height, width and channels: 14 * 14 * 128 = 25088
-        '''
+        in_features, self.final_side = flattened_features(input_size)
 
-        self.linear = nn.Linear(in_features = 25088, out_features= 4)
+        self.linear = nn.Linear(in_features = in_features, out_features= 4)
         self.lif_out = snn.Leaky(beta=beta, spike_grad=spike_grad)
 
     '''
@@ -50,6 +64,10 @@ class GWGlitchSNN(torch.nn.Module):
     '''    
     
     def forward(self, x):
+        if x.shape[-1] != self.input_size or x.shape[-2] != self.input_size:
+            raise ValueError(
+                f'input size of dataloader not same of input size of model')
+
         # Define membrane potentials
 
         mem1 = self.lif1.init_leaky()
@@ -99,17 +117,22 @@ class GWGlitchSNN(torch.nn.Module):
 
         return spike_out_stacked, spike1_stacked, spike2_stacked, spike3_stacked, spike4_stacked
 
+
 '''
-Sanity check: should give 10 time step, for 8 images, and 4 class probabilities
+Sanity check: forward pass for each resolution
 '''
 if __name__ == "__main__":
-    net = GWGlitchSNN()
-    dummy = torch.rand(10, 8, 3, 224, 224)
+    for size in (224, 112, 64):
+        in_features, side = flattened_features(size)
+        print(f"\n{size} px -> feature map final {side}x{side} "
+              f"-> in_features = {in_features}")
 
-    print("Initialize forward pass")
-    try:
-        output_tot, output1, output2, output3, output4 = net(dummy)
-        print(f"Check completed - output shapes: {output_tot.shape}")
-    except Exception as e:
-        print("Dimensional error")
-        print(e)
+        net = GWGlitchSNN(input_size=size)
+        dummy = torch.rand(10, 8, 3, size, size)
+
+        try:
+            output_tot, output1, output2, output3, output4 = net(dummy)
+            print(f"  forward ok - output shape: {tuple(output_tot.shape)}")
+            print(f"  parameters: {sum(p.numel() for p in net.parameters()):,}")
+        except Exception as e:
+            print(f"  Dimensional error: {e}")

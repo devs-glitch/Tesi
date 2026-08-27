@@ -1,0 +1,17 @@
+{
+  "timestamp": "2026-08-25T23:13:08",
+  "seed": 1234,
+  "hyperparameters": {
+    "learning_rate": 0.00010363364693748927,
+    "beta": 0.414845286586101,
+    "time_steps": 7
+  },
+  "n_train": 6695,
+  "n_val": 1435,
+  "best_epoch": 16,
+  "best_val_accuracy": 0.9825783972125436,
+  "best_val_loss": 0.062194605436474606,
+  "epochs_run": 22,
+  "stopped_early": true,
+  "checkpoint": "best_model.pt"
+}
