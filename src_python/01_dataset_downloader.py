@@ -1,9 +1,7 @@
-''' Communicate with the external: download raw files and safely save them'''
+''' Communicate with the external: download raw files and save them'''
 
 import os
 import requests
-import zipfile
-import tarfile
 
 urls = ["https://zenodo.org/records/5649212/files/H1_O1.csv?download=1",
         "https://zenodo.org/records/5649212/files/H1_O2.csv?download=1",

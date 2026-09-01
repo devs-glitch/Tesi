@@ -13,7 +13,7 @@ from pathlib import Path
 import torch
 
 sys.path.append(os.path.abspath('C:/Users/devam/OneDrive/Tesi'))
-from models.snn_model1 import GWGlitchSNN
+from models.snn_model import GWGlitchSNN
 from src_python.dataloader import build_dataloaders, INPUT_SIZE
 from src_python.training_utils import train_one_epoch, validate, validate_per_class
 

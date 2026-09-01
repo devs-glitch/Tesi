@@ -9,8 +9,8 @@ import torch
 
 sys.path.append(os.path.abspath('C:/Users/devam/OneDrive/Tesi'))
 from models.snn_model import GWGlitchSNN
-from src_python.old_dataloader import test_dataloader
-from tune import validate
+from src_python.dataloader import test_dataloader
+from src_python.tune import validate
 
 
 def main():

@@ -12,7 +12,7 @@ from sklearn.metrics import confusion_matrix, ConfusionMatrixDisplay
 
 sys.path.append(os.path.abspath('C:/Users/devam/OneDrive/Tesi'))
 from XAI.sam import load_trained_model, direct_encode
-from src_python.old_dataloader import test_dataloader
+from src_python.dataloader import test_dataloader
 
 
 # literature based threshold: near-zero firing rate -> dead neuron
@@ -28,12 +28,12 @@ def collect_test_set_statistics(net, test_dataloader, time_steps, device, layer_
 
     all_preds, all_labels = [], []
 
-    # Accumulated firing rate per neuron: sum over elements of shape [C,H,W<+]
+    # Accumulated firing rate per neuron]
     per_neuron_sum = {l: None for l in layer_indices}
     n_samples_seen = 0
 
     # CV-ISI: lidt of raw spikes train for a fixed sample per un campione fisso di
-    # posizioni neurone, popolate progressivamente attraverso tutto il test set
+    # of neurons position, populated progressively throu the test set
     sampled_positions = {l: None for l in layer_indices}
     isi_pools = {l: None for l in layer_indices}
 
@@ -57,16 +57,14 @@ def collect_test_set_statistics(net, test_dataloader, time_steps, device, layer_
             for layer_index in layer_indices:
                 spikes = all_spikes[layer_index]   # [T, B, C, H, W]
 
-                # --- Firing rate per neurone: accumulo elemento per elemento ---
-                # media su tempo e batch di QUESTO batch, sommata all'accumulatore totale
+                # Firing rate per neuron
                 batch_mean = spikes.mean(dim=(0, 1))  # [C, H, W]
                 if per_neuron_sum[layer_index] is None:
                     per_neuron_sum[layer_index] = batch_mean * batch_size
                 else:
                     per_neuron_sum[layer_index] += batch_mean * batch_size
 
-                # --- CV-ISI: scegli le posizioni da campionare UNA SOLA VOLTA
-                # (al primo batch), poi accumula i loro spike train da ogni batch ---
+                # CV-ISI choose positions to sample one at the first batch, then accumulate pike trains from each batch
                 C, H, W = spikes.shape[2], spikes.shape[3], spikes.shape[4]
                 if sampled_positions[layer_index] is None:
                     all_positions = [(c, h, w) for c in range(C) for h in range(H) for w in range(W)]
@@ -93,7 +91,7 @@ def collect_test_set_statistics(net, test_dataloader, time_steps, device, layer_
     return all_preds, all_labels, avg_firing_rate_per_neuron, isi_pools
 
 def plot_confusion_matrix(all_preds, all_labels, class_names):
-    # Normalizzata per riga (classe vera), come nel paper originale Gravity Spy
+    # normalized per true class
     cm = confusion_matrix(all_labels, all_preds, normalize='true')
     disp = ConfusionMatrixDisplay(confusion_matrix=cm, display_labels=class_names)
     disp.plot(cmap="Blues", values_format=".2f")

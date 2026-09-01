@@ -9,10 +9,12 @@ import csv
 import json
 import statistics
 from pathlib import Path
+import os, sys
 
 import torch
 
-from src_python.train1 import load_hyperparams, run_training
+sys.path.append(os.path.abspath('C:/Users/devam/OneDrive/Tesi'))
+from src_python.train import load_hyperparams, run_training
 
 RESOLUTIONS = (224, 112, 64)
 SEEDS = (1234, 2345, 3456)

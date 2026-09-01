@@ -10,8 +10,8 @@ import torch
 import matplotlib.pyplot as plt
 
 sys.path.append(os.path.abspath('C:/Users/devam/OneDrive/Tesi'))
-from models.snn_model1 import GWGlitchSNN
-from models.tune import direct_encode
+from models.snn_model import GWGlitchSNN
+from src_python.tune import direct_encode
 
 
 def load_trained_model(device):
