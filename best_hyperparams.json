@@ -1,1 +1,9 @@
-{"learning_rate": 0.00010363364693748927, "beta": 0.414845286586101, "time_steps": 7}
+{
+  "learning_rate": 0.00010466611822734701,
+  "beta": 0.75,
+  "time_steps": 8,
+  "input_size": 112,
+  "search_space": "v5",
+  "study_name": "glitch_snn_hpo_v5_112px",
+  "best_val_accuracy": 0.9846689895470383
+}

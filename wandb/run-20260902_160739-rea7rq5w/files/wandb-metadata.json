@@ -1,0 +1,40 @@
+{
+  "os": "Windows-11-10.0.26200-SP0",
+  "python": "CPython 3.12.3",
+  "startedAt": "2026-09-02T14:07:39.295524Z",
+  "program": "c:\\Users\\devam\\OneDrive\\Tesi\\src_python\\tune.py",
+  "codePath": "src_python\\tune.py",
+  "codePathLocal": "src_python\\tune.py",
+  "git": {
+    "remote": "https://github.com/devs-glitch/Tesi.git",
+    "commit": "39a345ff033e4d70734083ae4a72d23ea7566523"
+  },
+  "email": "devamucaj@gmail.com",
+  "root": "C:\\Users\\devam\\OneDrive\\Tesi",
+  "host": "MSI",
+  "executable": "C:\\Users\\devam\\AppData\\Local\\Programs\\Python\\Python312\\python.exe",
+  "cpu_count": 10,
+  "cpu_count_logical": 16,
+  "gpu": "NVIDIA GeForce RTX 4050 Laptop GPU",
+  "gpu_count": 1,
+  "disk": {
+    "/": {
+      "total": "487890874368",
+      "used": "217142566912"
+    }
+  },
+  "memory": {
+    "total": "16866521088"
+  },
+  "gpu_nvidia": [
+    {
+      "name": "NVIDIA GeForce RTX 4050 Laptop GPU",
+      "memoryTotal": "6439305216",
+      "cudaCores": 2560,
+      "architecture": "Ada",
+      "uuid": "GPU-b964094e-4512-7c41-ca17-6a4a18d8b0fa"
+    }
+  ],
+  "cudaVersion": "12.7",
+  "writerId": "n6ip4c2o9ll2jnl1k3yecbslm4eq9yge"
+}
