@@ -21,50 +21,15 @@ import torch
 import matplotlib.pyplot as plt
 
 sys.path.append(os.path.abspath('C:/Users/devam/OneDrive/Tesi'))
-from XAI.sam import load_reference_model, get_layer_spikes, compute_sam, temporal_centre_of_mass
+
 from src_python.dataloader import build_dataloaders
+from XAI.sam import load_reference_model, get_layer_spikes, compute_sam, temporal_centre_of_mass
+from XAI.sam_metrics import samples_per_class, sam_stacks, pearson, nanmean_or_nan
 
 GAMMA_VALUES = [0.1, 0.3, 0.5, 0.7, 0.9, 1.5, 3.0]
 MANIFEST = 'baseline_manifest.json'
 N_PER_CLASS = 15
 OUT_JSON = 'gamma_sensitivity.json'
-
-
-def samples_per_class(dataloader, n_classes, n_per_class):
-    # Collect n_per_class images for each class from a dataloader.
-    
-    samples = {i: [] for i in range(n_classes)}
-    for images, labels in dataloader:
-        for image, label in zip(images, labels):
-            c= label.item()
-            if len(samples[c]) < n_per_class:
-                samples[c].append(image)
-    return samples
-    
-def sam_stacks(net, image_list, time_steps, device, layer_index, gamma):
-    # Full SAM stack [T, H, W] for each image
-
-    stacks = []
-    for image in image_list:
-        spikes = get_layer_spikes(net, image, time_steps, device, layer_index)
-        stacks.append(compute_sam(spikes, gamma).cpu())
-    return stacks
-
-def pearson(map_a, map_b):
-    # Pearson correlation between two 2-D maps, flattened.
-
-    a = map_a.flatten().numpy()
-    b = map_b.flatten().numpy()
-
-    if a.std() == 0 or b.std() == 0:
-        return float('nan')
-
-    return float(np.corrcoef(a, b)[0, 1])
-
-def nanmean_or_nan(values):
-    if np.all(np.isnan(values)):
-        return float('nan')
-    return float(np.nanmean(values))
 
 
 def analyse_class(net, image_list, time_steps, device, layer_index, gammas):
