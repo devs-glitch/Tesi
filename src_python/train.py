@@ -15,7 +15,7 @@ import torch
 sys.path.append(os.path.abspath('C:/Users/devam/OneDrive/Tesi'))
 from models.snn_model import GWGlitchSNN
 from src_python.dataloader import build_dataloaders, INPUT_SIZE
-from src_python.training_utils import train_one_epoch, validate, validate_per_class
+from src_python.training_utils import train_one_epoch, validate, validate_per_class, measure_firing_rates
 
 HYPERPARAMS_FILE = 'best_hyperparams.json'
 RUNS_DIR = Path('runs')
@@ -111,6 +111,7 @@ def run_training(input_size, seed, hyperparams, tag=None, n_epochs=N_EPOCHS,
     net.load_state_dict(torch.load(checkpoint, map_location=device))
     recall, support = validate_per_class(net, val_dl, time_steps, device,
                                          n_classes=len(dataset.classes))
+    checkpoint_firing_rates = measure_firing_rates(net, val_dl, time_steps, device)
     per_class = {name: r for name, r in zip(dataset.classes, recall)}
 
     if verbose:
@@ -132,7 +133,8 @@ def run_training(input_size, seed, hyperparams, tag=None, n_epochs=N_EPOCHS,
         'best_val_loss': best_val_loss,
         'val_recall_per_class': per_class,
         'val_support_per_class': dict(zip(dataset.classes, support)),
-        'final_firing_rates': history[-1]['layer_firing_rates'],
+        'checkpoint_firing_rates': checkpoint_firing_rates,
+        'last_epoch_firing_rates': history[-1]['layer_firing_rates'],
         'epochs_run': epoch + 1,
         'stopped_early': stopped_early,
         'checkpoint': str(checkpoint),

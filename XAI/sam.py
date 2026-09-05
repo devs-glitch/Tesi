@@ -11,19 +11,30 @@ import matplotlib.pyplot as plt
 
 sys.path.append(os.path.abspath('C:/Users/devam/OneDrive/Tesi'))
 from models.snn_model import GWGlitchSNN
-from src_python.tune import direct_encode
+from src_python.training_utils import direct_encode
 
 
 def load_trained_model(device):
     with open("best_hyperparams.json", "r") as f:
         best_params = json.load(f)
 
-    net = GWGlitchSNN(beta=best_params["beta"]).to(device)
+    net = GWGlitchSNN(beta=best_params["beta"], input_size=best_params['input_size']).to(device)
     net.load_state_dict(torch.load("best_model.pt", map_location=device))
     net.eval()
 
     return net, best_params["time_steps"]
 
+def load_reference_model(device, manifest_path = 'baseline_manifest.json', checkpoint_index = 0):
+    # load reference model
+    with open(manifest_path) as f:
+        manifest = json.load(f)
+
+    hp = manifest['hyperparameters']
+    net = GWGlitchSNN(beta=hp['beta'], input_size=manifest['input_size']).to(device)
+    net.load_state_dict(torch.load(manifest['checkpoints'][checkpoint_index], map_location=device))
+    net.eval()
+
+    return net, hp['time_steps'], manifest['input_size'], manifest['sam']['reference_layer']
 
 def get_layer_spikes(net, image, time_steps, device, layer_index):
     image_batched = image.unsqueeze(0)
@@ -88,23 +99,31 @@ def denormalize_image(image, mean, std):
 
     return image_denorm
 
+def temporal_centre_of_mass(sam_check):
+    # mean timesteps at which the SAM energy concentrates
+    # com = sum_t t* E_t / sum_t E_t, with E_t the sapcial energy at step t
+    energy = sam_check.sum(dim=(1, 2))
+    total = energy.sum()
+    if total <= 0:
+        return float ('nan')
+    steps = torch.arange(sam_check.shape[0], dtype=energy.dtype, device = energy.device)
+    return float((steps * energy).sum() / total)
+
 def main():
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
-    net, time_steps = load_trained_model(device)
+    net, time_steps, input_size, layer_index = load_reference_model(device)
 
     # take a sample from the test set
-    from src_python.old_dataloader import test_dataloader
-    images, labels = next(iter(test_dataloader))
+    from src_python.dataloader import val_dataloader
+    images, labels = next(iter(val_dataloader))
     sample_image = images[0]
     sample_label = labels[0].item()
 
-    class_names = test_dataloader.dataset.dataset.classes
+    class_names = val_dataloader.dataset.dataset.classes
     sample_class_name = class_names[sample_label]
 
-    # SAM parameters
-    layer_index = 2   # second layer
-    gamma = 0.5       # temporal window
+    gamma = 0.5       # temporal window parameter
 
     # SAM computation
     spikes = get_layer_spikes(net, sample_image, time_steps, device, layer_index)

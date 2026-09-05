@@ -56,13 +56,14 @@ def analyse_run(run_json, device):
 
     _, _, val_dl, _ = build_dataloaders(input_size=input_size, verbose=False)
 
+    checkpoint = Path(run_json).parent / 'best_model.pt'
     net = GWGlitchSNN(beta=hp['beta'], input_size=input_size).to(device)
-    net.load_state_dict(torch.load(summary['checkpoint'], map_location=device))
+    net.load_state_dict(torch.load(checkpoint, map_location=device))
 
     rates = per_neuron_firing_rates(net, val_dl, hp['time_steps'], device)
 
     out = {'tag': summary['tag'], 'input_size': input_size, 'seed': summary['seed'],
-           'layers': {}}
+           'beta': hp['beta'], 'time_steps': hp['time_steps'], 'layers': {}}
     for l in LAYERS:
         r = rates[l]
         out['layers'][l] = {
@@ -101,44 +102,53 @@ def main():
         print(f'analysing {rj.parent.name}...')
         results.append(analyse_run(rj, device))
 
-    Path(args.out).parent.mkdir(parents=True, exist_ok=True)
-    with open(args.out, 'w') as f:
-        json.dump(results, f, indent=2)
+    # Group by resolution
 
     by_res = defaultdict(list)
     for r in results:
-        by_res[r['input_size']].append(r)
+        by_res[r['input_size'], r['beta'], r['time_steps']].append(r)
+
+    def label(k):
+        size, beta, T = k
+        return f'{size}px b{beta}, T{T}'
+
+    order = sorted(by_res, key=lambda k: (-k[0], k[1]))
 
     def cell(rs, l, key):
         v = [r['layers'][l][key] for r in rs]
         return st.mean(v), (st.stdev(v) if len(v) > 1 else 0.0)
 
+    Path(args.out).parent.mkdir(parents=True, exist_ok=True)
+    with open(args.out, 'w') as f:
+        json.dump(results, f, indent=2)
+
     print('\nDead nurons (firing rate < 0.01), mean +- dev.std. on seed')
-    print(f'{"":<10}' + ''.join(f'{"layer"+str(l):>16}' for l in LAYERS) + f'{"n neurons L4":>16}')
-    for size in sorted(by_res, reverse=True):
-        rs = by_res[size]
-        line = f'{str(size)+" px":<10}'
+    print(f'{"":<20}' + ''.join(f'{"layer"+str(l):>16}' for l in LAYERS) + f'{"n neurons L4":>16}')
+
+    for k in order:
+        rs = by_res[k]
+        line = f'{label(k):<20}'
         for l in LAYERS:
-            m, d = cell(rs, l, 'pct_dead')
-            line += f'{m:>11.1f}±{d:<4.1f}'
+            m, d = cell(rs, l , 'pct_dead')
+            line += f'{m:>11.1f}+-{d:<4.1f}'
         line += f'{rs[0]["layers"][4]["n_neurons"]:>16}'
         print(line)
 
     print('\nMedian of firing rate per neuron')
-    print(f'{"":<10}' + ''.join(f'{"layer"+str(l):>16}' for l in LAYERS))
-    for size in sorted(by_res, reverse=True):
-        rs = by_res[size]
-        line = f'{str(size)+" px":<10}'
+    print(f'{"":<20}' + ''.join(f'{"layer"+str(l):>16}' for l in LAYERS))
+    for k in order:
+        rs = by_res[k]
+        line = f'{label(k):<20}'
         for l in LAYERS:
             m, _ = cell(rs, l, 'median_rate')
             line += f'{m:>16.4f}'
         print(line)
 
     print('\nSaturated neuons (firing rate > 0.80)')
-    print(f'{"":<10}' + ''.join(f'{"layer"+str(l):>16}' for l in LAYERS))
-    for size in sorted(by_res, reverse=True):
-        rs = by_res[size]
-        line = f'{str(size)+" px":<10}'
+    print(f'{"":<20}' + ''.join(f'{"layer"+str(l):>16}' for l in LAYERS))
+    for k in order:
+        rs = by_res[k]
+        line = f'{label(k):<20}'
         for l in LAYERS:
             m, _ = cell(rs, l, 'pct_saturated')
             line += f'{m:>16.1f}'

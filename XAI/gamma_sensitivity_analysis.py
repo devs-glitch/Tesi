@@ -1,102 +1,192 @@
 '''
-gamma sensitivity analysis
+Gamma sensitivity of SAM
+We compute:
+- The spatial PCC between time-aggregated maps
+- temporal center of mass of the SAM energy, which is the axis gamma acts on
+- Per-timestep PCC against a reference gamma
+
+If the centre of mass shifts appreciably with gamma
+while the spatial correlation stays high, gamma governs WHEN the
+explanation concentrates and not WHERE, and the choice of gamma must be taken
+considering the temporal axis, which is the axis on which quantization
+divergence is measured
 '''
+
+import json
 import os
 import sys
-import numpy as np
 
+import numpy as np
 import torch
 import matplotlib.pyplot as plt
 
 sys.path.append(os.path.abspath('C:/Users/devam/OneDrive/Tesi'))
-from XAI.SAM_class_comparison import compute_sam_statistics_for_class
+from XAI.sam import load_reference_model, get_layer_spikes, compute_sam, temporal_centre_of_mass
+from src_python.dataloader import build_dataloaders
 
 GAMMA_VALUES = [0.1, 0.3, 0.5, 0.7, 0.9, 1.5, 3.0]
+MANIFEST = 'baseline_manifest.json'
+N_PER_CLASS = 15
+OUT_JSON = 'gamma_sensitivity.json'
 
-def gamma_sensitivity_analysis(net, image_list, time_steps, device, layer_index, gamma_values):
-    maps_per_gamma = {}
 
-    for gamma in gamma_values:
-        mean_map, _ = compute_sam_statistics_for_class(net, image_list, time_steps, device, layer_index, gamma)
-        maps_per_gamma[gamma] = mean_map
+def samples_per_class(dataloader, n_classes, n_per_class):
+    # Collect n_per_class images for each class from a dataloader.
+    
+    samples = {i: [] for i in range(n_classes)}
+    for images, labels in dataloader:
+        for image, label in zip(images, labels):
+            c= label.item()
+            if len(samples[c]) < n_per_class:
+                samples[c].append(image)
+    return samples
+    
+def sam_stacks(net, image_list, time_steps, device, layer_index, gamma):
+    # Full SAM stack [T, H, W] for each image
 
-    n = len(gamma_values)
-    corr_matrix = np.zeros((n, n))
+    stacks = []
+    for image in image_list:
+        spikes = get_layer_spikes(net, image, time_steps, device, layer_index)
+        stacks.append(compute_sam(spikes, gamma).cpu())
+    return stacks
 
-    for i, g1 in enumerate(gamma_values):
-        for j, g2 in enumerate(gamma_values):
-            map1 = maps_per_gamma[g1].cpu().numpy().flatten()
-            map2 = maps_per_gamma[g2].cpu().numpy().flatten()
-            corr_matrix[i, j] = np.corrcoef(map1, map2)[0, 1]
+def pearson(map_a, map_b):
+    # Pearson correlation between two 2-D maps, flattened.
 
-    return maps_per_gamma, corr_matrix
+    a = map_a.flatten().numpy()
+    b = map_b.flatten().numpy()
 
-def plot_gamma_sensitivity(maps_per_gamma, corr_matrix, gamma_values, class_name, layer_index):
-    n = len(gamma_values)
+    if a.std() == 0 or b.std() == 0:
+        return float('nan')
 
-    # Riga 1: le mappe medie per ciascun gamma, scala condivisa (stesso layer,
-    # stessa classe — numericamente comparabili, come nel confronto tra classi)
-    all_values = torch.cat([m.flatten() for m in maps_per_gamma.values()])
-    vmin, vmax = all_values.min().item(), all_values.max().item()
+    return float(np.corrcoef(a, b)[0, 1])
 
-    fig, axes = plt.subplots(1, n, figsize=(3 * n, 3))
-    for idx, gamma in enumerate(gamma_values):
-        heatmap = maps_per_gamma[gamma].cpu().numpy()
-        im = axes[idx].imshow(heatmap, cmap="jet", vmin=vmin, vmax=vmax)
-        axes[idx].set_title(f"γ={gamma}")
-        axes[idx].axis("off")
-    fig.colorbar(im, ax=axes, shrink=0.6, label="SAM score (media)")
-    fig.suptitle(f"Sensibilità a gamma — classe: {class_name}, layer {layer_index}")
-    plt.savefig(f"gamma_sensitivity_maps_{class_name}.png", dpi=150, bbox_inches="tight")
-    plt.show()
+def nanmean_or_nan(values):
+    if np.all(np.isnan(values)):
+        return float('nan')
+    return float(np.nanmean(values))
 
-    # Riga 2: la matrice di correlazione tra tutte le coppie di gamma
-    fig2, ax2 = plt.subplots(figsize=(6, 5))
-    im2 = ax2.imshow(corr_matrix, cmap="viridis", vmin=0, vmax=1)
-    ax2.set_xticks(range(n))
-    ax2.set_yticks(range(n))
-    ax2.set_xticklabels(gamma_values)
-    ax2.set_yticklabels(gamma_values)
-    ax2.set_xlabel("gamma")
-    ax2.set_ylabel("gamma")
 
-    for i in range(n):
-        for j in range(n):
-            ax2.text(j, i, f"{corr_matrix[i, j]:.4f}", ha="center", va="center",
-                      color="white" if corr_matrix[i, j] < 0.7 else "black", fontsize=8)
+def analyse_class(net, image_list, time_steps, device, layer_index, gammas):
+    # Run the three measurements for one class.
 
-    fig2.colorbar(im2, label="Correlazione di Pearson")
-    fig2.suptitle(f"Correlazione tra mappe SAM a gamma diversi — classe: {class_name}")
-    plt.savefig(f"gamma_sensitivity_correlation_{class_name}.png", dpi=150, bbox_inches="tight")
-    plt.show()
+    stacks = {g: sam_stacks(net, image_list, time_steps, device, layer_index, g) for g in gammas}
+    n= len(gammas)
+
+    spatial = np.zeros((n, n))
+    for i, g1 in enumerate(gammas):
+        for j, g2 in enumerate(gammas):
+            per_image = [pearson(s1.mean(dim=0), s2.mean(dim=0))
+                for s1, s2 in zip(stacks[g1], stacks[g2])]
+            spatial[i, j] = nanmean_or_nan(per_image)
+
+    com = {g: nanmean_or_nan([temporal_centre_of_mass(s) for s in stacks[g]]) for g in gammas}
+
+    reference_gamma = gammas[len(gammas) // 2]
+    n_steps = stacks[reference_gamma][0].shape[0]
+    per_step = {}
+    for g in gammas:
+        curve = []
+        for t in range(n_steps):
+            per_image = [pearson(s_ref[t], s_g[t])
+                         for s_ref, s_g in zip(stacks[reference_gamma], stacks[g])]
+            # nan at t=0 for every gamma by definition of the NCS
+            curve.append(nanmean_or_nan(per_image))
+        per_step[g] = curve
+
+    return spatial, com, per_step, reference_gamma
+
+def plot_class(spatial, com, per_step, gammas, reference_gamma,
+               class_name, layer_index):
+    # Three-panel figure for one class
+    fig, (ax1, ax2, ax3) = plt.subplots(1, 3, figsize=(17, 4.5))
+ 
+    # Panel 1 - spatial PCC matrix
+    im = ax1.imshow(spatial, cmap='viridis', vmin=0, vmax=1)
+    ax1.set_xticks(range(len(gammas)))
+    ax1.set_yticks(range(len(gammas)))
+    ax1.set_xticklabels(gammas)
+    ax1.set_yticklabels(gammas)
+    ax1.set_xlabel('gamma')
+    ax1.set_ylabel('gamma')
+    ax1.set_title('spatial PCC (time-aggregated)')
+    for i in range(len(gammas)):
+        for j in range(len(gammas)):
+            ax1.text(j, i, f'{spatial[i, j]:.3f}', ha='center', va='center',
+                     fontsize=7,
+                     color='white' if spatial[i, j] < 0.7 else 'black')
+    fig.colorbar(im, ax=ax1, shrink=0.8)
+ 
+    # Panel 2 - where in time the explanation concentrates
+    ax2.plot(gammas, [com[g] for g in gammas], 'o-')
+    ax2.set_xlabel('gamma')
+    ax2.set_ylabel('temporal centre of mass (time steps)')
+    ax2.set_title('when the explanation concentrates')
+    ax2.grid(alpha=0.3)
+ 
+    # Panel 3 - a flat, high curve means the temporal structure survives
+    # a curve decaying with t means late-stage reasoning diverges while early
+    # processing is preserved
+    for g in gammas:
+        ax3.plot(range(len(per_step[g])), per_step[g], 'o-',
+                 label=f'gamma={g}', alpha=0.8)
+    ax3.set_xlabel('time step')
+    ax3.set_ylabel(f'PCC vs gamma={reference_gamma}')
+    ax3.set_title('per-timestep agreement')
+    ax3.set_ylim(0, 1.02)
+    ax3.legend(fontsize=7)
+    ax3.grid(alpha=0.3)
+ 
+    fig.suptitle(f'Gamma sensitivity - {class_name}, layer {layer_index}')
+    plt.savefig(f'gamma_sensitivity_{class_name}.png', dpi=150, bbox_inches='tight')
+    plt.close(fig)
 
 
 def main():
-    from XAI.sam import load_trained_model
-    from XAI.SAM_class_comparison import get_n_samples_per_class
-    from src_python.old_dataloader import test_dataloader
-
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-    net, time_steps = load_trained_model(device)
-    class_names = test_dataloader.dataset.dataset.classes
 
-    n_classes = len(class_names)
-    samples = get_n_samples_per_class(test_dataloader, n_classes, n_per_class=15)
+    net, time_steps, input_size, layer_index = load_reference_model(device, MANIFEST)
+    print(f"reference model: {input_size}px | T={time_steps} | SAM layer={layer_index}")
 
-    # Estesa a tutte le classi (non solo Blip) per rigore statistico completo —
-    # accettiamo il costo computazionale maggiore (7 gamma x 15 immagini x 4 classi)
-    for target_class_idx in range(n_classes):
-        class_name = class_names[target_class_idx]
-        image_list = samples[target_class_idx]
+    dataset, _, val_dataloader, _ = build_dataloaders(input_size=input_size, verbose=False)
 
-        print(f"Analisi sensibilità gamma per classe: {class_name}...")
+    classes = dataset.classes
+    samples= samples_per_class(val_dataloader, len(classes), N_PER_CLASS)
+    print('samples per class: ' + str({classes[c]: len(v) for c, v in samples.items()}))
 
-        maps_per_gamma, corr_matrix = gamma_sensitivity_analysis(
-            net, image_list, time_steps, device, layer_index=2, gamma_values=GAMMA_VALUES
-        )
+    results = {}
+    for class_index, class_name in enumerate(classes):
+        print(f'analysing {class_name}...')
+        spatial, com, per_step, reference_gamma = analyse_class(net, samples[class_index], time_steps, device, layer_index, GAMMA_VALUES)
+        plot_class(spatial, com, per_step, GAMMA_VALUES, reference_gamma, class_name, layer_index)
+        results[class_name] = {
+            'spatial_pcc': spatial.tolist(),
+            'temporal_com': com,
+            'per_step_pcc_vs_reference': per_step,
+            'reference_gamma': reference_gamma,
+        }
 
-        plot_gamma_sensitivity(maps_per_gamma, corr_matrix, GAMMA_VALUES, class_name, layer_index=2)
+    with open(OUT_JSON, 'w') as f:
+        json.dump({'gammas': GAMMA_VALUES,
+                    'layer': layer_index,
+                    'input_size': input_size,
+                    'time_steps': time_steps,
+                    'n_per_class': N_PER_CLASS,
+                    'classes': results}, f, indent=2
+                   )
+    print(f'\nresults written in {OUT_JSON}\n')
 
+    print('Temporal center of mass per gamma (time_steps)')
+    print(f'{"class":<18}' + ''.join(f'{"g=" + str(g):>9}' for g in GAMMA_VALUES))
+    for class_name in classes:
+        com = results[class_name]['temporal_com']
+        print(f'{class_name:<18}' + ''.join(f'{com[g]:>9.3f}' for g in GAMMA_VALUES))
+ 
+    print(f'\nSpatial PCC between the extreme gammas '
+          f'({GAMMA_VALUES[0]} vs {GAMMA_VALUES[-1]}), and matrix minimum')
+    for class_name in classes:
+        s = np.array(results[class_name]['spatial_pcc'])
+        print(f'  {class_name:<18} extremes {s[0, -1]:.4f}   minimum {s.min():.4f}')
 
-if __name__ == "__main__":
+if __name__ == '__main__':
     main()

@@ -95,3 +95,20 @@ def validate_per_class(net, dataloader, time_steps, device, n_classes=4):
     recall = [(correct[c] / support[c]).item() if support[c] > 0 else float('nan')
               for c in range(n_classes)]
     return recall, support.tolist()
+
+def measure_firing_rates(net, dataloader, time_steps, device):
+    # measure firing rate on saved checkpoint
+    net.eval()
+    totals = {f'layer{i}': 0.0 for i in range(1, 5)}
+    n_seen = 0
+
+    with torch.no_grad():
+        for images, _ in dataloader:
+            images = images.to(device)
+            _, s1, s2, s3, s4 = net(direct_encode(images, time_steps))
+            bs = images.shape[0]
+            n_seen += bs
+            for i, s in enumerate((s1, s2, s3, s4), start=1):
+                totals[f'layer{i}'] += s.mean().item() * bs
+
+    return {k: v/n_seen for k, v in totals.items()}
