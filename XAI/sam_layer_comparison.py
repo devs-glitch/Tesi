@@ -1,6 +1,5 @@
 '''
-Confronto tra layer, multi-campione: media e deviazione standard per
-ciascun layer, per ciascuna classe separatamente
+multi-sample comparison btw layers: mean and std for each layer and each class separately
 '''
 import os
 import sys
@@ -9,21 +8,18 @@ import torch
 import matplotlib.pyplot as plt
 
 sys.path.append(os.path.abspath('C:/Users/devam/OneDrive/Tesi'))
-from XAI.sam import load_trained_model, get_layer_spikes, compute_sam
-from XAI.sam_class_comparison import get_n_samples_per_class
 
+from XAI.sam import load_reference_model, get_layer_spikes, compute_sam
+from XAI.sam_metrics import samples_per_class
+from src_python.dataloader import build_dataloaders
+
+MANIFEST = 'baseline_manifest.json'
+# The reference layer is not read from the manifest since this module compares all four layers by construction
 LAYER_INDICES = [1, 2, 3, 4]
 N_PER_CLASS = 20
-GAMMA = 0.5
 
 
 def compute_layer_statistics(net, image_list, time_steps, device, layer_index, gamma):
-    """
-    Come compute_sam_statistics_for_class, ma con l'aggiunta della
-    normalizzazione per numero di canali — necessaria qui perché stiamo
-    confrontando layer con profondità diverse (16, 32, 64 canali),
-    a differenza del confronto tra classi dove il layer era sempre lo stesso.
-    """
     per_sample_maps = []
     n_channels = None
 
@@ -37,11 +33,6 @@ def compute_layer_statistics(net, image_list, time_steps, device, layer_index, g
 
     stacked = torch.stack(per_sample_maps, dim=0)       # [N, H, W]
 
-    # TODO: normalizza sia mean_map che std_map dividendo per n_channels —
-    # stesso principio già applicato nel vecchio sam_layer_comparison.py
-    # a singolo campione, qui applicato però DOPO aver calcolato mean/std
-    # sui campioni. Attenzione: la normalizzazione va fatta su entrambe
-    # le mappe risultanti (mean e std), non solo su una
     mean_map = stacked.mean(dim=0)
     std_map = stacked.std(dim=0)
 
@@ -73,37 +64,40 @@ def plot_layer_comparison_for_class(net, image_list, time_steps, device, class_n
     for idx, layer_index in enumerate(layer_indices):
         im_mean = axes[0, idx].imshow(mean_maps[layer_index].cpu().numpy(), cmap="jet",
                                         vmin=mean_vmin, vmax=mean_vmax)
-        axes[0, idx].set_title(f"Layer {layer_index} (C={channel_counts[layer_index]}) — media")
+        axes[0, idx].set_title(f"Layer {layer_index} (C={channel_counts[layer_index]}) - mean")
         axes[0, idx].axis("off")
 
         im_std = axes[1, idx].imshow(std_maps[layer_index].cpu().numpy(), cmap="magma",
                                        vmin=std_vmin, vmax=std_vmax)
-        axes[1, idx].set_title(f"Layer {layer_index} — dev. std")
+        axes[1, idx].set_title(f"Layer {layer_index} - std dev")
         axes[1, idx].axis("off")
 
-    fig.colorbar(im_mean, ax=axes[0, :], shrink=0.7, label="SAM/canale (media)")
-    fig.colorbar(im_std, ax=axes[1, :], shrink=0.7, label="SAM/canale (dev. std)")
-    fig.suptitle(f"Confronto SAM tra layer — classe: {class_name} (N={N_PER_CLASS} campioni)")
+    fig.colorbar(im_mean, ax=axes[0, :], shrink=0.7, label="SAM/channel (mean)")
+    fig.colorbar(im_std, ax=axes[1, :], shrink=0.7, label="SAM/channel (std dev)")
+    fig.suptitle(f"SAM layer comparison - class: {class_name} (N={N_PER_CLASS} samples)")
     plt.savefig(f"sam_layer_comparison_{class_name}.png", dpi=150, bbox_inches="tight")
     plt.show()
 
 
 def main():
-    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-    from src_python.old_dataloader import test_dataloader
 
-    net, time_steps = load_trained_model(device)
-    class_names = test_dataloader.dataset.dataset.classes
+    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+
+    net, time_steps, input_size, _, gamma = load_reference_model(device, MANIFEST)
+    dataset, _, val_dataloader, _ = build_dataloaders(input_size=input_size, verbose=False)
+    class_names = dataset.classes
     n_classes = len(class_names)
 
-    samples = get_n_samples_per_class(test_dataloader, n_classes, N_PER_CLASS)
+    print(f'{input_size} px | gamma {gamma} | '
+          f'{len(val_dataloader.dataset)} validation images')
+
+    samples = samples_per_class(val_dataloader, n_classes, N_PER_CLASS)
 
     for label in range(n_classes):
         class_name = class_names[label]
-        print(f"Confronto layer per classe: {class_name}...")
+        print(f"Layer comparison for class: {class_name}...")
         plot_layer_comparison_for_class(net, samples[label], time_steps, device,
-                                          class_name, GAMMA, LAYER_INDICES)
-
+                                        class_name, gamma, LAYER_INDICES)
 
 if __name__ == "__main__":
     main()

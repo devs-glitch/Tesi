@@ -12,17 +12,7 @@ import matplotlib.pyplot as plt
 sys.path.append(os.path.abspath('C:/Users/devam/OneDrive/Tesi'))
 from models.snn_model import GWGlitchSNN
 from src_python.training_utils import direct_encode
-
-
-def load_trained_model(device):
-    with open("best_hyperparams.json", "r") as f:
-        best_params = json.load(f)
-
-    net = GWGlitchSNN(beta=best_params["beta"], input_size=best_params['input_size']).to(device)
-    net.load_state_dict(torch.load("best_model.pt", map_location=device))
-    net.eval()
-
-    return net, best_params["time_steps"]
+from src_python.dataloader import build_dataloaders
 
 def load_reference_model(device, manifest_path = 'baseline_manifest.json', checkpoint_index = 0):
     # load reference model
@@ -34,7 +24,7 @@ def load_reference_model(device, manifest_path = 'baseline_manifest.json', check
     net.load_state_dict(torch.load(manifest['checkpoints'][checkpoint_index], map_location=device))
     net.eval()
 
-    return net, hp['time_steps'], manifest['input_size'], manifest['sam']['reference_layer']
+    return net, hp['time_steps'], manifest['input_size'], manifest['sam']['reference_layer'], manifest['sam']['gamma']
 
 def get_layer_spikes(net, image, time_steps, device, layer_index):
     image_batched = image.unsqueeze(0)
@@ -112,18 +102,17 @@ def temporal_centre_of_mass(sam_check):
 def main():
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
-    net, time_steps, input_size, layer_index = load_reference_model(device)
+    net, time_steps, input_size, layer_index, gamma = load_reference_model(device)
 
-    # take a sample from the test set
-    from src_python.dataloader import val_dataloader
+    # take a sample from the val set
+    dataset, _, val_dataloader, _ = build_dataloaders(input_size=input_size, verbose=False)
+
     images, labels = next(iter(val_dataloader))
     sample_image = images[0]
     sample_label = labels[0].item()
 
-    class_names = val_dataloader.dataset.dataset.classes
+    class_names = dataset.classes
     sample_class_name = class_names[sample_label]
-
-    gamma = 0.5       # temporal window parameter
 
     # SAM computation
     spikes = get_layer_spikes(net, sample_image, time_steps, device, layer_index)

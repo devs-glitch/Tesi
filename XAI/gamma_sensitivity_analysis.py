@@ -59,7 +59,7 @@ def analyse_class(net, image_list, time_steps, device, layer_index, gammas):
             curve.append(nanmean_or_nan(per_image))
         per_step[g] = curve
 
-    return spatial, com, per_step, reference_gamma
+    return spatial, com, per_step, reference_gamma, _
 
 def plot_class(spatial, com, per_step, gammas, reference_gamma,
                class_name, layer_index):

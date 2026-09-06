@@ -133,7 +133,7 @@ def main():
 
     header = (f'{"class":<18}{"PCC mean":>11}{"PCC min":>10}'
               f'{"IoU mean":>11}{"IoU min":>10}{"COM mean":>11}{"COM max":>10}')
-    print('FP32-vs-FP32 NOISE FLOOR (over seed pairs)')
+    print('FP32-vs-FP32 noise floor (over seed pairs)')
     print(header)
     print('-' * len(header))
     for class_name in classes:
@@ -146,7 +146,7 @@ def main():
 
     print(f'\nchance-level IoU at k={TOP_K}: {CHANCE_IOU:.4f} '
           '(two independent maps)')
-    print('\nWorst per-timestep PCC within a pair, by class:')
+    print('\nWorst per timestep PCC within a pair by class:')
     for class_name in classes:
         w = results[class_name]['worst_step_pcc']
         print(f'  {class_name:<18} mean {w["mean"]:.4f}   worst {min(w["values"]):.4f}')

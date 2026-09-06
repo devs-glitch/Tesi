@@ -11,34 +11,33 @@ import matplotlib.pyplot as plt
 from sklearn.metrics import confusion_matrix, ConfusionMatrixDisplay
 
 sys.path.append(os.path.abspath('C:/Users/devam/OneDrive/Tesi'))
-from XAI.sam import load_trained_model, direct_encode
-from src_python.dataloader import test_dataloader
+from XAI.sam import load_reference_model
+from src_python.training_utils import direct_encode
+from src_python.dataloader import build_dataloaders
 
-
-# literature based threshold: near-zero firing rate -> dead neuron
-# firing rate near al 100% -> saturated/epileptic
+MANIFEST = 'baseline_manifest.json'
 DEAD_THRESHOLD = 0.01
 SATURATED_THRESHOLD = 0.80
 
 N_NEURONS_SAMPLE = 200  # per layer -> CV-ISI
 
+def collect_statistics(net, dataloader, time_steps, device, layer_indices=(1, 2, 3, 4)):
+    random.seed(42)
 
-def collect_test_set_statistics(net, test_dataloader, time_steps, device, layer_indices=(1, 2, 3)):
     net.eval()
 
     all_preds, all_labels = [], []
 
-    # Accumulated firing rate per neuron]
+    # Accumulated firing rate per neuron
     per_neuron_sum = {l: None for l in layer_indices}
     n_samples_seen = 0
 
-    # CV-ISI: lidt of raw spikes train for a fixed sample per un campione fisso di
-    # of neurons position, populated progressively throu the test set
+    # CV-ISI: list of raw spikes train for a fixed sample of neurons position, populated progressively throu the val set
     sampled_positions = {l: None for l in layer_indices}
     isi_pools = {l: None for l in layer_indices}
 
     with torch.no_grad():
-        for images, labels in test_dataloader:
+        for images, labels in dataloader:
             images, labels = images.to(device), labels.to(device)
             encoded_x = direct_encode(images, time_steps=time_steps)
 
@@ -73,16 +72,17 @@ def collect_test_set_statistics(net, test_dataloader, time_steps, device, layer_
                     )
                     isi_pools[layer_index] = {pos: [] for pos in sampled_positions[layer_index]}
 
-                # spikes: [T, B, C, H, W] -> per ogni immagine del batch, per ogni
-                # posizione campionata, estrai la sequenza temporale [T] e calcola
-                # gli indici temporali in cui ha sparato, poi le differenze (ISI)
+                # spikes: [T, B, C, H, W] for each image of the batch, for each sample position
+                positions = torch.tensor(sampled_positions[layer_index], device=spikes.device)
+                # spikes: [T, B, C, H, W] -> trains: [T, B, N_positions]
+                trains = spikes[:, :, positions[:, 0], positions[:, 1],
+                                positions[:, 2]].cpu().numpy()
+
                 for b in range(batch_size):
-                    for (c, h, w) in sampled_positions[layer_index]:
-                        train = spikes[:, b, c, h, w].cpu().numpy()  # [T], 0/1
-                        spike_times = np.where(train == 1)[0]
+                    for n, pos in enumerate(sampled_positions[layer_index]):
+                        spike_times = np.where(trains[:, b, n] == 1)[0]
                         if len(spike_times) >= 2:
-                            isi = np.diff(spike_times)
-                            isi_pools[layer_index][(c, h, w)].extend(isi.tolist())
+                            isi_pools[layer_index][pos].extend(np.diff(spike_times).tolist())
 
     avg_firing_rate_per_neuron = {
         l: (per_neuron_sum[l] / n_samples_seen).cpu().numpy() for l in layer_indices
@@ -108,13 +108,13 @@ def plot_firing_rate_distributions(avg_firing_rate_per_neuron):
         rates = avg_firing_rate_per_neuron[layer_index].flatten()
         ax = axes[idx]
         ax.hist(rates, bins=50, color="steelblue", edgecolor="black")
-        ax.axvline(DEAD_THRESHOLD, color="red", linestyle="--", label=f"soglia morto ({DEAD_THRESHOLD})")
-        ax.axvline(SATURATED_THRESHOLD, color="orange", linestyle="--", label=f"soglia saturo ({SATURATED_THRESHOLD})")
+        ax.axvline(DEAD_THRESHOLD, color="red", linestyle="--", label=f"dead threshold ({DEAD_THRESHOLD})")
+        ax.axvline(SATURATED_THRESHOLD, color="orange", linestyle="--", label=f"saturated threshold ({SATURATED_THRESHOLD})")
 
         pct_dead = (rates < DEAD_THRESHOLD).mean() * 100
         pct_saturated = (rates > SATURATED_THRESHOLD).mean() * 100
 
-        ax.set_title(f"Layer {layer_index}\n{pct_dead:.1f}% morti, {pct_saturated:.1f}% saturi")
+        ax.set_title(f"Layer {layer_index}\n{pct_dead:.1f}% dead, {pct_saturated:.1f}% saturated")
         ax.set_xlabel("Firing rate per neuron")
         ax.legend(fontsize=8)
 
@@ -130,7 +130,7 @@ def plot_cv_isi(isi_pools):
     for idx, layer_index in enumerate(layer_indices):
         cvs = []
         for pos, isi_list in isi_pools[layer_index].items():
-            if len(isi_list) >= 5:  # troppo pochi ISI danno una stima instabile
+            if len(isi_list) >= 5:  # not enough ISI give an unstable estimate
                 isi_arr = np.array(isi_list)
                 cv = isi_arr.std() / isi_arr.mean() if isi_arr.mean() > 0 else np.nan
                 if not np.isnan(cv):
@@ -139,24 +139,27 @@ def plot_cv_isi(isi_pools):
         ax = axes[idx]
         if len(cvs) > 0:
             ax.hist(cvs, bins=30, color="seagreen", edgecolor="black")
-            ax.set_title(f"Layer {layer_index} (n={len(cvs)} neuroni)")
+            ax.set_title(f"Layer {layer_index} (n={len(cvs)} neurons)")
         else:
-            ax.set_title(f"Layer {layer_index}\n(dati ISI insufficienti)")
+            ax.set_title(f"Layer {layer_index}\n(insufficient ISI data)")
         ax.set_xlabel("CV-ISI")
 
-    fig.suptitle(f"Distribuzione CV-ISI per layer (campione di {N_NEURONS_SAMPLE} neuroni/layer,\n"
-                 f"ISI aggregati su tutto il test set)")
+    fig.suptitle(f"CV-ISI per-layer distribution (sample of {N_NEURONS_SAMPLE} neurons/layer,\n"
+                 f"ISI aggregated on val set)")
     plt.savefig("cv_isi_distributions.png", dpi=150, bbox_inches="tight")
     plt.show()
 
 def main():
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
-    net, time_steps = load_trained_model(device)
-    class_names = test_dataloader.dataset.dataset.classes
+    net, time_steps, input_size, _, _ = load_reference_model(device, MANIFEST)
+    dataset, _, val_dataloader, _ = build_dataloaders(input_size=input_size, verbose=False)
+    class_names = dataset.classes
 
-    all_preds, all_labels, avg_firing_rate_per_neuron, isi_pools = collect_test_set_statistics(
-        net, test_dataloader, time_steps, device, layer_indices=(1, 2, 3, 4)
+    print(f'{input_size} px | {len(val_dataloader.dataset)} validation images')
+
+    all_preds, all_labels, avg_firing_rate_per_neuron, isi_pools = collect_statistics(
+        net, val_dataloader, time_steps, device, layer_indices=(1, 2, 3, 4)
     )
 
     plot_confusion_matrix(all_preds, all_labels, class_names)
