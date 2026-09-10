@@ -1,9 +1,23 @@
+# Data and artefacts
 data/
-models/*.pt
-models/*.pth
+runs/
+wandb/
+*.pt
+*.pth
+*.db
+
+# Local config
+.vscode/
+*.code-workspace
+
+# Python
 __pycache__/
-.pio/
-*.pdf
+*.py[cod]
+.venv/
+venv/
+*.egg-info/
+
+# Docs build
 *.aux
 *.log
-.vscode/
+.DS_Store
