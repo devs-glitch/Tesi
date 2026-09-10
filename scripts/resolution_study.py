@@ -13,8 +13,7 @@ import os, sys
 
 import torch
 
-sys.path.append(os.path.abspath('C:/Users/devam/OneDrive/Tesi'))
-from qsnn.train import load_hyperparams, run_training
+from scripts.train import load_hyperparams, run_training
 
 RESOLUTIONS = (224, 112, 64)
 SEEDS = (1234, 2345, 3456)

@@ -10,10 +10,9 @@ import numpy as np
 import matplotlib.pyplot as plt
 from sklearn.metrics import confusion_matrix, ConfusionMatrixDisplay
 
-sys.path.append(os.path.abspath('C:/Users/devam/OneDrive/Tesi'))
-from qsnn.sam import load_reference_model
-from qsnn.training_utils import direct_encode
-from qsnn.dataloader import build_dataloaders
+from xai.sam import load_reference_model
+from scripts.training_utils import direct_encode
+from scripts.dataloader import build_dataloaders
 
 MANIFEST = 'baseline_manifest.json'
 DEAD_THRESHOLD = 0.01

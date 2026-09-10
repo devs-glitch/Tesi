@@ -12,10 +12,9 @@ from pathlib import Path
 
 import torch
 
-sys.path.append(os.path.abspath('C:/Users/devam/OneDrive/Tesi'))
-from qsnn.snn_model import GWGlitchSNN
-from qsnn.dataloader import build_dataloaders, INPUT_SIZE
-from qsnn.training_utils import train_one_epoch, validate, validate_per_class, measure_firing_rates
+from model.snn_model import GWGlitchSNN
+from scripts.dataloader import build_dataloaders, INPUT_SIZE
+from scripts.training_utils import train_one_epoch, validate, validate_per_class, measure_firing_rates
 
 HYPERPARAMS_FILE = 'best_hyperparams.json'
 RUNS_DIR = Path('runs')

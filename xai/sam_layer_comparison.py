@@ -7,11 +7,10 @@ import sys
 import torch
 import matplotlib.pyplot as plt
 
-sys.path.append(os.path.abspath('C:/Users/devam/OneDrive/Tesi'))
 
-from qsnn.sam import load_reference_model, get_layer_spikes, compute_sam
-from qsnn.sam_metrics import samples_per_class
-from qsnn.dataloader import build_dataloaders
+from xai.sam import load_reference_model, get_layer_spikes, compute_sam
+from xai.sam_metrics import samples_per_class
+from scripts.dataloader import build_dataloaders
 
 MANIFEST = 'baseline_manifest.json'
 # The reference layer is not read from the manifest since this module compares all four layers by construction

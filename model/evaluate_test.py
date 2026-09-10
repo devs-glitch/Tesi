@@ -11,11 +11,10 @@ import json
 
 import torch
 
-sys.path.append(os.path.abspath('C:/Users/devam/OneDrive/Tesi'))
-from qsnn.snn_model import GWGlitchSNN
-from qsnn.dataloader import test_dataloader, INPUT_SIZE
-from qsnn.training_utils import direct_encode, validate
-from qsnn.per_sample import loader_paths, save_per_sample
+from model.snn_model import GWGlitchSNN
+from scripts.dataloader import test_dataloader, INPUT_SIZE
+from scripts.training_utils import direct_encode, validate
+from scripts.per_sample import loader_paths, save_per_sample
 
 PER_SAMPLE_CSV = 'results/test_predictions.csv'
 

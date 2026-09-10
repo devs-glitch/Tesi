@@ -18,12 +18,11 @@ import sys
 import numpy as np
 import torch
 
-sys.path.append(os.path.abspath('C:/Users/devam/OneDrive/Tesi'))
-from qsnn.dataloader import build_dataloaders
-from qsnn.sam import (load_reference_model, get_layer_spikes, compute_sam,
+from scripts.dataloader import build_dataloaders
+from xai.sam import (load_reference_model, get_layer_spikes, compute_sam,
                      temporal_centre_of_mass)
-from qsnn.sam_metrics import samples_per_class, sam_stacks, pearson, nanmean_or_nan
-from scripts.noise_floor import compare_two_models
+from xai.sam_metrics import samples_per_class, sam_stacks, pearson, nanmean_or_nan
+from xai.noise_floor import compare_two_models
 
 MANIFEST = 'baseline_manifest.json'
 N_PER_CLASS = 15

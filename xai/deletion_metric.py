@@ -10,12 +10,11 @@ import torch.nn.functional as F
 import matplotlib.pyplot as plt
 import random
 
-sys.path.append(os.path.abspath('C:/Users/devam/OneDrive/Tesi'))
 
-from qsnn.sam import load_reference_model, get_layer_spikes, compute_sam
-from qsnn.sam_metrics import samples_per_class
-from qsnn.training_utils import direct_encode
-from qsnn.dataloader import build_dataloaders
+from xai.sam import load_reference_model, get_layer_spikes, compute_sam
+from xai.sam_metrics import samples_per_class
+from scripts.training_utils import direct_encode
+from scripts.dataloader import build_dataloaders
 
 MANIFEST = 'baseline_manifest.json'
 FRACTIONS = np.arange(0, 1.01, 0.05)

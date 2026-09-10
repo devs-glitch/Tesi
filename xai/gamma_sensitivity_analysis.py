@@ -20,11 +20,10 @@ import numpy as np
 import torch
 import matplotlib.pyplot as plt
 
-sys.path.append(os.path.abspath('C:/Users/devam/OneDrive/Tesi'))
 
-from qsnn.dataloader import build_dataloaders
-from qsnn.sam import load_reference_model, get_layer_spikes, compute_sam, temporal_centre_of_mass
-from qsnn.sam_metrics import samples_per_class, sam_stacks, pearson, nanmean_or_nan
+from scripts.dataloader import build_dataloaders
+from xai.sam import load_reference_model, get_layer_spikes, compute_sam, temporal_centre_of_mass
+from xai.sam_metrics import samples_per_class, sam_stacks, pearson, nanmean_or_nan
 
 GAMMA_VALUES = [0.1, 0.3, 0.5, 0.7, 0.9, 1.5, 3.0]
 MANIFEST = 'baseline_manifest.json'

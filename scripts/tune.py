@@ -10,10 +10,9 @@ import wandb
 
 import torch
 
-sys.path.append(os.path.abspath('C:/Users/devam/OneDrive/Tesi'))
-from qsnn.snn_model import GWGlitchSNN
-from qsnn.dataloader import train_dataloader, val_dataloader, INPUT_SIZE
-from qsnn.training_utils import train_one_epoch, validate
+from model.snn_model import GWGlitchSNN
+from scripts.dataloader import train_dataloader, val_dataloader, INPUT_SIZE
+from scripts.training_utils import train_one_epoch, validate
 
 BETA_SHIFT = [0.25, 0.5, 0.75, 0.875]
 SEARCH_SPACE = os.environ.get('SEARCH_SPACE', 'v5')
