@@ -1,1 +1,0 @@
-{"_wandb":{"runtime":2362},"firing_rate_layer1":0.23790335421051298,"_timestamp":1.786391793676496e+09,"firing_rate_layer3":0.16323590860480353,"_runtime":2362,"validation accuracy":0.9797909407665505,"avg_firing_rate":0.25599526706196013,"firing_rate_layer4":0.014137795403422344,"_step":9,"epoch":9,"validation_loss":0.07428418640696317,"firing_rate_layer2":0.17361022780338922}

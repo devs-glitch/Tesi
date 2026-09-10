@@ -1,1 +1,0 @@
-{"avg_firing_rate":0.21511936138073603,"_runtime":1810,"validation accuracy":0.9679442508710802,"firing_rate_layer1":0.13469959951582408,"epoch":3,"_step":3,"_timestamp":1.7882739425042007e+09,"_wandb":{"runtime":1810},"firing_rate_layer2":0.11396305965525763,"firing_rate_layer4":0.0821171122824862,"firing_rate_layer3":0.13314859813877514,"validation_loss":0.11814548687340906}
