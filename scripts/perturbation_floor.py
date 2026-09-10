@@ -23,7 +23,7 @@ from qsnn.dataloader import build_dataloaders
 from qsnn.sam import (load_reference_model, get_layer_spikes, compute_sam,
                      temporal_centre_of_mass)
 from qsnn.sam_metrics import samples_per_class, sam_stacks, pearson, nanmean_or_nan
-from XAI.noise_floor import compare_two_models
+from scripts.noise_floor import compare_two_models
 
 MANIFEST = 'baseline_manifest.json'
 N_PER_CLASS = 15
