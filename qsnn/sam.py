@@ -10,9 +10,9 @@ import torch
 import matplotlib.pyplot as plt
 
 sys.path.append(os.path.abspath('C:/Users/devam/OneDrive/Tesi'))
-from models.snn_model import GWGlitchSNN
-from src_python.training_utils import direct_encode
-from src_python.dataloader import build_dataloaders
+from qsnn.snn_model import GWGlitchSNN
+from qsnn.training_utils import direct_encode
+from qsnn.dataloader import build_dataloaders
 
 def load_reference_model(device, manifest_path = 'baseline_manifest.json', checkpoint_index = 0):
     # load reference model

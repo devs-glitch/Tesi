@@ -12,10 +12,10 @@ import random
 
 sys.path.append(os.path.abspath('C:/Users/devam/OneDrive/Tesi'))
 
-from XAI.sam import load_reference_model, get_layer_spikes, compute_sam
-from XAI.sam_metrics import samples_per_class
-from src_python.training_utils import direct_encode
-from src_python.dataloader import build_dataloaders
+from qsnn.sam import load_reference_model, get_layer_spikes, compute_sam
+from qsnn.sam_metrics import samples_per_class
+from qsnn.training_utils import direct_encode
+from qsnn.dataloader import build_dataloaders
 
 MANIFEST = 'baseline_manifest.json'
 FRACTIONS = np.arange(0, 1.01, 0.05)

@@ -12,7 +12,7 @@ from pathlib import Path
 
 import torch
 
-from src_python.train import load_hyperparams, run_training
+from qsnn.train import load_hyperparams, run_training
 
 SEEDS = (1234, 2345, 3456)
 MANIFEST = Path('baseline_manifest.json')

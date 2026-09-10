@@ -32,10 +32,10 @@ import sys
 import torch
 
 sys.path.append(os.path.abspath('C:/Users/devam/OneDrive/Tesi'))
-from src_python.dataloader import build_dataloaders
-from XAI.sam import (load_reference_model, get_layer_spikes, compute_sam,
+from qsnn.dataloader import build_dataloaders
+from qsnn.sam import (load_reference_model, get_layer_spikes, compute_sam,
                      temporal_centre_of_mass)
-from XAI.sam_metrics import samples_per_class, sam_stacks, pearson, top_k_iou
+from qsnn.sam_metrics import samples_per_class, sam_stacks, pearson, top_k_iou
 from XAI.noise_floor import compare_two_models, MANIFEST, N_PER_CLASS
 
 TOLERANCE = 1e-9

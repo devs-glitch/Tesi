@@ -22,9 +22,9 @@ import matplotlib.pyplot as plt
 
 sys.path.append(os.path.abspath('C:/Users/devam/OneDrive/Tesi'))
 
-from src_python.dataloader import build_dataloaders
-from XAI.sam import load_reference_model, get_layer_spikes, compute_sam, temporal_centre_of_mass
-from XAI.sam_metrics import samples_per_class, sam_stacks, pearson, nanmean_or_nan
+from qsnn.dataloader import build_dataloaders
+from qsnn.sam import load_reference_model, get_layer_spikes, compute_sam, temporal_centre_of_mass
+from qsnn.sam_metrics import samples_per_class, sam_stacks, pearson, nanmean_or_nan
 
 GAMMA_VALUES = [0.1, 0.3, 0.5, 0.7, 0.9, 1.5, 3.0]
 MANIFEST = 'baseline_manifest.json'

@@ -1,23 +1,39 @@
-# Data and artefacts
-data/
+# Data
+data/raw/
+data/processed/
+data/quarantine/
+!data/split_assignment.csv
+
+# Model checkpoints and experiment artefacts
 runs/
-wandb/
 *.pt
 *.pth
-*.db
+*.ckpt
 
-# Local config
+# Optuna and W&B local caches
+*.db
+wandb/
+
+# Local editor config
 .vscode/
+.idea/
 *.code-workspace
 
 # Python
 __pycache__/
 *.py[cod]
+*.egg-info/
 .venv/
 venv/
-*.egg-info/
+.ipynb_checkpoints/
 
-# Docs build
+# LaTeX build artefacts
 *.aux
-*.log
+*.out
+*.toc
+*.synctex.gz
+thesis_report/*.log
+
+# OS
 .DS_Store
+Thumbs.db

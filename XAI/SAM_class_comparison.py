@@ -9,9 +9,9 @@ import torch
 import matplotlib.pyplot as plt
 
 sys.path.append(os.path.abspath('C:/Users/devam/OneDrive/Tesi'))
-from XAI.sam import (load_reference_model, get_layer_spikes, compute_sam)
-from XAI.sam_metrics import samples_per_class
-from src_python.dataloader import build_dataloaders
+from qsnn.sam import (load_reference_model, get_layer_spikes, compute_sam)
+from qsnn.sam_metrics import samples_per_class
+from qsnn.dataloader import build_dataloaders
 
 MANIFEST = 'baseline_manifest.json'
 N_PER_CLASS = 25

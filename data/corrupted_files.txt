@@ -1,0 +1,2 @@
+data/processed/Extremely_Loud\glitch_2675.png
+data/processed/Scattered_Light\glitch_5042.png

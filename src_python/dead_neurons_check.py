@@ -17,9 +17,9 @@ from pathlib import Path
 import torch
 
 sys.path.append(os.path.abspath('C:/Users/devam/OneDrive/Tesi'))
-from models.snn_model import GWGlitchSNN
-from src_python.dataloader import build_dataloaders
-from src_python.training_utils import direct_encode
+from qsnn.snn_model import GWGlitchSNN
+from qsnn.dataloader import build_dataloaders
+from qsnn.training_utils import direct_encode
 
 RUNS_DIR = Path('runs')
 DEAD_THRESHOLD = 0.01       
