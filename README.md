@@ -16,9 +16,6 @@ pip install -e .
 pip install -r requirements.txt
 ```
 
-The `-e` install is what makes `from xai.sam import ...` resolve from any
-working directory. Run every script from the repository root.
-
 ## Pipeline
 
 
