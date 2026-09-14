@@ -1,0 +1,14 @@
+# Requirements
+torch>=2.5
+torchvision>=0.20
+snntorch>=0.9
+optuna>=4.0
+wandb>=0.18
+numpy>=2.0
+pandas>=2.2
+matplotlib>=3.9
+scikit-learn>=1.5
+umap-learn>=0.5
+seaborn>=0.13
+pillow>=10.0
+requests>=2.32

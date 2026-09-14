@@ -11,9 +11,8 @@ import matplotlib.pyplot as plt
 
 from model.snn_model import GWGlitchSNN
 from scripts.training_utils import direct_encode
-from scripts.dataloader import build_dataloaders
 
-def load_reference_model(device, manifest_path = 'baseline_manifest.json', checkpoint_index = 0):
+def load_reference_model(device, manifest_path = 'config/baseline_manifest.json', checkpoint_index = 0):
     # load reference model
     with open(manifest_path) as f:
         manifest = json.load(f)
@@ -97,56 +96,3 @@ def temporal_centre_of_mass(sam_check):
         return float ('nan')
     steps = torch.arange(sam_check.shape[0], dtype=energy.dtype, device = energy.device)
     return float((steps * energy).sum() / total)
-
-def main():
-    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-
-    net, time_steps, input_size, layer_index, gamma = load_reference_model(device)
-
-    # take a sample from the val set
-    dataset, _, val_dataloader, _ = build_dataloaders(input_size=input_size, verbose=False)
-
-    images, labels = next(iter(val_dataloader))
-    sample_image = images[0]
-    sample_label = labels[0].item()
-
-    class_names = dataset.classes
-    sample_class_name = class_names[sample_label]
-
-    # SAM computation
-    spikes = get_layer_spikes(net, sample_image, time_steps, device, layer_index)
-    sam_maps = compute_sam(spikes, gamma)
-
-    reference = compute_sam_reference(spikes, gamma)
-    max_diff = (sam_maps - reference).abs().max().item()
-    assert max_diff < 1e-5, f'recursion and explicit sum diverge: {max_diff}'
-
-    # original image
-    mean = [0.485, 0.456, 0.406]
-    std = [0.229, 0.224, 0.225]
-    image_vis = denormalize_image(sample_image, mean, std).permute(1, 2, 0).cpu().numpy()
-
-    vmin, vmax = sam_maps.min().item(), sam_maps.max().item()
-
-    T = sam_maps.shape[0]
-    fig, axes = plt.subplots(1, T, figsize=(3 * T, 3))
-
-    for t in range(T):
-        ax = axes[t] if T > 1 else axes
-        ax.imshow(image_vis)
-        heatmap = sam_maps[t].cpu().numpy()
-        im = ax.imshow(heatmap, cmap="jet", alpha=0.5, vmin=vmin, vmax=vmax,
-                        extent=(0, image_vis.shape[1], image_vis.shape[0], 0))
-        ax.set_title(f"t={t}" + (" (no history)" if t == 0 else ""))
-        ax.axis("off")
-
-    fig.suptitle(f"SAM - layer {layer_index}, class: {sample_label} ({sample_class_name})")
-    fig.colorbar(im, ax=axes, shrink=0.6, label="SAM score")
-    plt.savefig("sam_visualization.png", dpi=150, bbox_inches="tight")
-    plt.show()
-
-    print(f"SAM computed on layer {layer_index}, {T} time-step, class: {sample_label}")
-    print(f"SAM range: [{vmin:.4f}, {vmax:.4f}] | t=0 null by definition")
-
-if __name__ == "__main__":
-    main()

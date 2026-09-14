@@ -11,8 +11,13 @@ import wandb
 import torch
 
 from model.snn_model import GWGlitchSNN
-from scripts.dataloader import train_dataloader, val_dataloader, INPUT_SIZE
+from scripts.dataloader import DEFAULT_INPUT_SIZE, build_dataloaders
 from scripts.training_utils import train_one_epoch, validate
+
+# Here resolution does not come from the manifest
+INPUT_SIZE = int(os.environ.get('SNN_INPUT_SIZE', DEFAULT_INPUT_SIZE))
+
+_, TRAIN_LOADER, VAL_LOADER, _ = build_dataloaders(input_size=INPUT_SIZE, verbose=True)
 
 BETA_SHIFT = [0.25, 0.5, 0.75, 0.875]
 SEARCH_SPACE = os.environ.get('SEARCH_SPACE', 'v5')
@@ -54,9 +59,9 @@ def objective(trial):
     try:
         for epoch in range(N_EPOCHS):
             avg_firing_rate, layer_firing_rates = train_one_epoch(
-            net, train_dataloader, optimizer, criterion, time_steps, device
+            net,TRAIN_LOADER, optimizer, criterion, time_steps, device
             )
-            val_loss, val_accuracy = validate(net, val_dataloader, criterion, time_steps, device)
+            val_loss, val_accuracy = validate(net, VAL_LOADER, criterion, time_steps, device)
 
             wandb.log({
                 "epoch": epoch,

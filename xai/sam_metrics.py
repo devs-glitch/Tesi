@@ -3,6 +3,7 @@ Shared helpers for every SAM-based analysis
 '''
 
 import numpy as np
+from xai.sam import get_layer_spikes, compute_sam
 
 
 
@@ -19,8 +20,7 @@ def samples_per_class(dataloader, n_classes, n_per_class):
     return samples
 
 
-def sam_stacks(net, image_list, time_steps, device, layer_index, gamma,
-               get_layer_spikes, compute_sam):
+def sam_stacks(net, image_list, time_steps, device, layer_index, gamma):
     # Full SAM stack [T, H, W] per image
     stacks = []
     for image in image_list:

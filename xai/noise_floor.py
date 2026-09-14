@@ -12,18 +12,16 @@ import numpy as np
 import torch
 
 from scripts.dataloader import build_dataloaders
-from xai.sam import (load_reference_model, get_layer_spikes, compute_sam,
-                     temporal_centre_of_mass)
-from xai.sam_metrics import (samples_per_class, sam_stacks, pearson,
-                             nanmean_or_nan, top_k_iou)
+from xai.sam import (load_reference_model, temporal_centre_of_mass)
+from xai.sam_metrics import (samples_per_class, sam_stacks, pearson, nanmean_or_nan, top_k_iou)
 
-MANIFEST = 'baseline_manifest.json'
+MANIFEST = 'config/baseline_manifest.json'
 N_PER_CLASS = 15
 OUT_JSON = 'noise_floor.json'
 TOP_K = 0.20
 
 # Expected IoU of two independent maps at this k, for reference in the report:
-# k / (2 - k). A measured value approaching it means no shared ranking at all.
+# k / (2 - k). A measured value approaching it means no shared ranking at all
 CHANCE_IOU = TOP_K / (2.0 - TOP_K)
 
 
@@ -92,8 +90,7 @@ def main():
                                                      checkpoint_index=k)
         print(f'  checkpoint {k}: {manifest["checkpoints"][k]}')
         stacks[k] = {c: sam_stacks(net, samples[c], time_steps, device,
-                                   layer_index, gamma,
-                                   get_layer_spikes, compute_sam)
+                                   layer_index, gamma)
                      for c in range(len(classes))}
         del net
         if torch.cuda.is_available():

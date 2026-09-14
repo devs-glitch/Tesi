@@ -13,10 +13,13 @@ from pathlib import Path
 import torch
 
 from model.snn_model import GWGlitchSNN
-from scripts.dataloader import build_dataloaders, INPUT_SIZE
+from scripts.dataloader import DEFAULT_INPUT_SIZE, build_dataloaders
 from scripts.training_utils import train_one_epoch, validate, validate_per_class, measure_firing_rates
 
-HYPERPARAMS_FILE = 'best_hyperparams.json'
+HYPERPARAMS_FILE = 'config/best_hyperparams.json'
+
+# resolution is a parameter of the run
+INPUT_SIZE = int(os.environ.get('SNN_INPUT_SIZE', DEFAULT_INPUT_SIZE))
 RUNS_DIR = Path('runs')
 N_EPOCHS = 50
 PATIENCE = 5

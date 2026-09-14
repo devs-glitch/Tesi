@@ -14,7 +14,7 @@ from xai.sam import load_reference_model
 from scripts.training_utils import direct_encode
 from scripts.dataloader import build_dataloaders
 
-MANIFEST = 'baseline_manifest.json'
+MANIFEST = 'config/baseline_manifest.json'
 DEAD_THRESHOLD = 0.01
 SATURATED_THRESHOLD = 0.80
 

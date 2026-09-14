@@ -22,11 +22,11 @@ import matplotlib.pyplot as plt
 
 
 from scripts.dataloader import build_dataloaders
-from xai.sam import load_reference_model, get_layer_spikes, compute_sam, temporal_centre_of_mass
+from xai.sam import load_reference_model, temporal_centre_of_mass
 from xai.sam_metrics import samples_per_class, sam_stacks, pearson, nanmean_or_nan
 
 GAMMA_VALUES = [0.1, 0.3, 0.5, 0.7, 0.9, 1.5, 3.0]
-MANIFEST = 'baseline_manifest.json'
+MANIFEST = 'config/baseline_manifest.json'
 N_PER_CLASS = 15
 OUT_JSON = 'gamma_sensitivity.json'
 

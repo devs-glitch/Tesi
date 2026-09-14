@@ -19,12 +19,11 @@ import numpy as np
 import torch
 
 from scripts.dataloader import build_dataloaders
-from xai.sam import (load_reference_model, get_layer_spikes, compute_sam,
-                     temporal_centre_of_mass)
+from xai.sam import (load_reference_model, temporal_centre_of_mass)
 from xai.sam_metrics import samples_per_class, sam_stacks, pearson, nanmean_or_nan
 from xai.noise_floor import compare_two_models
 
-MANIFEST = 'baseline_manifest.json'
+MANIFEST = 'config/baseline_manifest.json'
 N_PER_CLASS = 15
 OUT_JSON = 'perturbation_floor.json'
 CHECKPOINT_INDEX = 0
@@ -85,8 +84,7 @@ def main():
     samples = samples_per_class(val_dataloader, len(classes), N_PER_CLASS)
 
     # Reference stacks from the unperturbed model
-    reference = {c: sam_stacks(net, samples[c], time_steps, device, layer_index,
-                               gamma, get_layer_spikes, compute_sam)
+    reference = {c: sam_stacks(net, samples[c], time_steps, device, layer_index, gamma)
                  for c in range(len(classes))}
 
     results = {}
@@ -98,8 +96,7 @@ def main():
 
         per_class = {}
         for c, class_name in enumerate(classes):
-            stacks = sam_stacks(perturbed, samples[c], time_steps, device,
-                                layer_index, gamma, get_layer_spikes, compute_sam)
+            stacks = sam_stacks(perturbed, samples[c], time_steps, device, layer_index, gamma)
             per_class[class_name] = compare_two_models(reference[c], stacks)
 
         results[str(fraction)] = {'sigma': sigma, 'per_class': per_class}

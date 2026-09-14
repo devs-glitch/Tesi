@@ -15,7 +15,7 @@ import torch
 from scripts.train import load_hyperparams, run_training
 
 SEEDS = (1234, 2345, 3456)
-MANIFEST = Path('baseline_manifest.json')
+MANIFEST = Path('config/baseline_manifest.json')
 SPLIT_FILE = Path('data/split_assignment.csv')
 
 SAM_REFERENCE_LAYER = 2

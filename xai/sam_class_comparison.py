@@ -12,7 +12,7 @@ from xai.sam import (load_reference_model, get_layer_spikes, compute_sam)
 from xai.sam_metrics import samples_per_class
 from scripts.dataloader import build_dataloaders
 
-MANIFEST = 'baseline_manifest.json'
+MANIFEST = 'config/baseline_manifest.json'
 N_PER_CLASS = 25
 
 

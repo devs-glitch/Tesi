@@ -16,7 +16,7 @@ from xai.sam_metrics import samples_per_class
 from scripts.training_utils import direct_encode
 from scripts.dataloader import build_dataloaders
 
-MANIFEST = 'baseline_manifest.json'
+MANIFEST = 'config/baseline_manifest.json'
 FRACTIONS = np.arange(0, 1.01, 0.05)
 N_PER_CLASS = 15
 
