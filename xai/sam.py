@@ -12,7 +12,10 @@ import matplotlib.pyplot as plt
 from model.snn_model import GWGlitchSNN
 from scripts.training_utils import direct_encode
 
-def load_reference_model(device, manifest_path = 'config/baseline_manifest.json', checkpoint_index = 0):
+MANIFEST = 'config/baseline_manifest.json'
+
+
+def load_reference_model(device, manifest_path=MANIFEST, checkpoint_index=0):
     # load reference model
     with open(manifest_path) as f:
         manifest = json.load(f)

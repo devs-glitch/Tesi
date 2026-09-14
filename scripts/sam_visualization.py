@@ -6,7 +6,7 @@ import matplotlib.pyplot as plt
 import torch
 
 from scripts.dataloader import build_dataloaders
-from xai.sam import (MANIFEST, load_reference_model, get_layer_spikes,
+from xai.sam import (load_reference_model, get_layer_spikes,
                      compute_sam, compute_sam_reference, denormalize_image)
 
 IMAGENET_MEAN = [0.485, 0.456, 0.406]
@@ -17,7 +17,7 @@ OUT_PNG = 'results/Figures/Model_and_Explainability/sam/sam_visualization.png'
 def main():
     device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
     net, time_steps, input_size, layer_index, gamma = load_reference_model(
-        device, MANIFEST)
+        device)
     print(f'{input_size} px | layer {layer_index} | gamma {gamma} | T={time_steps}')
 
     dataset, _, val_dataloader, _ = build_dataloaders(input_size=input_size,

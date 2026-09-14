@@ -15,7 +15,7 @@ from model.snn_model import GWGlitchSNN
 from scripts.dataloader import build_dataloaders
 from scripts.training_utils import direct_encode, validate
 from scripts.per_sample import loader_paths, save_per_sample
-from xai.sam import MANIFEST, load_reference_model
+from xai.sam import load_reference_model
 
 PER_SAMPLE_CSV = 'results/test_predictions.csv'
 SUMMARY_JSON = 'results/test_evaluation.json'
@@ -49,7 +49,7 @@ def predict_per_sample(net, dataloader, time_steps, device):
 def main():
     device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
     net, time_steps, input_size, layer_index, gamma = load_reference_model(
-        device, MANIFEST)
+        device)
  
     print(f'{input_size} px | T={time_steps} | layer {layer_index} | gamma {gamma}')
     print('\nOpening test partition\n')
