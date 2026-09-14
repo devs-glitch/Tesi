@@ -36,10 +36,9 @@ pip install -r requirements.txt
 | 13 | `xai/sam_layer_comparison.py` | The same statistics across all four hidden layers |
 | 14 | `xai/deletion_metric.py` | Faithfulness of SAM against a random baseline |
 | 15 | `xai/noise_floor.py` | FP32-vs-FP32 divergence across seed pairs |
-| 16 | `xai/noise_floor_selfcheck.py` | Identity, determinism and reproducibility checks |
-| 17 | `xai/perturbation_floor.py` | Divergence under negligible weight noise |
-| 18 | `scripts/snr_axis_check.py` | Verifies SNR translates into image intensity |
-| 19 | `scripts/evaluate_test.py` | **Opens the test partition. Once.** |
+| 16 | `xai/perturbation_floor.py` | Divergence under negligible weight noise |
+| 17 | `scripts/snr_axis_check.py` | Verifies SNR translates into image intensity |
+| 18 | `scripts/evaluate_test.py` | **Opens the test partition. Once.** |
 
 Resolution is passed through `SNN_INPUT_SIZE` for steps 5–7, which sweep over
 it; from step 8 onwards every script reads it from the manifest.
