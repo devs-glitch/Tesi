@@ -48,7 +48,7 @@ it; from step 8 onwards every script reads it from the manifest.
 
 | Path | Contents |
 | --- | --- |
-| `model/` | `snn_model.py` — the architecture, and nothing else |
+| `model/` | `snn_model.py` - the architecture, and nothing else |
 | `scripts/` | Data pipeline, training, diagnostics, entry points |
 | `xai/` | SAM, its metrics, and the calibration of those metrics |
 | `config/` | Frozen manifest and hyperparameters |
