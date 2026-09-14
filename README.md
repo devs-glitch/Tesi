@@ -73,9 +73,7 @@ it; from step 8 onwards every script reads it from the manifest.
 
 Not included. The scripts download it from Zenodo record
 [5649212](https://doi.org/10.5281/zenodo.5649212); the corpus is 9 566 images
-across four classes. The frozen partition **is** version-controlled, and the
-manifest records its SHA-256 digest: without it the results cannot be
-reproduced.
+across four classes.
 
 Labels are the classifications of the Gravity Spy convolutional model, not
 physical ground truth, so reported accuracy is agreement with that reference
