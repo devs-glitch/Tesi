@@ -38,4 +38,4 @@ thesis_report/*.log
 .DS_Store
 Thumbs.db
 
-# Thesis sources — kept locally, will be re-added when the document is written thesis_report/
+# Thesis sources - kept locally: re-added when the document is written thesis_report/

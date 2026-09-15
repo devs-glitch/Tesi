@@ -1,0 +1,279 @@
+\chapter{Methodology}
+\label{ch:methodology}
+
+This chapter describes the data pipeline, the model, the procedure by which the
+operating configuration was selected, and the implementation of the Spike
+Activation Map. Every measurement reported here is on the validation partition.
+
+\section{Data}
+
+\subsection{Acquisition}
+
+The Gravity Spy machine-learning release~\cite{glanzer2021} is distributed as
+eight CSV files, one per detector (H1, L1) and observing run (O1, O2, O3a, O3b).
+Each record corresponds to an Omicron trigger with signal-to-noise ratio above
+$7.5$ and peak frequency between $10$\,Hz and $2048$\,Hz, and carries the
+trigger metadata, the per-class confidence of the Gravity Spy classifier, the
+assigned label, and URLs to Omega-scan spectrograms.
+
+\textbf{The labels are the classifications produced by that convolutional
+model}, not physical ground truth and not the volunteer-combined label of the
+separate citizen-science release. Accuracy reported in this thesis is agreement
+with that reference classifier, which is standard practice on this release and
+is stated here so the figures are read correctly.
+
+\subsection{Class selection}
+
+Four classes were retained --- \textbf{Blip}, \textbf{Extremely\_Loud},
+\textbf{Scattered\_Light}, \textbf{Violin\_Mode} --- on three criteria
+established before any separability analysis, so that the multivariate checks
+are a verification rather than the selection rule.
+
+\emph{Abundance.} These are among the most populated of the 24 classes, with
+$29\,573$, $24\,002$, $99\,665$ and $2\,392$ members respectively. The smallest
+sets the balanced cardinality at $2\,392$ per class, sufficient to train without
+augmentation.
+
+\emph{Morphological diversity.} The four span physically distinct families of
+instrumental noise~\cite{zevin2017, glanzer2023, bahaadini2018}: short broadband
+transients of teardrop morphology and $\sim$0.04\,s duration (Blip);
+high-amplitude events that saturate the spectrogram (Extremely\_Loud);
+long-duration arches of 2--2.5\,s correlated with ground motion, caused in O3 by
+relative motion between the optical suspension and reaction-mass chains
+(Scattered\_Light); and narrowband lines at $\sim$500\,Hz and harmonics,
+corresponding to resonances of the glass fibres suspending the mirrors
+(Violin\_Mode). Spanning the morphological range is what makes the explanation
+analysis informative, since each class should elicit a recognizably different
+attention pattern.
+
+\emph{Practical constraint.} Four classes keep training and the downstream
+quantization grid feasible on a single 6\,GB consumer GPU.
+
+Verification in the tabular domain shows each class isolated by a \emph{different}
+descriptor, which is the relevant property: Extremely\_Loud occupies
+$\log(\text{SNR}+1)$ between 6 and 12 while the others lie between 2 and 5; Blip
+is separated by duration; Scattered\_Light sits below roughly 100\,Hz in peak
+frequency with a bimodal bandwidth distribution; and Violin\_Mode is the only
+class extending to 2\,kHz. A UMAP projection~\cite{mcinnes2018umap} of the
+standardized descriptors confirms the separation independently.
+
+Violin\_Mode is the weakest case, and this is stated because it anticipates a
+result that recurs throughout: in the $\log(\text{SNR}+1)$ versus
+$\log(\text{duration}+1)$ plane it overlaps both Blip and Scattered\_Light, being
+separated only in peak frequency. It is the lowest-recall class at every
+configuration tested and the most sensitive class in every explainability
+measurement.
+
+Restricting the problem to four classes keeps it tractable, but means the results
+are not directly comparable to the full Gravity Spy benchmark.
+
+\subsection{Feature selection}
+
+Of the twelve numerical Omicron descriptors, four were retained on three distinct
+criteria.
+
+\emph{Exact redundancy.} The three timestamp variables are mutually correlated at
+$r = 1.00$, being the same GPS time to within sub-second offsets. Beyond the
+redundancy, retaining any of them would supply \emph{when} a glitch occurred
+rather than \emph{what} it is, and the correlation matrix shows this is an
+exploitable shortcut: event time correlates at $-0.45$ with the quality factor
+and $-0.22$ with peak frequency, reflecting instrumental drift across observing
+runs. Separately, central frequency and bandwidth correlate at $0.98$; bandwidth
+was retained because peak frequency already encodes spectral position, so
+bandwidth supplies extent rather than duplicating location.
+
+\emph{Degenerate distributions.} The nanosecond remainders are uniformly
+distributed and correlate with everything between $0.00$ and $0.11$, consistent
+with timing quantization noise. The quality factor contains a sentinel value of
+order $10^{20}$ that compresses the real distribution to the axis origin.
+
+\emph{Normalized counterpart preferred.} Amplitude is a raw strain amplitude,
+heavily skewed and dependent on the calibration and noise level at the time of
+the trigger; SNR carries the same information normalized to the local noise floor
+and is therefore comparable across detectors and epochs.
+
+The four retained descriptors --- peak frequency, duration, bandwidth, SNR ---
+form a complete and non-redundant characterization of a transient in the
+time--frequency plane: spectral position, temporal extent, spectral extent and
+prominence. Their largest pairwise correlation is $0.39$, well below the $0.98$
+that forced the exclusion of central frequency.
+
+Only one of the four image URL columns was kept. The four correspond to
+successive time windows of the same detection (0.5\,s, 1\,s, 2\,s, 4\,s), and the
+first was retained. Because they are \emph{different views} rather than
+duplicates, they are not interchangeable, which is why unavailable images were
+excluded rather than substituted from another column.
+
+Residual class imbalance is removed by random undersampling to the cardinality of
+the smallest class, giving an exactly balanced set of $9\,568$ images.
+
+\subsection{Preprocessing and partition}
+
+The downloaded spectrograms are matplotlib figures comprising a frame with axes,
+colour bar and annotation. A centre crop of $470 \times 550$ pixels isolates the
+spectrogram panel, which is then resized to the working resolution; the order
+matters, since cropping the original and resizing afterwards keeps the same
+portion of the spectrogram framed at every resolution. Channel-wise
+normalization uses the standard ImageNet statistics, which also fixes the neutral
+reference value used later by the deletion metric.
+
+\textbf{The partition is frozen to disk.} A dedicated script generates the
+train/validation/test assignment once, 70\,/\,15\,/\,15 under a fixed seed, and
+writes it as a per-file record of path, class and split; every subsequent run
+reads that file. A file listed but absent from disk is dropped from its partition
+with a warning; a file present but unlisted raises, since an unassigned sample
+would otherwise be used without anyone knowing where it belongs.
+
+Freezing the partition rather than recomputing it gives two properties a seed
+alone does not. Because the assignment is a function of the file list rather than
+of the corpus size, removing a file removes exactly that file instead of
+reshuffling every remaining assignment. And the audit trail is externally
+verifiable: a reader can confirm that no file appears in two partitions, and the
+manifest records the SHA-256 digest of the assignment file.
+
+Four downloaded files proved unreadable. Two were recovered by re-downloading;
+two are permanently unavailable at source (0.02\,\% of the corpus) and were
+excluded. \textbf{Both belong to the training partition}, so the validation and
+test sets are complete and identical to those on which the hyperparameters were
+selected, which is why the search did not need to be repeated.
+
+The final corpus is \textbf{9\,566 images, partitioned $6\,695 / 1\,435 /
+1\,436$}. Beyond class balance, the three partitions are indistinguishable on the
+physical properties of the events: median SNR is $14.97 / 14.09 / 14.98$, with
+duration, peak frequency and bandwidth similarly matched.
+
+\section{Model}
+
+\subsection{Architecture}
+
+\texttt{GWGlitchSNN} is a four-block convolutional spiking network. Each block is
+a $5 \times 5$ convolution with stride 2 and padding 2 followed by a LIF layer;
+spatial downsampling is performed by the stride rather than by pooling, which
+keeps the spike tensors dense in time and avoids inserting a non-spiking operator
+between layers.
+
+\begin{table}[htbp]
+\centering
+\begin{tabular}{llll}
+\toprule
+Stage & Operation & Output shape & Notes \\
+\midrule
+Input & direct encoding $\times T$ & $[T, B, 3, 112, 112]$ & analog frame repeated \\
+Block 1 & Conv $3\to16$, k5, s2, p2 + LIF & $[B, 16, 56, 56]$ & exposed as \texttt{spike1} \\
+Block 2 & Conv $16\to32$, k5, s2, p2 + LIF & $[B, 32, 28, 28]$ & exposed as \texttt{spike2} \\
+Block 3 & Conv $32\to64$, k5, s2, p2 + LIF & $[B, 64, 14, 14]$ & exposed as \texttt{spike3} \\
+Block 4 & Conv $64\to128$, k5, s2, p2 + LIF & $[B, 128, 7, 7]$ & exposed as \texttt{spike4} \\
+Readout & Flatten (6\,272) $\to$ Linear $\to$ LIF & $[B, 4]$ & one neuron per class \\
+\bottomrule
+\end{tabular}
+\caption{Layer configuration at the working resolution of 112\,px. The flattened
+width is derived from the input size at construction ($25\,088$ at 224\,px,
+$6\,272$ at 112\,px, $2\,048$ at 64\,px), and the forward pass raises if the
+input resolution does not match the one the model was built for.}
+\label{tab:architecture}
+\end{table}
+
+The forward pass returns the stacked output spike train \emph{and} the four
+hidden spike tensors of shape $[T, B, C, H, W]$, so that every diagnostic and
+explainability procedure consumes raw hidden spike trains directly from the model
+interface rather than through hooks.
+
+Parameter count is nearly resolution-independent: $295\,332$ at 112\,px, of which
+$270\,240$ are convolutional and unaffected by input size. Only the linear
+readout shrinks with resolution, a fact with consequences for the design of the
+quantization grid discussed in Section~\ref{sec:grid}.
+
+Batch normalization, pooling and dropout are intentionally absent. Normalization
+layers interact non-trivially with quantization, and their treatment belongs to a
+later phase: batch normalization must be reconsidered for spiking networks in
+general, quantizing its parameters is a problem distinct from quantizing weights
+and potentials, and two alternative hardware strategies exist --- approximating
+it with shifts, or eliminating it entirely.
+
+\subsection{Readout and loss}
+
+Classification uses a \emph{rate-coded readout}: output spikes are summed over
+the $T$ time steps and the resulting per-class counts are passed to a
+cross-entropy loss as logits. Optimization uses Adam~\cite{kingma2015adam}. This
+keeps SAM in the multi-spike regime where its inter-spike-interval formulation
+remains meaningful.
+
+\section{Selecting the operating configuration}
+
+Three choices define the operating point: the input resolution, the three
+hyperparameters, and the decay constant of the explainer. Each is settled on
+evidence and recorded in a single frozen manifest. Taking any of them on test-set
+performance would consume the split reserved for the final estimate, so all three
+are decided on validation.
+
+\subsection{Input resolution}
+
+Nine training runs were performed: three resolutions (224, 112, 64\,px) at three
+seeds each, on the frozen partition, with hyperparameters held fixed and only the
+input size varying. Since those hyperparameters had been found at 224\,px, the
+protocol systematically handicaps the lower resolutions, and any deficit they
+show is an upper bound.
+
+The procedure and its outcome are reported in Section~\ref{sec:resolution}.
+
+\subsection{Hyperparameter search under deployment constraints}
+
+The search uses Optuna~\cite{akiba2019optuna} with a Hyperband
+pruner~\cite{li2018hyperband}, maximizing validation accuracy over three
+hyperparameters chosen because they govern three distinct axes: learning rate
+(optimization stability), $\beta$ (membrane leak and temporal memory), and $T$
+(latency, computation and memory cost).
+
+\textbf{Two deployment constraints are imposed inside the search space rather
+than by rounding the result.} $\beta$ is restricted to
+$\{0.25, 0.5, 0.75, 0.875\}$, values whose decay is realizable as a bit shift,
+and the set spans both families ($\beta = 2^{-k}$ and $\beta = 1 - 2^{-k}$)
+deliberately. $T$ is capped at 8 for the same reason. A rounded value is one that
+was never validated; constraining the search guarantees that whatever it returns
+is deployable by construction, and Section~\ref{sec:hyperparameters} shows that
+in this case the two differ.
+
+\section{The Spike Activation Map}
+\label{sec:sam-method}
+
+SAM is implemented in two stages, following the original
+formulation~\cite{kim2021sam}. The temporal spike contribution score weights a
+past spike at $t'$ by its recency with respect to the current step $t$:
+\begin{equation}
+T(t, t') = \exp\left(-\gamma\,|t - t'|\right).
+\end{equation}
+The neuronal contribution score of a neuron at time $t$ sums that weight over the
+neuron's preceding spikes, so a unit that has recently fired repeatedly --- one
+with short inter-spike intervals --- receives a high score:
+\begin{equation}
+N^{k}_{ij,t} = \sum_{t' \in P^{k}_{ij},\; t' < t} T(t, t') .
+\label{eq:ncs}
+\end{equation}
+The heat map at time $t$ masks that score with the spikes actually emitted at $t$
+and sums over the channel axis, yielding one spatial map per time step:
+\begin{equation}
+M_{ij,t} = \sum_{k} N^{k}_{ij,t}\, S^{k}_{ij,t} .
+\end{equation}
+
+\paragraph{The summation range is exclusive of $t$.} This is stated explicitly
+because an earlier implementation in this work summed over $t' \leq t$, and the
+error is instructive. The score measures the contribution of a neuron's
+\emph{preceding} trajectory; including $t' = t$ adds a term of weight
+$\exp(0) = 1$ for every neuron firing at $t$, so the map produced is the correct
+SAM \emph{plus the raw binary spike map}. The pedestal is independent of both
+$\gamma$ and the spike history, and therefore inflates every correlation between
+maps computed at different $\gamma$. A consequence of the correct definition is
+that SAM at $t = 0$ is identically zero, no past history existing at the first
+step.
+
+The implementation uses the recursion
+\begin{equation}
+N_{t+1} = e^{-\gamma}\left(N_{t} + S_{t}\right), \qquad N_0 = 0,
+\end{equation}
+algebraically identical to Equation~\ref{eq:ncs} but $O(T)$ rather than
+$O(T^2)$. A reference implementation computing the explicit sum is retained and
+the two are asserted equal at run time.
+
+Visualizations overlay every time step on the denormalized input under a
+\emph{shared colour scale}, so that a change in intensity across time is genuine
+and not an artefact of per-panel rescaling.

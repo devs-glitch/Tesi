@@ -1,0 +1,44 @@
+\chapter*{Abstract}
+\addcontentsline{toc}{chapter}{Abstract}
+
+Quantization reduces the numerical precision of a neural network to make it
+deployable under tight energy and memory budgets. A recent study on
+convolutional networks showed that accuracy is not a sufficient criterion for
+this operation: some architectures retain their accuracy at reduced precision
+while the explanations of their decisions degrade substantially. This thesis
+asks the spiking analogue of that question, and finds that it cannot be
+answered until a prior one is settled.
+
+Spiking neural networks carry a membrane potential, a state variable that is
+quantized independently of the weights, and their explanations are sequences of
+maps rather than single images. Measuring whether a quantized spiking network
+reasons like its full-precision parent therefore requires metrics that resolve
+both space and time. Before any such measurement can be interpreted, however,
+one must know what those metrics report when nothing has changed.
+
+This work builds and calibrates that instrument. A four-block convolutional
+spiking network is trained on four classes of transient noise from the LIGO
+Gravity Spy release, reaching $0.9833 \pm 0.0014$ validation accuracy over three
+seeds under constraints that keep the configuration hardware-realizable. The
+Spike Activation Map is implemented, its free parameter is fixed on the temporal
+axis it governs, and its faithfulness is tested against a random baseline. Three
+calibration levels are then established for the divergence metrics: the
+divergence produced by numerical noise, by a thirtyfold change in the explainer
+itself, and by initialization alone.
+
+The central finding is that the third level is far larger than expected. Two
+full-precision models differing only in random seed, and agreeing to within one
+validation sample in accuracy, produce Spike Activation Maps whose Pearson
+correlation falls to $0.153$ on the worst class, against a numerical floor of
+$0.975$. Spatial explanation-similarity metrics therefore cannot distinguish a
+quantization effect from initialization variance in this architecture, while the
+temporal centre of mass of the spike energy survives the same comparison. Since
+the literature reports values around $0.85$ as evidence of preserved
+explanations without establishing either floor, such values fall between the two
+and are not interpretable on their own.
+
+The calibration is inexpensive, requiring no training runs beyond the multi-seed
+baseline that is good practice regardless, and is proposed as a necessary
+preliminary to any claim about explanation fidelity under compression. The
+quantization grid it was built to support is specified in full and left as the
+immediate continuation of this work.

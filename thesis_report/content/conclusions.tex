@@ -1,0 +1,213 @@
+\chapter{Discussion and Future Work}
+\label{ch:conclusions}
+
+\section{What was established}
+
+This thesis set out to measure whether a quantized spiking neural network
+reasons like its full-precision parent, and found that the measurement could not
+be interpreted until the instrument was calibrated. Building and calibrating that
+instrument is what the work delivers.
+
+A four-block convolutional spiking network classifies four families of transient
+noise in LIGO data at $0.9833 \pm 0.0014$ validation accuracy over three seeds,
+under constraints --- shift-implementable membrane decay, at most eight time
+steps, 112-pixel input --- that keep the configuration deployable by
+construction rather than by subsequent rounding. Each of those constraints was
+shown to cost nothing measurable in accuracy, and the resolution choice was shown
+to improve the health of the deepest layer by 12.7 percentage points of dead
+fraction.
+
+The Spike Activation Map was implemented, its summation range corrected, and its
+free parameter fixed on the temporal axis it governs rather than on
+time-aggregated maps that cannot see it. Its faithfulness was tested
+quantitatively and found to hold on two classes of four.
+
+The central result is the calibration. Three levels were established: the
+divergence produced by weight noise as large as an entire 8-bit quantization step
+(PCC $0.975$), by a thirtyfold change in the explainer (PCC $0.960$), and by
+initialization alone (PCC $0.153$). The third is far larger than expected, and it
+carries three consequences.
+
+\paragraph{Spatial metrics cannot compare independently trained models.} Two
+networks that agree to within one validation sample in accuracy produce
+explanations correlating at $0.153$. The mechanism is representational
+permutation rather than any defect of the metric, and the disagreement is uniform
+across samples rather than driven by outliers.
+
+\paragraph{They can compare a model with its own parent.} Under a perturbation 85
+times smaller than the 2-bit quantization step, PCC remains above $0.975$. The
+two results answer different questions, and the distinction must be made
+explicitly whenever such a number is reported.
+
+\paragraph{Published figures are not interpretable without these floors.} Values
+around $0.85$ are presented in the literature as evidence of preserved
+explanations. For this architecture that value falls between the numerical floor
+and the independent-solutions level, so it cannot be read without knowing which
+comparison produced it. Establishing the floors requires no training runs beyond
+a multi-seed baseline that is good practice regardless.
+
+A fourth observation cuts across all of them: the class sensitivity ordering is
+identical under three unrelated interventions. Explanation sensitivity is a
+property of the class morphology, not of the perturbation applied, and
+Extremely\_Loud --- saturated and spatially extensive --- registers no change
+under any measure tested.
+
+\section{Limitations}
+
+\paragraph{Generalization of the thresholds.} The three calibration levels are
+specific to this architecture, this dataset and this explainer. The
+\emph{mechanism} behind the collapse, representational permutation between
+independently trained networks, is general and well documented; the
+\emph{magnitude} is not, and a different architecture could place the floors
+elsewhere. What generalizes is the claim that the floors must be measured, not
+the values measured here.
+
+\paragraph{Labels are model output.} Accuracy is agreement with the Gravity Spy
+convolutional classifier rather than with physical ground truth. A model that
+reproduced that classifier's systematic errors would score well here. The
+per-class confidences are available and would permit stratifying accuracy by the
+reference classifier's own certainty, which was not done.
+
+\paragraph{The partition is random with respect to time.} If glitches of the same
+class are correlated within observing periods, a random test set overestimates
+generalization to new periods. A block split by observing run would be the more
+conservative validation; the timestamps were dropped during feature selection for
+the reasons given in Section~3.1.3 and would have to be recovered.
+
+\paragraph{$T$ sits at the imposed ceiling.} The search was forbidden from
+exploring more than eight time steps, so it is not known whether it would have
+preferred a longer integration window. An unconstrained search selected seven,
+which bounds the likely cost but does not eliminate the question.
+
+\paragraph{The deletion metric fails on two classes.} The geometric explanation
+offered in Section~5.4.2 --- that deletion-based tests penalize spatially
+extended evidence --- is an interpretation, not a demonstration. An insertion
+curve, which rewards rather than penalizes distributed evidence, would test it
+directly.
+
+\paragraph{The explanation is class-agnostic.} SAM does not use labels, so the
+deletion metric measures faithfulness to the model's \emph{predicted} class. This
+is the correct reading of the metric and matches its original formulation, but it
+means misclassified examples are informative and should be inspected separately
+rather than pooled.
+
+\section{The quantization study}
+\label{sec:grid}
+
+The calibrated instrument exists to support a specific experiment, specified here
+in full.
+
+\subsection{The grid}
+
+Quantization-aware training is implemented by fake-quantization with a
+straight-through estimator~\cite{bengio2013ste}. The critical design choice is to
+\textbf{quantize the two targets separately before quantizing them together},
+which converts a single observation into a causal ablation and is what makes the
+hypothesis of Chapter~\ref{ch:introduction} testable.
+
+\begin{table}[htbp]
+\centering
+\begin{tabular}{llll}
+\toprule
+Arm & Weights & Membrane & Purpose \\
+\midrule
+FP32 reference & 32-bit float & 32-bit float & baseline for every comparison \\
+Weight-only & 8 / 4 / 2 bit & 32-bit float & isolates the synaptic effect \\
+Membrane-only & 32-bit float & 8 / 4 / 2 bit & isolates the state effect \\
+Joint (MINT-style) & 8 / 4 / 2 bit & 8 / 4 / 2 bit & deployable, shared scale \\
+\bottomrule
+\end{tabular}
+\caption{Ten configurations, each at three seeds.}
+\label{tab:grid}
+\end{table}
+
+The two arms have \emph{opposite} sensitivities to the resolution choice, which
+independently justifies treating them as separate ablations. Because $270\,240$
+of the parameters are convolutional and therefore resolution-independent, the
+weight arm achieves nearly the same absolute memory reduction at any resolution,
+whereas the membrane state falls twelvefold between 224 and 64 pixels.
+
+\subsection{Divergence metrics and what they can claim}
+
+For every configuration, SAM maps are recomputed and compared against the
+reference at the same seed, using: spatial Pearson correlation, top-20\,\%
+intersection-over-union, structural similarity~\cite{wang2004ssim}, the
+per-timestep correlation curve, the temporal centre of mass, cross-faithfulness,
+and the Earth Mover's Distance between firing-rate distributions for
+comparability with~\cite{smith2026}.
+
+Three constraints follow directly from Chapter~\ref{ch:results} and must be
+applied when those numbers are read.
+
+Results below the numerical floor of Table~\ref{tab:calibration} are measurement
+noise. IoU saturates early and is to be treated as a sensitive early indicator
+rather than a graded measure. And \textbf{cross-faithfulness will be
+interpretable on Blip and Extremely\_Loud only}, since the deletion metric does
+not separate SAM from a random baseline on the other two classes, leaving no
+baseline signal for a quantized model to degrade.
+
+\subsection{Stratified reporting}
+
+An aggregate divergence per configuration admits only a yes-or-no answer. Joining
+the per-sample outputs to the physical descriptors allows the central result to be
+reported as a relation instead.
+
+The hypothesis is that divergence increases as event strength decreases, with a
+mechanism specific to spiking networks: quantizing the membrane potential flips a
+neuron's spike decision only where the potential lies within the quantization
+error of the threshold, and weak events produce potentials that sit close to
+threshold rather than overshooting it. Because a flipped spike is a discrete
+event that propagates both to the next layer and forward in time through the
+decay and reset, and because SAM is constructed from spike trains, the flip
+changes the object the explanation is made of rather than merely perturbing it.
+
+The prediction discriminates between arms: membrane quantization applies a fixed
+absolute error and should show a steep dependence on event strength, whereas
+weight quantization perturbs the input current approximately in proportion to the
+signal and should be flatter.
+
+Two preconditions were verified. SNR does translate into image intensity, the
+Gravity Spy colour scale being fixed rather than auto-scaled per image. And SNR
+is very nearly a proxy for class --- the top global SNR quartile is 92.8\,\%
+Extremely\_Loud --- so stratification must use \textbf{within-class quantiles},
+or any trend measured would be a class effect wearing a strength label.
+
+\subsection{Energy accounting}
+
+Synaptic operations are counted as
+\begin{equation}
+\mathrm{SOP}_{\ell} = f_{\ell-1} \cdot T \cdot \mathrm{MAC}_{\ell},
+\end{equation}
+where $f_{\ell-1}$ is the firing rate of the preceding layer and
+$\mathrm{MAC}_{\ell}$ the multiply-accumulate count of the equivalent dense
+layer, and multiplied by the per-operation costs of~\cite{horowitz2014}. The
+rates must be the per-hidden-layer figures measured on the converged checkpoint.
+
+\textbf{One layer is asymmetric and dominates the budget.} Under direct encoding
+the first convolution receives analog pixel values rather than spikes, so its
+operations are expensive multiply-accumulates. Because the input is identical at
+every time step, the current it produces is constant in time and is computed once
+rather than $T$ times. This is a standard implementation of constant encoding,
+but stating it explicitly matters: recomputing that layer at every step would
+make the spiking network \emph{more} expensive than its convolutional
+equivalent, and the two readings differ by a factor of $2.9$.
+
+The headline figure then plots accuracy, explanation fidelity and energy on a
+shared bit-width axis. The three curves falling together would be unremarkable.
+The result to look for is a \textbf{divergence}: an operating point where
+accuracy is still intact and energy already much reduced, but the explanation has
+quietly stopped describing the same reasoning. Anyone selecting a configuration
+on accuracy alone would choose that point and deploy a model that decides
+correctly for different reasons. Should the curves instead move together, that
+too is reportable: it would establish that for this architecture accuracy is an
+adequate proxy for explanation fidelity under compression, which is the
+assumption the literature currently makes without testing.
+
+\section{Closing remark}
+
+The question this thesis asked has not been answered. What it established instead
+is the condition under which the answer will mean something --- and, along the
+way, that a class of published results in this area rests on a measurement whose
+noise floor was never checked. For a field in which compressed models are
+increasingly deployed where their explanations are acted upon, that seems worth
+knowing before the next number is reported.

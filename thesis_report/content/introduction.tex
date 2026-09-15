@@ -1,0 +1,144 @@
+\chapter{Introduction}
+\label{ch:introduction}
+
+\section{Motivation}
+
+Deploying a neural network outside a data centre means making it smaller. The
+standard tool is quantization: representing weights and activations with fewer
+bits, trading numerical precision for memory and energy. The operation is
+routinely validated by checking that accuracy does not fall, and for many
+applications that is a sufficient test.
+
+It is not sufficient when the model is used to explain something. Rabbi et
+al.~\cite{rabbi2026} evaluated five convolutional architectures at INT8 and
+INT4, comparing the attribution maps of the quantized models against their
+full-precision counterparts. They found that explanation similarity degrades
+measurably between INT8 and INT4 even where accuracy differences are negligible,
+and that when quantization does cause a misclassification, the quantized model
+is generally attending to \emph{different} regions of the input rather than
+weighing the same evidence differently. Accuracy and interpretability, in other
+words, do not degrade together.
+
+That finding is confined to conventional artificial neural networks. Spiking
+neural networks, the architecture most closely associated with low-power
+deployment, differ from them in ways that make the question both harder and more
+interesting.
+
+\section{Research question}
+
+The question this thesis addresses is:
+
+\begin{quote}
+\emph{Does a quantized spiking neural network under edge-realistic constraints
+base its decisions on the same evidence as its full-precision counterpart, and
+at what energy cost?}
+\end{quote}
+
+Three properties of spiking networks have no counterpart in the convolutional
+setting, and each one bears on the question.
+
+\paragraph{A second quantization target.} A spiking neuron carries a membrane
+potential: a state variable read and written at every time step, and the
+dominant memory cost at deployment. It is quantized independently of the
+weights~\cite{yin2024mint}, whereas a conventional network offers only weights
+and activations. The two targets can therefore be separated, which converts a
+single observation into a causal ablation.
+
+\paragraph{A temporal axis in the explanation.} A spiking explanation is a
+\emph{sequence} of maps, one per time step. Quantization may preserve where a
+network looks while displacing when it decides, a change to which spatial
+metrics are blind by construction.
+
+\paragraph{A native explainer.} The Spike Activation
+Map~\cite{kim2021sam} reads spike activity directly. It requires neither
+gradients, side-stepping the approximation error a surrogate gradient injects
+into any transplanted Grad-CAM-style method~\cite{selvaraju2017gradcam}, nor
+ground-truth labels.
+
+The working hypothesis follows from the first two properties: \textbf{quantizing
+the membrane potential degrades the temporal structure of the explanation before
+quantizing the weights degrades its spatial structure}, since the membrane
+potential is the variable that integrates evidence over time. The hypothesis is
+falsifiable, and testing it requires quantizing the two targets separately.
+
+\section{What this thesis establishes}
+
+Answering the research question requires an instrument, and building the
+instrument turned out to be the substantive part of the work. The metrics used
+to compare explanations return numbers between zero and one whatever is fed to
+them; before a quantization result can be read, one must know what they report
+when nothing has changed.
+
+This thesis therefore contributes the following.
+
+\begin{enumerate}
+  \item \textbf{A hardware-realizable full-precision baseline}, with every
+        design choice settled on evidence and recorded in a frozen manifest: the
+        input resolution chosen on network health rather than accuracy, the
+        membrane decay restricted to shift-implementable values inside the
+        hyperparameter search rather than rounded afterwards, and a three-seed
+        reference at $0.9833 \pm 0.0014$ validation accuracy.
+
+  \item \textbf{A corrected and re-derived implementation of the Spike
+        Activation Map}, with its decay parameter fixed on the temporal axis it
+        actually governs, and its faithfulness tested quantitatively against a
+        random baseline rather than judged by visual plausibility.
+
+  \item \textbf{A calibration of the explanation-divergence metrics} at three
+        levels: numerical noise, a thirtyfold change in the explainer, and
+        initialization variance. This establishes what those metrics can and
+        cannot detect, and it is the contribution with the widest scope, since
+        neither of the two closest works~\cite{rabbi2026, smith2026} establishes
+        any of the three.
+
+  \item \textbf{A complete specification of the quantization study} the
+        calibration was built to support, together with the limits the
+        calibration imposes on what that study will be able to claim.
+\end{enumerate}
+
+The central result is negative in form and useful in consequence. Two
+full-precision models differing only in random seed, and indistinguishable in
+accuracy, produce Spike Activation Maps correlating at $0.153$ on the worst
+class. Spatial explanation-similarity metrics cannot separate a quantization
+effect from initialization variance in this architecture. The temporal centre of
+mass, being an aggregate over the whole map rather than a pixel-wise comparison,
+survives the same test and becomes the primary instrument.
+
+\section{Application domain}
+
+The classification task is the identification of transient noise --- known as
+\emph{glitches} --- in the data of the LIGO gravitational-wave detectors, using
+the Gravity Spy release~\cite{zevin2017, glanzer2023, glanzer2021}.
+
+The domain was chosen for three reasons. Explanation fidelity has an
+\emph{operational} consequence there: glitch classification guides detector
+characterization, where a commissioner acts physically on the instrument, so a
+compressed model reaching the same label from different evidence would preserve
+the label while corrupting the diagnostic cue. The classes have physically
+interpretable morphology, so a domain expert can judge whether an attention map
+falls where the glitch actually is, which is not true of a generic image
+benchmark. And the data is public, large and labelled.
+
+\section{Scope}
+
+This work characterizes explanation fidelity under \emph{simulated}
+quantization, with analytical energy and memory accounting. Hardware deployment
+is explicitly out of scope: no model is exported to a neuromorphic device and no
+latency is measured on one.
+
+Every design decision in this thesis is taken on the validation partition. The
+test partition is opened once, for the final estimate reported in
+Section~\ref{sec:test}.
+
+\section{Structure}
+
+Chapter~\ref{ch:background} reviews spiking neural networks, their training by
+surrogate gradients, quantization for spiking architectures, explainability
+methods applicable to them, and the gravitational-wave classification task.
+Chapter~\ref{ch:methodology} describes the data pipeline, the model, the
+selection of the operating configuration and the implementation of the Spike
+Activation Map. Chapter~\ref{ch:results} reports the full-precision reference,
+the physical validation of the network dynamics, the explainability analyses and
+the calibration of the divergence metrics. Chapter~\ref{ch:conclusions}
+discusses the limits of these results and specifies the quantization study that
+follows.
