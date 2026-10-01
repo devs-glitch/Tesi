@@ -28,6 +28,7 @@ network, which makes it the dominant memory cost at deployment and a
 quantization target in its own right.
 
 \subsection{Training by surrogate gradients}
+\label{sec:surrogate}
 
 The spike-generating function in Equation~\ref{eq:lif} is a Heaviside step, whose
 derivative is zero almost everywhere and undefined at threshold. Backpropagation
@@ -72,7 +73,17 @@ symmetric uniform quantizer over $[-w_{\max}, +w_{\max}]$ the step is
 \end{equation}
 and the maximum rounding error is $\Delta/2$. Equation~\ref{eq:step} is used in
 Section~\ref{sec:perturbation} to express a perturbation in units the
-quantization itself defines.
+quantization itself defines. When the quantized quantity is known to be
+non-negative, an \emph{unsigned} grid over $[0, x_{\max}]$ with step
+$x_{\max}/(2^b - 1)$ spends no levels on values that never occur; this is the
+scheme adopted for the membrane potential in Chapter~\ref{ch:quantization}.
+
+The scale can be shared by a whole tensor (\emph{per-tensor}) or computed
+separately for each output channel (\emph{per-channel}). A per-tensor scale is
+set by the largest weight in the tensor, so channels whose weights are
+systematically smaller use only a fraction of the available levels; the
+per-channel scheme avoids this at the cost of one scale factor per
+channel~\cite{jacob2018quantization}.
 
 Two families of technique exist. \emph{Post-training quantization} rounds the
 weights of a trained model, and is what Rabbi et al.~\cite{rabbi2026} apply.
@@ -80,7 +91,7 @@ weights of a trained model, and is what Rabbi et al.~\cite{rabbi2026} apply.
 fake-quantization, and propagates gradients through the non-differentiable
 rounding operation with a straight-through estimator~\cite{bengio2013ste} ---
 the same device, in a different guise, as the surrogate gradient of
-Section~2.1.1.
+Section~\ref{sec:surrogate}.
 
 \subsection{Quantization for spiking networks}
 
@@ -112,6 +123,14 @@ multiply-accumulate costs $4.6$\,pJ against $0.9$\,pJ for a plain accumulate.
 That factor of five is the physical reason a spiking network can be cheaper,
 since a binary activation removes the multiplication, and the accumulation is
 performed only where a spike occurred.
+
+The same table supplies the integer figures used for quantized operating points:
+an 8-bit integer multiplication costs $0.2$\,pJ and an 8-bit addition $0.03$\,pJ.
+Narrower integer operations are not tabulated, so any figure below eight bits is
+an extrapolation and must be declared as such. Memory is accounted separately as
+the bits needed to store the weights plus the bits needed to store the membrane
+state of every neuron, which for a spiking network is a cost that a
+convolutional network of the same shape does not pay.
 
 \section{Explainability for spiking networks}
 \label{sec:sam-background}
@@ -197,7 +216,7 @@ firing statistics} aggregated over a dataset, not in explanations.
 
 The unoccupied ground is per-sample, spatially and temporally resolved
 explanation fidelity for a spiking classifier with the two quantization targets
-separated. That is the study this thesis specifies.
+separated. That is the study this thesis performs.
 
 Neither work, however, establishes what its metrics report when nothing has
 changed. Rabbi et al. present similarity values around $0.85$ as evidence of

@@ -172,19 +172,33 @@ the mean firing rate of layer 1 varies by a factor of $2.6$ across seeds, and th
 coefficient of variation falls monotonically with depth: $46.9$\,\% at layer 1,
 $28.6$\,\% at layer 2, $15.3$\,\% at layer 3, $9.5$\,\% at layer 4. The regime is
 established within the first epoch and persists, indicating that initialization
-selects the firing regime and training does not subsequently equalize it. This is
-the observation that motivates Section~\ref{sec:calibration}.
+selects the firing regime and training does not subsequently equalize it. A
+measurement taken during the resolution study puts the effect in the units of
+the closest work: the Wasserstein-1 distance between the per-layer firing-rate
+profiles of two full-precision models differing only in seed is $0.039$, inside
+the range of Earth Mover's Distances that Smith et al.~\cite{smith2026} report
+\emph{between full-precision and quantized} models. This is the observation that
+motivates Section~\ref{sec:calibration}.
 
 \section{Physical validation of the dynamics}
+\label{sec:physical}
 
 At the adopted configuration the confusion matrix diagonal reads
 $0.99 / 0.99 / 0.98 / 0.97$, consistent with Table~\ref{tab:fp32}; the only
 non-negligible errors are on Violin\_Mode, the class that in the tabular domain
-partially overlaps both Blip and Scattered\_Light.
+partially overlaps both Blip and Scattered\_Light (Figure~\ref{fig:confusion}).
+
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=0.6\linewidth]{confusion_matrix.png}
+\caption{Confusion matrix of the reference checkpoint (seed 1234) on validation,
+normalized per true class.}
+\label{fig:confusion}
+\end{figure}
 
 The dead fraction is $16.1 / 12.6 / 11.3 / 22.8$\,\% across the four layers, and
 \textbf{no neuron in any layer exceeds the saturation threshold}, a consequence
-of $\beta = 0.75$. These figures reproduce those of Section~\ref{sec:resolution}
+of $\beta = 0.75$ (Figure~\ref{fig:firing}). These figures reproduce those of Section~\ref{sec:resolution}
 exactly for the same seed, computed through an independent code path, which is a
 free verification of both.
 
@@ -194,6 +208,14 @@ in the deeper layers. A high-activity subpopulation therefore exists in the firs
 layer only, which may be related to its being the layer with the largest
 coefficient of variation across seeds.
 
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=\linewidth]{firing_rate_distributions.png}
+\caption{Distribution of per-neuron firing rates in the four hidden layers, on
+validation, with the dead ($0.01$) and saturation ($0.80$) thresholds.}
+\label{fig:firing}
+\end{figure}
+
 The coefficient of variation of inter-spike intervals concentrates between $0.35$
 and $0.45$ in all four layers. Firing is regular rather than Poisson-like, which
 is the expected outcome under constant direct encoding: since the input does not
@@ -202,11 +224,92 @@ dynamics and by interaction between layers. This is evidence about internal
 dynamics, not a claim of biological realism. With $T = 8$ a neuron can produce at
 most seven intervals, so the five-interval threshold used for the estimate is
 close to the ceiling, which is why the accumulation runs over the whole partition
-rather than a single image.
+rather than a single image. Between 184 and 196 of the 200 sampled neurons per
+layer met the threshold (Figure~\ref{fig:cvisi}).
+
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=\linewidth]{cv_isi_distributions.png}
+\caption{CV of inter-spike intervals for 200 sampled neurons per layer,
+accumulated over the validation partition.}
+\label{fig:cvisi}
+\end{figure}
+
+\section{What the explanations show}
+\label{sec:sam-results}
+
+Figure~\ref{fig:sam-steps} shows the SAM sequence of a single Blip at the
+reference layer. The map is zero at $t = 0$ by definition and builds up over
+the first steps as spike histories accumulate; from the third step onward the
+attended region is the vertical stroke of the glitch.
+
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=\linewidth]{sam_visualization.png}
+\caption{SAM at layer 2 for one Blip, one panel per time step, on a shared
+colour scale.}
+\label{fig:sam-steps}
+\end{figure}
+
+The class statistics (Figure~\ref{fig:sam-class}) show four recognizably
+different attention patterns, each matching the morphology of its class. For
+Blip the mean map concentrates on the narrow vertical stroke and so does the
+variability, which is the stroke shifting slightly between instances. For
+Extremely\_Loud the attended region is large and saturated, covering the lower
+and central part of the spectrogram. For Scattered\_Light the attention lies on
+a horizontal band at low frequency. Violin\_Mode produces the weakest and most
+diffuse mean map, with variability concentrated in a few localized spots along
+the line structure; it is also the class with the lowest recall, and the one
+whose explanations prove most sensitive in every test below.
+
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=0.9\linewidth]{sam_class_stats.png}
+\caption{SAM statistics per class at layer 2, 25 validation images per class:
+mean (top), standard deviation (middle) and coefficient of variation (bottom,
+truncated at the 95th percentile). Mean and standard deviation share a colour
+scale across classes.}
+\label{fig:sam-class}
+\end{figure}
+
+Across depth (Figure~\ref{fig:sam-layers}) the progression is the expected one,
+from fine localization in the early layers to coarse localization in the deep
+ones, with maps of side 56, 28, 14 and 7. At layer 4 a $7 \times 7$ map leaves
+only 49 positions, too few for a top-20\,\% overlap or a structural comparison
+to be meaningful, while layer 2 still resolves the morphology of every class.
+
+\todo{Confirm (or replace) this as the reason for choosing layer 2 as the
+reference layer; the progress report records the choice but not its
+justification.}
+
+\begin{figure}[htbp]
+\centering
+\begin{subfigure}{0.49\linewidth}
+  \includegraphics[width=\linewidth]{sam_layer_Blip.png}
+  \caption{Blip}
+\end{subfigure}\hfill
+\begin{subfigure}{0.49\linewidth}
+  \includegraphics[width=\linewidth]{sam_layer_Extremely_Loud.png}
+  \caption{Extremely\_Loud}
+\end{subfigure}
+
+\begin{subfigure}{0.49\linewidth}
+  \includegraphics[width=\linewidth]{sam_layer_Scattered_Light.png}
+  \caption{Scattered\_Light}
+\end{subfigure}\hfill
+\begin{subfigure}{0.49\linewidth}
+  \includegraphics[width=\linewidth]{sam_layer_Violin_Mode.png}
+  \caption{Violin\_Mode}
+\end{subfigure}
+\caption{SAM mean and standard deviation across the four hidden layers, 20
+images per class, normalized by the channel count of each layer.}
+\label{fig:sam-layers}
+\end{figure}
 
 \section{Fixing the explainer}
 
 \subsection{Choice of the decay rate}
+\label{sec:gamma}
 
 SAM has one free parameter, and an explanation that changed qualitatively with an
 arbitrary choice of $\gamma$ would not be trustworthy.
@@ -266,9 +369,19 @@ Within $\gamma \in [0.3, 0.9]$ all per-timestep correlations remain above $0.98$
 even in the worst class; only $\gamma = 3.0$ diverges appreciably.
 \textbf{$\gamma = 0.5$ is adopted}, the value of the original
 formulation~\cite{kim2021sam}, now supported by evidence on the axis $\gamma$
-actually governs.
+actually governs (Figure~\ref{fig:gamma}).
+
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=\linewidth]{gamma_Violin_Mode.png}
+\caption{$\gamma$ sensitivity for Violin\_Mode, the most sensitive class, at
+layer 2. The equivalent figures for the other three classes are in
+Appendix~\ref{app:figures}.}
+\label{fig:gamma}
+\end{figure}
 
 \subsection{Faithfulness}
+\label{sec:faithfulness}
 
 Robustness to $\gamma$ is necessary but not sufficient: a stable explanation can
 be stably wrong. The deletion metric~\cite{petsiuk2018rise} removes pixels in
@@ -300,6 +413,14 @@ Violin\_Mode & 0.4528 & 0.4540 & $-0.0012$ & $-0.3$\,\% & indistinguishable \\
 explanation gives AUC-SAM below AUC-random, so a negative $\Delta$ is expected.}
 \label{tab:deletion}
 \end{table}
+
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=\linewidth]{deletion_metric.png}
+\caption{Deletion curves, SAM order against random order, 15 validation images
+per class.}
+\label{fig:deletion}
+\end{figure}
 
 The metric separates SAM from the baseline on two classes and not on the other
 two, and the split is systematic. Blip and Extremely\_Loud show reductions of
@@ -476,11 +597,273 @@ Explanation sensitivity is therefore a property of the class morphology, and
 every grid result must be reported per class, since a pooled figure would average
 a class that responds strongly with one that does not respond at all.
 
+
+\section{Preparing the membrane arm}
+\label{sec:membrane-prep}
+
+\subsection{The range of the membrane potential}
+
+The membrane potential of every LIF layer was recorded at every time step over
+the full validation partition ($1\,435$ images, eight steps) on the reference
+checkpoint. Table~\ref{tab:membrane-range} summarizes the distributions.
+
+\begin{table}[htbp]
+\centering
+\begin{tabular}{lccccccc}
+\toprule
+Layer & min & $p_{0.1}$ & median & $p_{99.9}$ & max & std & $> U_{\text{thr}}$ \\
+\midrule
+1 & $-12.75$ & $-9.43$  & $-0.08$ & 6.40  & 8.76  & 1.98 & 14.9\,\% \\
+2 & $-15.73$ & $-11.10$ & $0.25$  & 5.63  & 11.64 & 1.42 & 15.1\,\% \\
+3 & $-47.03$ & $-36.82$ & $0.00$  & 11.27 & 20.23 & 4.22 & 15.3\,\% \\
+4 & $-26.04$ & $-17.01$ & $-0.62$ & 6.34  & 14.67 & 2.59 & 11.5\,\% \\
+\bottomrule
+\end{tabular}
+\caption{Membrane potential of the four hidden layers over the validation
+partition, reference checkpoint (seed 1234). The last column is the fraction of
+values above the firing threshold $U_{\text{thr}} = 1$, which equals the mean
+firing rate of the layer.}
+\label{tab:membrane-range}
+\end{table}
+
+The distributions are wide and strongly skewed towards negative values: in
+layer 3 the potential reaches $-47$, almost fifty thresholds below rest. A grid
+covering the full observed range would be dominated by values far from the
+threshold, which is the only point at which a potential affects a spike
+decision. At 4 bits, a symmetric grid over $[-47, +47]$ would have a step of
+more than six thresholds, and the network could not be represented at all.
+
+\subsection{Clipping the potential costs nothing}
+
+Before any quantization, the potential of the four hidden layers was
+\emph{clipped} at every time step to a candidate range, on the full-precision
+network, and the effect on accuracy and dynamics was measured. Clipping isolates
+the choice of range from the choice of bit-width: if a range already changes the
+network in full precision, no grid built on it can be faithful.
+
+\begin{table}[htbp]
+\centering
+\begin{tabular}{lccc}
+\toprule
+Clipping range & Val.\ accuracy & $\Delta$ samples & Layer-4 CoM \\
+\midrule
+none                         & 0.98328 & ---  & 3.9469 \\
+per layer, $[p_{0.1}, p_{99.9}]$ & 0.98328 & 0 & 3.9469 \\
+per layer, $[p_{1}, p_{99}]$     & 0.98328 & 0 & 3.9469 \\
+fixed $[-8, +4]$             & 0.98328 & 0    & 3.9469 \\
+fixed $[-4, +4]$             & 0.98328 & 0    & 3.9469 \\
+fixed $[-2, +2]$             & 0.98258 & $-1$ & 3.9415 \\
+unsigned $[0, +4]$           & 0.98258 & $-1$ & 3.9483 \\
+\textbf{unsigned $[0, +2]$}  & \textbf{0.98258} & $\mathbf{-1}$ & \textbf{3.9431} \\
+control $[-0.5, +0.5]$       & 0.84808 & $-194$ & 4.0684 \\
+\bottomrule
+\end{tabular}
+\caption{Effect of clipping the hidden membrane potentials on the
+full-precision reference (seed 1234), on validation. The tolerance is the spread
+of the three-seed reference, four samples out of $1\,435$. The last column is the
+temporal centre of mass of the layer-4 spike counts.}
+\label{tab:clipping}
+\end{table}
+
+Three observations follow from Table~\ref{tab:clipping}.
+
+\textbf{Negative potentials carry no information the network uses.} Clipping to
+$[0, 2]$ removes every negative value --- in layer 3 a range of 47 thresholds ---
+and costs one validation sample out of $1\,435$, a quarter of the spread between
+seeds. The per-layer dead fractions are unchanged to the first decimal
+(16.1 / 12.5 / 11.3 / 22.5\,\% against 16.1 / 12.6 / 11.3 / 22.8\,\%), and the
+largest shift in the temporal centre of mass of any layer's spike counts is
+$0.004$ steps, well below the $0.029$-step floor measured for the SAM centre of
+mass in Section~\ref{sec:calibration} (the two quantities are related but not
+identical). Below rest, how far below no longer matters: a
+neuron at $-20$ and a neuron at $0$ both need more than one threshold of input
+to fire.
+
+\textbf{The upper bound can be tight.} Potentials above twice the threshold are
+rare and can be clipped at no measurable cost. Since the clipping acts after the
+spike decision, it only alters the carried state of neurons that have just fired
+well above threshold; the spike they emitted at that step is unaffected.
+
+\textbf{The clipping is not inert.} The control range $[-0.5, +0.5]$, which
+keeps the potential permanently below threshold after each step, drops accuracy
+to $0.848$ and raises the layer-3 firing rate from $0.153$ to $0.227$. The hook
+therefore acts on the state the network actually carries, and the null results
+above are genuine.
+
+The unsigned range $[0, 2]$ is adopted: it is the tightest range tested that
+stays within tolerance, it centres the threshold in the grid, and it spends no
+levels on negative values, which saves one bit at every bit-width compared with
+the symmetric $[-2, 2]$ that performs identically.
+
+\section{Energy and memory of the reference}
+\label{sec:energy-fp32}
+
+Table~\ref{tab:energy-fp32} applies the accounting of
+Section~\ref{sec:energy-method} to the full-precision reference, using the
+per-hidden-layer firing rates averaged over the three seeds
+($0.258 / 0.186 / 0.185 / 0.126$).
+
+\begin{table}[htbp]
+\centering
+\begin{tabular}{lrrr}
+\toprule
+Layer & MAC (dense) & Operations & Energy ($\mu$J) \\
+\midrule
+conv1 (analog input, once) & $3.76 \times 10^{6}$ & $3.76 \times 10^{6}$ MAC & 17.31 \\
+conv2 & $10.04 \times 10^{6}$ & $20.72 \times 10^{6}$ SOP & 18.65 \\
+conv3 & $10.04 \times 10^{6}$ & $14.93 \times 10^{6}$ SOP & 13.44 \\
+conv4 & $10.04 \times 10^{6}$ & $14.83 \times 10^{6}$ SOP & 13.34 \\
+linear & $0.03 \times 10^{6}$ & $0.03 \times 10^{6}$ SOP & 0.02 \\
+\midrule
+\textbf{SNN, conv1 once} & & & \textbf{62.8} \\
+SNN, conv1 at every step & & & 183.9 \\
+Equivalent CNN (all MAC) & $33.89 \times 10^{6}$ & & 155.9 \\
+\bottomrule
+\end{tabular}
+\caption{Estimated energy per inference of the FP32 reference at 112\,px,
+$T = 8$, with 45\,nm costs of 4.6\,pJ per MAC and 0.9\,pJ per accumulate.}
+\label{tab:energy-fp32}
+\end{table}
+
+The spiking network costs $62.8\,\mu$J per inference, $2.5$ times less than a
+convolutional network of identical shape. The saving depends entirely on the
+treatment of the first layer: recomputing its constant current at every step
+would cost $183.9\,\mu$J, more than the convolutional equivalent, and the two
+readings differ by a factor of $2.9$. Even computed once, the first convolution
+is $28\,\%$ of the budget, because it is the only layer that multiplies.
+
+The initialization regime of Section~\ref{sec:hyperparameters} reaches the
+energy as well. Computed seed by seed, the estimate is $50.0$, $78.1$ and
+$60.1\,\mu$J for seeds 1234, 2345 and 3456, the difference coming almost
+entirely from the first two layers, where the firing regime varies most. Three
+models indistinguishable in accuracy therefore differ by more than half in
+estimated energy, and every energy comparison in the grid is made at matched
+seed.
+
+In memory, the 295\,332 weights occupy $1\,154$\,KiB in 32-bit float, and the
+membrane state of the $94\,080$ hidden neurons another $368$\,KiB. At 8, 4 and 2
+bits these become $288$, $144$ and $72$\,KiB for the weights and $92$, $46$ and
+$23$\,KiB for the state.
+
+\section{The quantization grid}
+\label{sec:grid-results}
+
+\todo{Everything in this section depends on the grid (schedule: launch 4
+October, GATE 2 on 7 October). The structure, tables and the questions each
+subsection must answer are in place; fill them from
+\texttt{results/grid/}, \texttt{results/divergence.json},
+\texttt{results/cross\_faithfulness.json}, \texttt{results/stratified.json} and
+\texttt{results/energy.json}. Report every table per class and with the
+three-seed spread.}
+
+\subsection{Sanity gate}
+
+The joint 8-bit model of seed \tbd{} reaches \tbd{} validation accuracy against
+\tbd{} for its parent, a difference of \tbd{} samples out of $1\,435$, within
+the four-sample tolerance. \todo{Report the number even if the gate passes
+trivially: it is the check that separates a bug from a result.}
+
+\subsection{Accuracy}
+
+\begin{table}[htbp]
+\centering
+\begin{tabular}{lcccc}
+\toprule
+Arm & 32 bit & 8 bit & 4 bit & 2 bit \\
+\midrule
+Weight-only   & 0.9833 & \tbd & \tbd & \tbd \\
+Membrane-only & 0.9833 & \tbd & \tbd & \tbd \\
+Joint         & 0.9833 & \tbd & \tbd & \tbd \\
+\bottomrule
+\end{tabular}
+\caption{Validation accuracy across the grid, mean over three seeds.}
+\label{tab:grid-accuracy}
+\end{table}
+
+\todo{Add per-class recall (as Table~\ref{tab:fp32}) and the relative $L_2$
+distance of the quantized weights from the parent, per layer. Comment on whether
+2-bit membrane collapses as predicted by Table~\ref{tab:membrane-grid}.}
+
+\subsection{Explanation divergence}
+
+\begin{table}[htbp]
+\centering
+\small
+\begin{tabular}{llcccc}
+\toprule
+Arm, bits & Metric & Blip & Extremely\_Loud & Scattered\_Light & Violin\_Mode \\
+\midrule
+W, 8 & PCC / CoM & \tbd & \tbd & \tbd & \tbd \\
+W, 4 & PCC / CoM & \tbd & \tbd & \tbd & \tbd \\
+W, 2 & PCC / CoM & \tbd & \tbd & \tbd & \tbd \\
+U, 8 & PCC / CoM & \tbd & \tbd & \tbd & \tbd \\
+U, 4 & PCC / CoM & \tbd & \tbd & \tbd & \tbd \\
+U, 2 & PCC / CoM & \tbd & \tbd & \tbd & \tbd \\
+W+U, 8 & PCC / CoM & \tbd & \tbd & \tbd & \tbd \\
+W+U, 4 & PCC / CoM & \tbd & \tbd & \tbd & \tbd \\
+W+U, 2 & PCC / CoM & \tbd & \tbd & \tbd & \tbd \\
+\midrule
+\multicolumn{2}{l}{Numerical floor (Table~\ref{tab:calibration})} & 0.9921 / --- & 0.9997 / --- & 0.9901 / --- & 0.9749 / --- \\
+\bottomrule
+\end{tabular}
+\caption{Spatial PCC and temporal CoM difference against the parent at the same
+seed, layer 2, $\gamma = 0.5$, fifteen validation images per class, mean over
+three seeds. Values beyond the numerical floor are a measured effect.}
+\label{tab:grid-divergence}
+\end{table}
+
+\todo{Fill from \texttt{divergence.json}; add the per-class CoM floors from the
+perturbation experiment in the last row (only the worst-class value, $0.029$, is
+currently in the text), and give IoU and SSIM in an analogous table. Plot the
+per-timestep correlation curves for U-only against W-only at 4 bits.}
+
+\subsection{The hypothesis}
+
+\todo{The single paragraph the thesis is built around. State at which bit-width
+the U-only arm first displaces the CoM beyond $0.029$ steps and at which
+bit-width the W-only arm first lowers PCC below the floor, per class; conclude
+whether the ordering predicted in Chapter~\ref{ch:introduction} holds. If the
+CoM never moves, check first that the temporal metric is not insensitive in
+this regime (Section~\ref{sec:gamma}: the CoM is dominated by near-continuously
+firing neurons).}
+
+\subsection{Faithfulness and behaviour}
+
+\todo{Cross-faithfulness on Blip and Extremely\_Loud (own map vs parent map);
+EMD between firing-rate distributions, compared with the range reported by
+Smith et al.\ and with the seed-to-seed value of $0.039$; dead and saturated
+fractions and CV-ISI per configuration.}
+
+\subsection{Stratification by event strength}
+
+\todo{Divergence per within-class SNR tercile, for each arm. Prediction:
+steep dependence for the membrane arm, flatter for weights. Characterize the
+disagreement subset by its physical descriptors.}
+
+\subsection{Accuracy, fidelity and energy}
+
+\todo{Energy and memory per configuration (extend Table~\ref{tab:energy-fp32}
+with the integer coefficients and the per-layer rates measured on each quantized
+checkpoint), then the concluding figure: accuracy, explanation fidelity and
+energy on a common bit-width axis. Identify, if it exists, the operating point
+where accuracy is intact and energy reduced but the explanation has diverged.}
+
 \section{Test-set evaluation}
 \label{sec:test}
 
-The test partition is opened once, on the frozen configuration, and the result
-reported with a Wilson interval. Accuracy is computed twice by different routes
---- an aggregate over batches and a per-sample classification --- and the two are
-asserted equal, since the per-sample output feeds the stratified analysis
-described in Chapter~\ref{ch:conclusions}.
+\begin{table}[htbp]
+\centering
+\begin{tabular}{lcc}
+\toprule
+Model & Test accuracy & 95\,\% Wilson interval \\
+\midrule
+FP32 reference & \tbd & \tbd \\
+\tbd{} (selected quantized) & \tbd & \tbd \\
+\bottomrule
+\end{tabular}
+\caption{Accuracy on the test partition ($1\,436$ images), opened once.}
+\label{tab:test}
+\end{table}
+
+\todo{Run \texttt{evaluate\_test.py} once, after every design decision
+(schedule: 11 October). Add per-class recall.}

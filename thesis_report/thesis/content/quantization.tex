@@ -1,0 +1,311 @@
+\chapter{The Quantization Study}
+\label{ch:quantization}
+
+This chapter describes how the quantized models are built and how they are
+compared with their full-precision parents. Every design choice below is either
+inherited from the calibration of Section~\ref{sec:calibration} or settled by a
+measurement reported in Section~\ref{sec:membrane-prep}; none is taken on the
+test partition.
+
+\section{Design principle: three separate arms}
+\label{sec:grid}
+
+The critical design choice is to \textbf{quantize the two targets separately
+before quantizing them together}. Quantizing weights and membrane potential at
+once would produce a single observation from which the contribution of each could
+not be recovered; separating them turns the grid into a causal ablation and is
+what makes the hypothesis of Chapter~\ref{ch:introduction} testable.
+
+\begin{table}[htbp]
+\centering
+\resizebox{\linewidth}{!}{%
+\begin{tabular}{llll}
+\toprule
+Arm & Weights & Membrane potential & Purpose \\
+\midrule
+FP32 reference & 32-bit float & 32-bit float & baseline for every comparison \\
+Weight-only (W) & 8 / 4 / 2 bit & 32-bit float & isolates the synaptic (spatial) effect \\
+Membrane-only (U) & 32-bit float & 8 / 4 / 2 bit & isolates the state (temporal) effect \\
+Joint (W+U) & 8 / 4 / 2 bit & 8 / 4 / 2 bit & deployable configuration \\
+\bottomrule
+\end{tabular}}
+\caption{The quantization grid: ten configurations, each at the three seeds of
+the reference.}
+\label{tab:grid}
+\end{table}
+
+Two quantities are deliberately left out of the grid. The membrane decay
+$\beta = 0.75$ is already shift-implementable, having been constrained inside the
+hyperparameter search (Section~\ref{sec:constrained-search}), and is not
+re-quantized, which would be a third, unplanned intervention. The biases are kept
+in full precision: there are 244 of them, under $0.1\,\%$ of the parameters,
+and on integer hardware they are added once to a wide accumulator.
+
+The two arms have \emph{opposite} sensitivities to the resolution choice, which
+independently justifies treating them as separate ablations. Because $270\,240$
+of the $295\,332$ parameters are convolutional and therefore
+resolution-independent, the weight arm achieves nearly the same absolute memory
+reduction at any resolution, whereas the membrane state falls twelvefold between
+224 and 64 pixels.
+
+\section{Quantization-aware training from the parent}
+\label{sec:qat}
+
+Quantization-aware training is implemented by fake quantization: in the forward
+pass each quantized tensor is rounded to its grid and clamped to the grid's
+bounds, and in the backward pass the rounding is replaced by the identity, the
+straight-through estimator~\cite{bengio2013ste}.
+
+\paragraph{Every quantized model is fine-tuned from the full-precision
+checkpoint of the same seed.} This is the constraint that determines the rest of
+the design. The numerical floor of the calibration ($\mathrm{PCC} = 0.975$) holds
+for comparisons between a model and its own parent, where no channel permutation
+exists; a quantized model trained from a random initialization would be an
+independent solution, for which the relevant level is $0.153$ and almost no
+quantization effect would be distinguishable from initialization variance. The
+fine-tuning is therefore short and at reduced learning rate, adapting the parent
+to its grid rather than finding a new solution. The relative $L_2$ distance
+between the quantized weights and those of the parent is reported per layer, as
+a check that each quantized model stayed in its parent's neighbourhood.
+
+\todo{State the fine-tuning schedule actually used (number of epochs, learning
+rate as a fraction of $1.047 \times 10^{-4}$, early-stopping rule) once fixed in
+\texttt{train.py}.}
+
+\paragraph{Execution order and sanity gate.} All 8-bit configurations are run
+first, then 4-bit, then 2-bit. Before the grid is launched, the joint 8-bit model
+of one seed must match its parent to within the spread of the full-precision
+reference, four samples out of $1\,435$. At 8 bits the weight step is of the
+order of the perturbation that left the spatial correlation at $0.975$ in the
+calibration, so an appreciable loss of accuracy at that bit-width would indicate
+a defect of the implementation, not a physical effect.
+
+\paragraph{Fallback.} Should quantization-aware training prove unstable at the
+lowest bit-widths, those configurations are produced by post-training
+quantization of the parent instead, the procedure used by Rabbi et
+al.~\cite{rabbi2026}; the comparison between the two procedures is then itself
+reported.
+
+\section{Weight quantizer}
+\label{sec:weight-quantizer}
+
+Weights are quantized on a \emph{symmetric signed} grid with
+$q_{\max} = 2^{b-1} - 1$ levels on each side of zero, so that zero is exactly
+representable: 255 levels at 8 bits, 15 at 4 bits and 3 at 2 bits (the values
+$-\Delta, 0, +\Delta$, a ternary network). The quantizer is applied to every
+convolutional and linear weight tensor, including the readout.
+
+\textbf{The scale is computed per output channel.} The choice was made on the
+measured weight distributions of the reference checkpoint
+(Table~\ref{tab:weight-ranges}). In the deeper convolutions the largest weight
+of the weakest channel is less than half the largest weight of the whole tensor,
+so a per-tensor scale would leave that channel using fewer than half of the
+levels: about one effective bit lost, which at 2 bits is the difference between
+a ternary channel and a channel quantized entirely to zero.
+
+\begin{table}[htbp]
+\centering
+\begin{tabular}{lcccc}
+\toprule
+Layer & $\max|w|$, tensor & $\max|w|$, weakest channel & Ratio & Bits lost per-tensor \\
+\midrule
+conv1  & 0.144 & 0.115 & 1.25 & 0.33 \\
+conv2  & 0.126 & 0.060 & 2.11 & 1.08 \\
+conv3  & 0.113 & 0.054 & 2.11 & 1.08 \\
+conv4  & 0.099 & 0.044 & 2.26 & 1.18 \\
+linear & 0.214 & 0.146 & 1.46 & 0.55 \\
+\bottomrule
+\end{tabular}
+\caption{Weight ranges of the reference checkpoint (seed 1234). ``Bits lost'' is
+$\log_2$ of the ratio: the resolution that the weakest channel would forgo under
+a single per-tensor scale.}
+\label{tab:weight-ranges}
+\end{table}
+
+The global 8-bit step used in the calibration ($0.00168$, from the largest
+absolute weight of the network, $0.214$) is therefore an upper bound on the
+per-channel steps actually applied.
+
+\section{Membrane quantizer}
+\label{sec:membrane-quantizer}
+
+The membrane potential of the four hidden LIF layers is quantized at every time
+step. The quantizer acts on the potential returned by each layer after the spike
+decision, so the quantized value is the \emph{state} carried into the next step:
+what is stored, and therefore what costs memory, is what is quantized. The
+output layer, four neurons, is left in full precision; its state is negligible in
+memory and quantizing it would act directly on the logits.
+
+A grid for the membrane cannot be designed without knowing the range of the
+quantity, and unlike a weight, the potential has no range until the network is
+run. Its distribution was therefore measured over the whole validation partition
+(Section~\ref{sec:membrane-prep}), and the clipping range was chosen by testing
+candidate ranges on the full-precision network before any quantization.
+
+\textbf{The membrane grid is unsigned over $[0, 2]$}, twice the firing threshold
+$U_{\text{thr}} = 1$. The step is $2/(2^b - 1)$:
+
+\begin{table}[htbp]
+\centering
+\begin{tabular}{cccc}
+\toprule
+Bits & Levels & Step & Step / threshold \\
+\midrule
+8 & 256 & 0.0078 & 0.8\,\% \\
+4 & 16  & 0.1333 & 13.3\,\% \\
+2 & 4   & 0.6667 & 66.7\,\% \\
+\bottomrule
+\end{tabular}
+\caption{The membrane grid at each bit-width. At 2 bits the representable
+potentials are $0$, $2/3$, $4/3$ and $2$: a single level lies strictly between
+rest and threshold.}
+\label{tab:membrane-grid}
+\end{table}
+
+Table~\ref{tab:membrane-grid} contains a quantitative prediction. At 8 bits the
+rounding error is below one percent of the threshold; at 4 bits it is an eighth
+of it; at 2 bits the error is of the same order as the threshold itself, and a
+neuron's state can encode only whether it is at rest, below threshold, or above
+it. This is the mechanism behind the observation of Smith et
+al.~\cite{smith2026} that membrane quantization needs at least four bits, and the
+grid tests it directly.
+
+The unsigned scheme is a consequence of the clipping study rather than an
+assumption: the network turns out to make no use of negative potentials, so a
+signed grid would spend half of its levels on values that carry no information,
+the equivalent of losing one bit at every bit-width.
+
+\section{Joint arm}
+
+The joint arm applies both quantizers at once, with the per-channel weight scales
+of Section~\ref{sec:weight-quantizer} and the fixed membrane grid of
+Section~\ref{sec:membrane-quantizer}, at the same bit-width.
+
+\todo{Decide whether the joint arm keeps independent scales (as currently
+implemented in \texttt{model/quantization.py}) or shares a single scale between
+weights and membrane in the style of MINT~\cite{yin2024mint}, as stated in the
+progress report. If scales stay independent, remove ``MINT-style'' everywhere
+and justify the choice here; if shared, describe how the shared scale is set.}
+
+\section{Reading the results}
+\label{sec:reading}
+
+For every quantized model, SAM maps are recomputed on the same fifteen validation
+images per class and compared with those of \textbf{the full-precision parent of
+the same seed}, using the metrics of Section~\ref{sec:metrics}: spatial PCC,
+top-20\,\% IoU, the temporal centre of mass, and the per-timestep correlation
+curve. Structural similarity~\cite{wang2004ssim} is added for comparability with
+Rabbi et al.; unlike the other metrics it is not scale-invariant, and the maps
+are normalized before it is computed.
+
+Three further measurements characterize behaviour rather than explanations:
+\begin{itemize}
+  \item \textbf{cross-faithfulness}: the deletion metric applied to the quantized
+        model with its \emph{own} map and with the map of its \emph{parent}. The
+        second is the operational question, since in practice one is tempted to
+        explain a deployed model with the maps of the original;
+  \item the \textbf{Earth Mover's Distance} between the per-neuron firing-rate
+        distributions of quantized model and parent, for direct comparison with
+        Smith et al.~\cite{smith2026};
+  \item the \textbf{diagnostics} of Section~\ref{sec:diagnostics} --- dead and
+        saturated fractions, CV-ISI --- since quantization can induce dead or
+        saturated neurons, which is a candidate mechanism for \emph{why} an
+        explanation changes.
+\end{itemize}
+
+Five rules, all established in Chapter~\ref{ch:results} before the grid was
+run, govern how those numbers are read.
+
+\begin{enumerate}
+  \item \textbf{Below the numerical floor is noise.} A divergence smaller than
+        that produced by weight noise of one 8-bit step ($\mathrm{PCC}$ $0.975$,
+        IoU $0.704$, CoM difference $0.029$ steps) is not a result.
+  \item \textbf{IoU is an early indicator, PCC a graded measure.} IoU has a
+        dynamic range of $2.6\times$ its floor and saturates early; PCC has
+        $34\times$.
+  \item \textbf{Everything is reported per class.} The sensitivity ordering
+        Violin\_Mode $>$ Scattered\_Light $>$ Blip $>$ Extremely\_Loud recurs
+        under every intervention tested, so a pooled figure would average a class
+        that responds strongly with one that does not respond at all.
+  \item \textbf{A flat result on Extremely\_Loud is uninformative.} That class
+        did not register any perturbation tested; absence of effect and inability
+        to detect one cannot be told apart.
+  \item \textbf{Cross-faithfulness is interpretable on Blip and Extremely\_Loud
+        only}, the two classes on which the deletion metric separates SAM from a
+        random baseline. On the other two there is no signal for quantization to
+        degrade.
+\end{enumerate}
+
+\paragraph{The test of the hypothesis.} The hypothesis predicts an
+\emph{ordering}: the membrane arm should displace the temporal centre of mass
+beyond its floor at a higher bit-width than the one at which the weight arm
+lowers the spatial correlation beyond its floor. The reverse order refutes it.
+
+\section{Stratified analysis}
+\label{sec:stratified-method}
+
+An aggregate divergence per configuration admits only a yes-or-no answer.
+Joining the per-sample outputs to the physical descriptors allows the result to
+be reported as a relation instead.
+
+The hypothesis is that divergence increases as event strength decreases, with a
+mechanism specific to spiking networks: quantizing the membrane potential flips a
+neuron's spike decision only where the potential lies within the quantization
+error of the threshold, and weak events produce potentials that sit close to
+threshold rather than overshooting it. Because a flipped spike is a discrete
+event that propagates both to the next layer and forward in time through the
+decay and reset, and because SAM is constructed from spike trains, the flip
+changes the object the explanation is made of rather than merely perturbing it.
+
+The prediction discriminates between arms: membrane quantization applies a fixed
+absolute error and should show a steep dependence on event strength, whereas
+weight quantization perturbs the input current approximately in proportion to the
+signal and should be flatter.
+
+Two preconditions were verified. SNR does translate into image intensity, the
+Gravity Spy colour scale being fixed rather than auto-scaled per image. And SNR
+is very nearly a proxy for class --- the top global SNR quartile is 92.8\,\%
+Extremely\_Loud --- so stratification uses \textbf{terciles computed within each
+class}, or any trend measured would be a class effect wearing a strength label.
+
+Finally, the \emph{disagreement subset} --- validation images classified
+correctly by the parent and incorrectly after quantization --- is characterized
+by its physical descriptors, to ask whether quantization fails on a particular
+kind of event.
+
+\section{Energy and memory}
+\label{sec:energy-method}
+
+Synaptic operations are counted per layer as
+\begin{equation}
+\mathrm{SOP}_{\ell} = f_{\ell-1} \cdot T \cdot \mathrm{MAC}_{\ell},
+\end{equation}
+where $f_{\ell-1}$ is the mean firing rate of the preceding hidden layer and
+$\mathrm{MAC}_{\ell}$ the multiply-accumulate count of the equivalent dense
+layer, and multiplied by the per-operation costs of~\cite{horowitz2014}. The
+rates are the per-hidden-layer figures measured on the converged checkpoint of
+each configuration, never the output-layer quantity logged as
+\texttt{avg\_firing\_rate}.
+
+\textbf{One layer is asymmetric.} Under direct encoding the first convolution
+receives analog pixel values rather than spikes, so its operations are
+multiply-accumulates. Because the input is identical at every time step, the
+current it produces is constant in time and is computed once rather than $T$
+times. This is a standard implementation of constant encoding, but stating it
+matters: recomputing that layer at every step would make the spiking network
+more expensive than its convolutional equivalent (Section~\ref{sec:energy-fp32}).
+
+Memory is the number of bits needed to store the weights plus those needed to
+store the membrane state of the $94\,080$ hidden neurons at the working
+resolution. For integer configurations the 8-bit energy figures of Horowitz are
+used; at 4 and 2 bits they are a conservative upper bound, since narrower
+operations are not tabulated.
+
+\section{Test-set evaluation}
+
+The test partition is opened once, after every design decision has been taken,
+on the full-precision reference and on the quantized configurations selected for
+the final comparison. Accuracy is reported with a 95\,\% Wilson interval and per
+class, and is computed by two routes --- an aggregate over batches and a
+per-sample classification --- asserted equal, since the per-sample output feeds
+the stratified analysis.

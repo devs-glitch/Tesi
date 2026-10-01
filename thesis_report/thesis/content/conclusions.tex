@@ -1,0 +1,167 @@
+\chapter{Discussion and Conclusions}
+\label{ch:conclusions}
+
+\section{The instrument}
+
+This thesis set out to measure whether a quantized spiking neural network
+reasons like its full-precision parent, and found that the measurement could not
+be interpreted until the instrument was calibrated.
+
+A four-block convolutional spiking network classifies four families of transient
+noise in LIGO data at $0.9833 \pm 0.0014$ validation accuracy over three seeds,
+under constraints --- shift-implementable membrane decay, at most eight time
+steps, 112-pixel input --- that keep the configuration deployable by
+construction rather than by subsequent rounding. Each of those constraints was
+shown to cost nothing measurable in accuracy, and the resolution choice improved
+the health of the deepest layer by 12.7 percentage points of dead fraction.
+
+The Spike Activation Map was implemented, its summation range corrected, and its
+free parameter fixed on the temporal axis it governs rather than on
+time-aggregated maps that cannot see it. Its faithfulness was tested
+quantitatively and found to hold on two classes of four, with a geometric
+explanation for the other two.
+
+The calibration established three levels: the divergence produced by weight noise
+as large as an entire 8-bit quantization step (PCC $0.975$), by a thirtyfold
+change in the explainer (PCC $0.960$), and by initialization alone (PCC $0.153$).
+The third is far larger than expected, and it carries three consequences.
+
+\paragraph{Spatial metrics cannot compare independently trained models.} Two
+networks that agree to within one validation sample in accuracy produce
+explanations correlating at $0.153$. The mechanism is representational
+permutation rather than any defect of the metric, and the disagreement is uniform
+across samples rather than driven by outliers.
+
+\paragraph{They can compare a model with its own parent.} Under a perturbation 85
+times smaller than the 2-bit quantization step, PCC remains above $0.975$. The
+two results answer different questions, and the distinction must be made
+explicitly whenever such a number is reported. In this thesis it decided the
+design of the grid: every quantized model is fine-tuned from its own parent.
+
+\paragraph{Published figures are not interpretable without these floors.} Values
+around $0.85$ are presented in the literature as evidence of preserved
+explanations. For this architecture that value falls between the numerical floor
+and the independent-solutions level, so it cannot be read without knowing which
+comparison produced it. Establishing the floors requires no training runs beyond
+a multi-seed baseline that is good practice regardless.
+
+A fourth observation cuts across all of them: the class sensitivity ordering is
+identical under three unrelated interventions. Explanation sensitivity is a
+property of the class morphology, not of the perturbation applied, and
+Extremely\_Loud --- saturated and spatially extensive --- registers no change
+under any measure tested.
+
+The preparation of the membrane arm added a result of its own: the network makes
+no use of negative membrane potentials. Clipping the hidden state to $[0, 2]$,
+which removes up to 47 thresholds of negative range, costs one validation sample
+and leaves the dynamics unchanged, so the membrane can be stored on an unsigned
+grid at one bit less than a symmetric one would need.
+
+\section{Quantization and explanation fidelity}
+
+\todo{The main discussion of the thesis, written from Section~\ref{sec:grid-results}.
+Answer, in this order: (1) was the hypothesis confirmed or refuted, and at which
+bit-widths, per class; (2) do accuracy, explanation fidelity and energy diverge,
+and where; (3) how the results compare with Rabbi et al.\ (CNN, spatial) and
+Smith et al.\ (SNN, firing statistics) --- in particular whether the 4-bit
+minimum for the membrane is reproduced in the explanations as well as in the
+accuracy; (4) what the stratification says about which events lose their
+explanation first. If the three curves move together, say so plainly: it
+establishes that for this architecture accuracy is an adequate proxy for
+explanation fidelity, which is the assumption the literature makes without
+testing.}
+
+\section{Limitations}
+
+\paragraph{Generalization of the thresholds.} The three calibration levels are
+specific to this architecture, this dataset and this explainer. The
+\emph{mechanism} behind the collapse, representational permutation between
+independently trained networks, is general and well documented; the
+\emph{magnitude} is not, and a different architecture could place the floors
+elsewhere. What generalizes is the claim that the floors must be measured, not
+the values measured here.
+
+\paragraph{Labels are model output.} Accuracy is agreement with the Gravity Spy
+convolutional classifier rather than with physical ground truth. A model that
+reproduced that classifier's systematic errors would score well here. The
+per-class confidences are available and would permit stratifying accuracy by the
+reference classifier's own certainty, which was not done.
+
+\paragraph{The partition is random with respect to time.} If glitches of the same
+class are correlated within observing periods, a random test set overestimates
+generalization to new periods. A block split by observing run would be the more
+conservative validation; the timestamps were dropped during feature selection for
+the reasons given in Chapter~\ref{ch:methodology} and would have to be recovered.
+
+\paragraph{$T$ sits at the imposed ceiling.} The search was forbidden from
+exploring more than eight time steps, so it is not known whether it would have
+preferred a longer integration window. An unconstrained search selected seven,
+which bounds the likely cost but does not eliminate the question.
+
+\paragraph{The deletion metric fails on two classes.} The geometric explanation
+offered in Section~\ref{sec:faithfulness} --- that deletion-based tests penalize
+spatially extended evidence --- is an interpretation, not a demonstration. An
+insertion curve, which rewards rather than penalizes distributed evidence, would
+test it directly.
+
+\paragraph{The explanation is class-agnostic.} SAM does not use labels, so the
+deletion metric measures faithfulness to the model's \emph{predicted} class. This
+is the correct reading of the metric and matches its original formulation, but it
+means misclassified examples are informative and should be inspected separately
+rather than pooled.
+
+\paragraph{The temporal metric is partly kernel arithmetic.} The $\gamma$
+analysis showed that the centre of mass of the SAM energy is dominated by a
+minority of near-continuously firing neurons. Between models compared at the same
+$\gamma$ this component cancels, but it means that the CoM is most sensitive to
+changes in that minority and may under-report changes elsewhere.
+
+\paragraph{Quantization is simulated.} Fake quantization reproduces the values an
+integer implementation would hold, not its arithmetic: the membrane is quantized
+as a stored state after each spike decision, while on integer hardware the
+comparison with threshold would itself be performed on integers. The energy
+figures are analytical, at a 45\,nm reference node, and below eight bits they are
+an upper bound rather than an estimate.
+
+\paragraph{Sample sizes of the explanation analyses.} Divergence and
+faithfulness are measured on fifteen validation images per class, and the
+membrane range on a single checkpoint. Both are sufficient for the effects
+reported here but limit the resolution with which small differences between
+configurations can be ranked.
+
+\todo{Add any limitation that emerges from the grid (e.g.\ PTQ fallback used at
+2 bits, a single seed for some configuration, instability of QAT).}
+
+\section{Future work}
+
+\paragraph{Deployment.} Hardware deployment was deliberately left out of scope.
+The natural continuation is to export the selected integer configuration to a
+neuromorphic platform or a microcontroller, and to measure on it the latency,
+energy and memory that are estimated analytically here.
+
+\paragraph{Normalization.} The baseline contains no batch normalization, because
+quantizing its parameters is a problem distinct from quantizing weights and
+potentials. Deeper spiking networks need it, and both approximating it with shifts
+and removing it altogether through progressive training are available; repeating
+the study on a normalized architecture would test whether the conclusions survive.
+
+\paragraph{The temporal axis of the input.} Under direct encoding every temporal
+structure is generated by the network. Feeding the spectrogram column by column,
+so that time in the input corresponds to time in the signal, would give the
+temporal explanation a physical meaning and make the temporal metrics measure
+something a detector scientist can read.
+
+\paragraph{Wider benchmark.} Extending the four classes to the full Gravity Spy
+taxonomy, with a split by observing run, would make the classification results
+comparable with the published benchmark.
+
+\section{Closing remark}
+
+\todo{Rewrite once the grid is in. The draft below closes the instrument part
+only.}
+
+Compressed models are increasingly deployed where their explanations are acted
+upon. This thesis showed that before asking whether such a model still decides
+for the same reasons, one has to know what the instruments used to ask the
+question report when nothing has changed --- and that for spiking networks, the
+answer depends on whether the comparison is with a sibling or with a parent.

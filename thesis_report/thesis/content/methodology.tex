@@ -32,7 +32,16 @@ are a verification rather than the selection rule.
 \emph{Abundance.} These are among the most populated of the 24 classes, with
 $29\,573$, $24\,002$, $99\,665$ and $2\,392$ members respectively. The smallest
 sets the balanced cardinality at $2\,392$ per class, sufficient to train without
-augmentation.
+augmentation (Figure~\ref{fig:label-counts}).
+
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=0.75\linewidth]{label_counts.png}
+\caption{Class frequencies in the Gravity Spy machine-learning release, all
+observing runs and both detectors combined. The distribution is strongly
+imbalanced; the four retained classes are among the most populated.}
+\label{fig:label-counts}
+\end{figure}
 
 \emph{Morphological diversity.} The four span physically distinct families of
 instrumental noise~\cite{zevin2017, glanzer2023, bahaadini2018}: short broadband
@@ -44,7 +53,17 @@ relative motion between the optical suspension and reaction-mass chains
 corresponding to resonances of the glass fibres suspending the mirrors
 (Violin\_Mode). Spanning the morphological range is what makes the explanation
 analysis informative, since each class should elicit a recognizably different
-attention pattern.
+attention pattern. An example of each is shown in
+Figure~\ref{fig:examples}.
+
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=\linewidth]{spectrogram_examples.png}
+\caption{One Omega-scan spectrogram per retained class (Hanford detector, 0.5\,s
+window). From left: a saturated broadband event, a short teardrop-shaped
+transient, a long low-frequency band, and narrow lines near 500\,Hz and 1\,kHz.}
+\label{fig:examples}
+\end{figure}
 
 \emph{Practical constraint.} Four classes keep training and the downstream
 quantization grid feasible on a single 6\,GB consumer GPU.
@@ -54,8 +73,27 @@ descriptor, which is the relevant property: Extremely\_Loud occupies
 $\log(\text{SNR}+1)$ between 6 and 12 while the others lie between 2 and 5; Blip
 is separated by duration; Scattered\_Light sits below roughly 100\,Hz in peak
 frequency with a bimodal bandwidth distribution; and Violin\_Mode is the only
-class extending to 2\,kHz. A UMAP projection~\cite{mcinnes2018umap} of the
-standardized descriptors confirms the separation independently.
+class extending to 2\,kHz (Figure~\ref{fig:pairplot}). A UMAP
+projection~\cite{mcinnes2018umap} of the standardized descriptors, computed on a
+stratified subsample of 500 events per class ($n_\text{neighbors} = 15$,
+seed 42), confirms the separation independently (Figure~\ref{fig:umap}).
+
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=0.85\linewidth]{pairplot.png}
+\caption{Pair plot of the four retained descriptors, coloured by class. Each
+class is isolated by a different descriptor; Violin\_Mode overlaps Blip and
+Scattered\_Light except in peak frequency.}
+\label{fig:pairplot}
+\end{figure}
+
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=0.85\linewidth]{umap.png}
+\caption{Two-dimensional UMAP projection of the standardized descriptors, 500
+events per class.}
+\label{fig:umap}
+\end{figure}
 
 Violin\_Mode is the weakest case, and this is stated because it anticipates a
 result that recurs throughout: in the $\log(\text{SNR}+1)$ versus
@@ -70,7 +108,17 @@ are not directly comparable to the full Gravity Spy benchmark.
 \subsection{Feature selection}
 
 Of the twelve numerical Omicron descriptors, four were retained on three distinct
-criteria.
+criteria, read from their distributions and from their correlation matrix
+(Figure~\ref{fig:correlation}).
+
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=0.9\linewidth]{correlation_matrix.png}
+\caption{Pearson correlation between the twelve numerical Omicron descriptors.
+The three timestamps are perfectly correlated, and central frequency and
+bandwidth correlate at $0.98$.}
+\label{fig:correlation}
+\end{figure}
 
 \emph{Exact redundancy.} The three timestamp variables are mutually correlated at
 $r = 1.00$, being the same GPS time to within sub-second offsets. Beyond the
@@ -198,6 +246,64 @@ cross-entropy loss as logits. Optimization uses Adam~\cite{kingma2015adam}. This
 keeps SAM in the multi-spike regime where its inter-spike-interval formulation
 remains meaningful.
 
+\section{Training}
+\label{sec:training}
+
+\subsection{Hyperparameter optimization}
+
+Hyperparameters are searched with Optuna~\cite{akiba2019optuna}, maximizing
+validation accuracy. Each trial reports validation accuracy after every epoch
+and is pruned by a Hyperband pruner~\cite{li2018hyperband} (minimum resource 1
+epoch, maximum 15, reduction factor 3), which allocates epochs to promising
+configurations and truncates the others early. A handler catches out-of-memory
+errors, releases the model and optimizer and marks the trial as pruned, so that
+configurations with a long time window can fail on the 6\,GB budget of the
+available GPU without interrupting the study. Studies are persisted to SQLite,
+one study name per search and resolution.
+
+Two studies were run. The first (v4), at 224\,px, searched the learning rate in
+$[10^{-4}, 3 \times 10^{-3}]$ (log-uniform), $\beta$ in $(0, 1)$ and
+$T \in \{5, \dots, 15\}$, and selected a learning rate of
+$1.036 \times 10^{-4}$, $\beta = 0.4148$ and $T = 7$; this configuration was
+used for the resolution study. The second (v5), at the working resolution,
+imposes the deployment constraints described in
+Section~\ref{sec:constrained-search} and produced the configuration used
+throughout the rest of the thesis.
+
+\subsection{Experiment tracking}
+
+Every trial is logged to Weights \& Biases. Beyond validation loss and
+accuracy, the logged metrics include the mean firing rate of each of the four
+hidden layers. Firing rate is the proxy for energy consumption in spiking
+hardware~\cite{roy2019towards}, so tracking it per layer during the search shows
+whether high-accuracy configurations achieve their accuracy through dense and
+expensive activity or through sparse spiking, and whether any layer is silent or
+saturated before any explainability diagnostic is run.
+
+A separately logged quantity, recorded under the name
+\texttt{avg\_firing\_rate}, is the mean over the four \emph{output} neurons only.
+A value near $0.25$ indicates that roughly one output neuron fires consistently,
+which is a signature of confident classification rather than a measure of
+network activity. It is \emph{not} the global firing rate of the network and is
+never used for energy accounting, for which only the per-hidden-layer rates are
+valid.
+
+\subsection{Final training}
+
+The training script reads the frozen configuration and trains from scratch,
+parametrized on input resolution and seed, so that the same code serves the
+resolution study, the final training and the multi-seed reference. The seed is
+set explicitly before the model is constructed. The checkpoint is written
+whenever validation accuracy improves, and training stops after five
+consecutive epochs without improvement in validation loss, with a ceiling of 50
+epochs. Each run writes the checkpoint together with a record of the full
+per-epoch history, the per-layer firing rates, the per-class validation recall,
+the seed and the resolution.
+
+All experiments run on a single NVIDIA RTX 4050 Laptop GPU (6\,GB). One epoch
+over the balanced training partition takes approximately three minutes at
+224\,px and 45 seconds at 112\,px.
+
 \section{Selecting the operating configuration}
 
 Three choices define the operating point: the input resolution, the three
@@ -217,6 +323,7 @@ show is an upper bound.
 The procedure and its outcome are reported in Section~\ref{sec:resolution}.
 
 \subsection{Hyperparameter search under deployment constraints}
+\label{sec:constrained-search}
 
 The search uses Optuna~\cite{akiba2019optuna} with a Hyperband
 pruner~\cite{li2018hyperband}, maximizing validation accuracy over three
@@ -232,6 +339,51 @@ deliberately. $T$ is capped at 8 for the same reason. A rounded value is one tha
 was never validated; constraining the search guarantees that whatever it returns
 is deployable by construction, and Section~\ref{sec:hyperparameters} shows that
 in this case the two differ.
+
+The lower bound of the learning rate was moved from $10^{-4}$ to $10^{-5}$,
+because the v4 optimum ($1.036 \times 10^{-4}$) sat on the boundary of the
+earlier range and a boundary optimum is not an optimum.
+
+\subsection{Baseline manifest}
+
+The outcome of these choices is recorded in a single file,
+\texttt{baseline\_manifest.json}: the input resolution, the three
+hyperparameters, the originating study, the decay rate and reference layer of
+the explainer, the list of seeds (1234, 2345, 3456), the checkpoint paths, the
+size of each partition, and the first sixteen hexadecimal digits of the SHA-256
+digest of the partition file (\texttt{754b2515b6509075}). Every downstream
+script reads the model and its configuration from the manifest rather than from
+hard-coded paths, so that no analysis can silently run on a different model or a
+different partition.
+
+\section{Diagnostics of the network dynamics}
+\label{sec:diagnostics}
+
+Two diagnostics characterize whether a trained network is a healthy spiking
+system or a formally correct one whose neurons are dead or saturated. Both are
+reused unchanged on every quantized model.
+
+\paragraph{Dead and saturated neurons.} For each hidden layer, the mean firing
+rate of every individual neuron is accumulated across the validation partition,
+weighted by batch size. A rate below $0.01$ identifies a \emph{dead} neuron,
+above $0.80$ a \emph{saturated} one. Dead neurons are wasted capacity and, being
+permanently silent, cannot appear in any explanation; saturated neurons carry
+almost no information, a nearly-always-firing binary unit having minimal
+entropy, while consuming the maximum possible energy.
+
+\paragraph{Regularity of firing.} The coefficient of variation of the
+inter-spike intervals,
+\begin{equation}
+\mathrm{CV} = \frac{\sigma_{\mathrm{ISI}}}{\mu_{\mathrm{ISI}}},
+\end{equation}
+distinguishes regular, clock-like firing ($\mathrm{CV} \to 0$) from irregular,
+Poisson-like firing ($\mathrm{CV} \approx 1$). It is relevant here because the
+Spike Activation Map is built on inter-spike intervals. A random sample of 200
+neuron positions per layer is fixed once, at the first batch, and the intervals
+of exactly those positions are accumulated over every validation image; the CV
+is computed only where at least five intervals were observed. Since a neuron can
+produce at most $T - 1 = 7$ intervals within a single image, pooling over the
+whole partition is what makes the estimate stable.
 
 \section{The Spike Activation Map}
 \label{sec:sam-method}
@@ -277,3 +429,106 @@ the two are asserted equal at run time.
 Visualizations overlay every time step on the denormalized input under a
 \emph{shared colour scale}, so that a change in intensity across time is genuine
 and not an artefact of per-panel rescaling.
+
+The reference configuration for every analysis below is \textbf{layer 2 with
+$\gamma = 0.5$}, both recorded in the manifest. The choice of $\gamma$ is
+justified in Section~\ref{sec:gamma}.
+
+\section{Evaluating and comparing explanations}
+\label{sec:xai-protocol}
+
+\subsection{Multi-sample statistics}
+
+A single heat map is a glimpse, not a description of what the network attends to
+for a class. For each class, SAM is computed on 25 validation images, aggregated
+over time (mean over $T$) and stacked, and three maps are reported: the
+\emph{mean}, the region attended on average; the \emph{standard deviation},
+where the explanation varies most across instances; and their ratio, the
+\emph{coefficient of variation}, which indicates whether a region is attended
+consistently or only in some examples. Mean and standard deviation share a
+colour scale across classes so that they are numerically comparable; the
+coefficient of variation has an extremely long tail where the mean is near zero,
+and its colour scale is truncated at the 95th percentile.
+
+The same statistics are repeated for all four hidden layers, on 20 images per
+class. Since SAM sums over the channel axis and the four layers have 16, 32, 64
+and 128 channels, raw magnitudes are not comparable across depth, and both maps
+are normalized by the channel count of their layer before being plotted on a
+shared scale.
+
+\subsection{Faithfulness: the deletion metric}
+
+Stability is not correctness, so faithfulness is tested separately with the
+deletion metric of Petsiuk et al.~\cite{petsiuk2018rise}:
+\begin{enumerate}
+  \item the time-aggregated SAM map of an image is upsampled bilinearly from the
+        layer resolution to the input resolution, so that importance is
+        expressed over input pixels;
+  \item the class predicted on the unmodified image is recorded and tracked
+        throughout, since SAM is class-agnostic and the metric measures
+        faithfulness to the model's decision;
+  \item pixels are removed in decreasing order of SAM score, in 21 steps from
+        0\,\% to 100\,\%, and the softmax confidence of the tracked class is
+        recorded at each step;
+  \item the identical procedure is repeated with pixels removed in random
+        order, as a control;
+  \item the curves are averaged over 15 images per class and compared through
+        their area under the curve (AUC), computed by the trapezoidal rule.
+\end{enumerate}
+A faithful map degrades the confidence faster than random removal, so
+$\Delta = \mathrm{AUC}_{\mathrm{SAM}} - \mathrm{AUC}_{\mathrm{random}} < 0$ is
+the expected outcome. Deleted pixels are set to zero in normalized space, which
+corresponds to the dataset mean rather than to black; the ordering is computed
+once per image and sliced progressively, so that the removed sets are nested for
+both curves.
+
+\subsection{Divergence metrics}
+\label{sec:metrics}
+
+Two explanations of the same image, produced by two models, are compared with
+three metrics, each answering a different question.
+
+\paragraph{Spatial Pearson correlation (PCC).} The linear correlation between
+the two time-aggregated maps, flattened. It is invariant to an affine rescaling
+of either map, which is the property that makes it usable across models whose
+overall spiking activity differs.
+
+\paragraph{Top-$k$ intersection over union (IoU).} The overlap between the sets
+of the $k = 20\,\%$ highest-scoring positions of the two maps. Two independent
+random rankings overlap at a chance level of $k / (2 - k) = 0.111$.
+
+\paragraph{Temporal centre of mass (CoM).} The mean time step at which the
+energy of the SAM map is concentrated,
+\begin{equation}
+\mathrm{CoM} = \frac{\sum_t t \, E_t}{\sum_t E_t},
+\qquad E_t = \sum_{i,j} M_{ij,t},
+\end{equation}
+reported as the absolute difference between the two models. Being an aggregate
+over the whole map, it is the metric that carries the temporal axis.
+
+In addition, the \emph{per-timestep correlation} between the maps at each $t$
+localizes in time where agreement breaks down.
+
+\subsection{Calibration protocol}
+\label{sec:calibration-protocol}
+
+The divergence metrics are calibrated before they are used, at three levels,
+all on fifteen validation images per class at the reference layer and $\gamma$,
+on the three checkpoints of the full-precision reference.
+
+\begin{enumerate}
+  \item \textbf{Verification.} A checkpoint compared with itself must return
+        perfect agreement; two calls to the sampling routine must return
+        bit-identical images; and two forward passes of the same model must
+        return identical maps.
+  \item \textbf{Independent solutions.} The three full-precision checkpoints are
+        compared pairwise, which measures how similar two independently trained
+        solutions are.
+  \item \textbf{Numerical floor.} Gaussian noise is added to the weight tensors
+        of one checkpoint, at magnitudes expressed as fractions of its measured
+        8-bit quantization step, and the perturbed model is compared with the
+        unperturbed one. Biases and the LIF buffers are excluded, since
+        perturbing $\beta$ would mix membrane dynamics with weight noise.
+\end{enumerate}
+The $\gamma$ sensitivity analysis supplies a further reference point: the
+divergence produced by changing the explainer itself thirtyfold.

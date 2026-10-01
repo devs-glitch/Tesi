@@ -1,0 +1,154 @@
+\begin{thebibliography}{10}
+
+\bibitem{adebayo2018sanity}
+Julius Adebayo, Justin Gilmer, Michael Muelly, Ian Goodfellow, Moritz Hardt,
+  and Been Kim.
+\newblock Sanity checks for saliency maps.
+\newblock In {\em Advances in Neural Information Processing Systems},
+  volume~31, pages 9505--9515, 2018.
+
+\bibitem{akiba2019optuna}
+Takuya Akiba, Shotaro Sano, Toshihiko Yanase, Takeru Ohta, and Masanori Koyama.
+\newblock Optuna: A next-generation hyperparameter optimization framework.
+\newblock In {\em ACM SIGKDD}, pages 2623--2631, 2019.
+
+\bibitem{bahaadini2018}
+S.~Bahaadini, V.~Noroozi, N.~Rohani, et~al.
+\newblock Machine learning for gravity spy: Glitch classification and dataset.
+\newblock {\em Information Sciences}, 444:172--186, 2018.
+
+\bibitem{bengio2013ste}
+Yoshua Bengio, Nicholas L{\'e}onard, and Aaron Courville.
+\newblock Estimating or propagating gradients through stochastic neurons for
+  conditional computation.
+\newblock {\em arXiv preprint arXiv:1308.3432}, 2013.
+
+\bibitem{bylinskii2019metrics}
+Zoya Bylinskii, Tilke Judd, Aude Oliva, Antonio Torralba, and Fr{\'e}do Durand.
+\newblock What do different evaluation metrics tell us about saliency models?
+\newblock {\em IEEE Transactions on Pattern Analysis and Machine Intelligence},
+  41(3):740--757, 2019.
+
+\bibitem{eshraghian2023}
+Jason~K. Eshraghian, Max Ward, Emre~O. Neftci, et~al.
+\newblock Training spiking neural networks using lessons from deep learning.
+\newblock {\em Proceedings of the IEEE}, 111(9):1016--1054, 2023.
+
+\bibitem{glanzer2021}
+J.~Glanzer, S.~Banagiri, S.~Coughlin, et~al.
+\newblock Gravity spy machine learning classifications of {LIGO} glitches from
+  observing runs {O1}, {O2}, {O3a}, and {O3b}.
+\newblock Zenodo, 2021.
+
+\bibitem{glanzer2023}
+J.~Glanzer, S.~Banagiri, S.~B. Coughlin, et~al.
+\newblock Data quality up to the third observing run of advanced {LIGO}:
+  Gravity spy glitch classifications.
+\newblock {\em Classical and Quantum Gravity}, 40(6):065004, 2023.
+
+\bibitem{horowitz2014}
+Mark Horowitz.
+\newblock Computing's energy problem (and what we can do about it).
+\newblock In {\em IEEE International Solid-State Circuits Conference (ISSCC)},
+  pages 10--14, 2014.
+
+\bibitem{jacob2018quantization}
+B.~Jacob, S.~Kligys, B.~Chen, M.~Zhu, M.~Tang, A.~Howard, H.~Adam, and
+  D.~Kalenichenko.
+\newblock Quantization and training of neural networks for efficient
+  integer-arithmetic-only inference.
+\newblock In {\em Proceedings of the IEEE Conference on Computer Vision and
+  Pattern Recognition (CVPR)}, pages 2704--2713, 2018.
+
+\bibitem{kim2021sam}
+Youngeun Kim and Priyadarshini Panda.
+\newblock Visual explanations from spiking neural networks using inter-spike
+  intervals.
+\newblock {\em Scientific Reports}, 11:19037, 2021.
+
+\bibitem{kingma2015adam}
+Diederik~P. Kingma and Jimmy Ba.
+\newblock Adam: A method for stochastic optimization.
+\newblock In {\em International Conference on Learning Representations (ICLR)},
+  2015.
+
+\bibitem{li2018hyperband}
+Lisha Li, Kevin Jamieson, Giulia DeSalvo, Afshin Rostamizadeh, and Ameet
+  Talwalkar.
+\newblock Hyperband: A novel bandit-based approach to hyperparameter
+  optimization.
+\newblock {\em Journal of Machine Learning Research}, 18(185):1--52, 2018.
+
+\bibitem{mcinnes2018umap}
+Leland McInnes, John Healy, and James Melville.
+\newblock {UMAP}: Uniform manifold approximation and projection for dimension
+  reduction.
+\newblock {\em arXiv preprint arXiv:1802.03426}, 2018.
+
+\bibitem{neftci2019surrogate}
+Emre~O. Neftci, Hesham Mostafa, and Friedemann Zenke.
+\newblock Surrogate gradient learning in spiking neural networks.
+\newblock {\em IEEE Signal Processing Magazine}, 36(6):51--63, 2019.
+
+\bibitem{nguyen2023attribution}
+E.~Nguyen, C.~Seifert, and M.~Huber.
+\newblock Feature attribution explanations for spiking neural networks.
+\newblock {\em arXiv preprint arXiv:2311.02110}, 2023.
+
+\bibitem{petsiuk2018rise}
+Vitali Petsiuk, Abir Das, and Kate Saenko.
+\newblock {RISE}: Randomized input sampling for explanation of black-box
+  models.
+\newblock In {\em British Machine Vision Conference (BMVC)}, page 151, 2018.
+
+\bibitem{rabbi2026}
+K.~K. Rabbi, M.~Z. A.~Z. Farabe, and M.~S. Rahman.
+\newblock Same predictions, different reasons: The effect of quantization on
+  model explanations.
+\newblock {\em arXiv preprint arXiv:2607.22872}, 2026.
+
+\bibitem{rathi2023dietsnn}
+Nitin Rathi and Kaushik Roy.
+\newblock {DIET-SNN}: A low-latency spiking neural network with direct input
+  encoding and leakage and threshold optimization.
+\newblock {\em IEEE Transactions on Neural Networks and Learning Systems},
+  34(6):3174--3182, 2023.
+
+\bibitem{roy2019towards}
+K.~Roy, A.~Jaiswal, and P.~Panda.
+\newblock Towards spike-based machine intelligence with neuromorphic computing.
+\newblock {\em Nature}, 575:607--617, 2019.
+
+\bibitem{selvaraju2017gradcam}
+Ramprasaath~R. Selvaraju, Michael Cogswell, Abhishek Das, Ramakrishna Vedantam,
+  Devi Parikh, and Dhruv Batra.
+\newblock {Grad-CAM}: Visual explanations from deep networks via gradient-based
+  localization.
+\newblock In {\em IEEE International Conference on Computer Vision (ICCV)},
+  pages 618--626, 2017.
+
+\bibitem{smith2026}
+R.~Smith, J.~Whitehill, and R.~Ganji.
+\newblock Quantization of spiking neural networks beyond accuracy.
+\newblock {\em arXiv preprint arXiv:2604.14487}, 2026.
+
+\bibitem{wang2004ssim}
+Zhou Wang, Alan~C. Bovik, Hamid~R. Sheikh, and Eero~P. Simoncelli.
+\newblock Image quality assessment: From error visibility to structural
+  similarity.
+\newblock {\em IEEE Transactions on Image Processing}, 13(4):600--612, 2004.
+
+\bibitem{yin2024mint}
+Ruokai Yin, Yuhang Li, Abhishek Moitra, and Priyadarshini Panda.
+\newblock {MINT}: Multiplier-less {INT}eger quantization for energy efficient
+  spiking neural networks.
+\newblock In {\em Asia and South Pacific Design Automation Conference
+  (ASP-DAC)}, pages 830--835, 2024.
+
+\bibitem{zevin2017}
+M.~Zevin, S.~Coughlin, S.~Bahaadini, et~al.
+\newblock Gravity spy: integrating advanced {LIGO} detector characterization,
+  machine learning, and citizen science.
+\newblock {\em Classical and Quantum Gravity}, 34(6):064003, 2017.
+
+\end{thebibliography}

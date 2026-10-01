@@ -1,0 +1,49 @@
+\backcite {rabbi2026}{{5}{1.1}{section.1.1}}
+\backcite {roy2019towards}{{5}{1.1}{section.1.1}}
+\backcite {yin2024mint, smith2026}{{6}{1.2}{section*.4}}
+\backcite {kim2021sam}{{6}{1.2}{section*.6}}
+\backcite {selvaraju2017gradcam}{{6}{1.2}{section*.6}}
+\backcite {rabbi2026, smith2026}{{7}{3}{Item.3}}
+\backcite {zevin2017, glanzer2023, glanzer2021}{{7}{1.4}{section.1.4}}
+\backcite {neftci2019surrogate}{{8}{2.1.1}{subsection.2.1.1}}
+\backcite {eshraghian2023}{{8}{2.1.1}{subsection.2.1.1}}
+\backcite {rathi2023dietsnn}{{9}{2.1.2}{subsection.2.1.2}}
+\backcite {jacob2018quantization}{{9}{2.2}{equation.2.2}}
+\backcite {rabbi2026}{{9}{2.2}{equation.2.2}}
+\backcite {bengio2013ste}{{9}{2.2}{equation.2.2}}
+\backcite {yin2024mint}{{9}{2.2.1}{subsection.2.2.1}}
+\backcite {smith2026}{{9}{2.2.1}{subsection.2.2.1}}
+\backcite {horowitz2014}{{9}{2.2.2}{subsection.2.2.2}}
+\backcite {selvaraju2017gradcam}{{10}{2.3}{section.2.3}}
+\backcite {kim2021sam}{{10}{2.3}{section.2.3}}
+\backcite {nguyen2023attribution}{{10}{2.3}{equation.2.3}}
+\backcite {petsiuk2018rise}{{10}{2.3.1}{subsection.2.3.1}}
+\backcite {bylinskii2019metrics}{{10}{2.3.1}{subsection.2.3.1}}
+\backcite {wang2004ssim}{{10}{2.3.1}{subsection.2.3.1}}
+\backcite {adebayo2018sanity}{{10}{2.3.1}{subsection.2.3.1}}
+\backcite {zevin2017, bahaadini2018}{{10}{2.4}{section.2.4}}
+\backcite {glanzer2021}{{10}{2.4}{section.2.4}}
+\backcite {rabbi2026}{{11}{2.5}{section.2.5}}
+\backcite {smith2026}{{11}{2.5}{section.2.5}}
+\backcite {glanzer2021}{{12}{3.1.1}{subsection.3.1.1}}
+\backcite {zevin2017, glanzer2023, bahaadini2018}{{12}{3.1.2}{figure.caption.7}}
+\backcite {mcinnes2018umap}{{14}{3.1.2}{figure.caption.8}}
+\backcite {kingma2015adam}{{17}{3.2.2}{subsection.3.2.2}}
+\backcite {akiba2019optuna}{{17}{3.3.1}{subsection.3.3.1}}
+\backcite {li2018hyperband}{{17}{3.3.1}{subsection.3.3.1}}
+\backcite {roy2019towards}{{18}{3.3.2}{subsection.3.3.2}}
+\backcite {akiba2019optuna}{{19}{3.4.2}{subsection.3.4.2}}
+\backcite {li2018hyperband}{{19}{3.4.2}{subsection.3.4.2}}
+\backcite {kim2021sam}{{20}{3.6}{section.3.6}}
+\backcite {petsiuk2018rise}{{21}{3.7.2}{subsection.3.7.2}}
+\backcite {bengio2013ste}{{23}{4.2}{section.4.2}}
+\backcite {rabbi2026}{{24}{4.2}{section*.22}}
+\backcite {smith2026}{{25}{4.4}{table.caption.24}}
+\backcite {yin2024mint}{{25}{4.5}{section.4.5}}
+\backcite {wang2004ssim}{{25}{4.6}{section.4.6}}
+\backcite {smith2026}{{26}{4.6}{section.4.6}}
+\backcite {horowitz2014}{{27}{4.8}{equation.4.1}}
+\backcite {smith2026}{{30}{5.2.2}{table.caption.28}}
+\backcite {kim2021sam}{{34}{5.5.1}{table.caption.35}}
+\backcite {petsiuk2018rise}{{34}{5.5.2}{subsection.5.5.2}}
+\backcite {adebayo2018sanity}{{37}{5.6.3}{subsection.5.6.3}}

@@ -1,0 +1,78 @@
+%---------------------------------------
+% References
+%---------------------------------------
+\clearpage
+\phantomsection
+\addcontentsline{toc}{chapter}{References}
+\bibliographystyle{plain}
+\bibliography{references}
+
+%---------------------------------------
+% Appendices
+%---------------------------------------
+\appendix
+
+\chapter{Additional figures}
+\label{app:figures}
+
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=\linewidth]{gamma_Blip.png}\\[0.5em]
+\includegraphics[width=\linewidth]{gamma_Extremely_Loud.png}\\[0.5em]
+\includegraphics[width=\linewidth]{gamma_Scattered_Light.png}
+\caption{$\gamma$ sensitivity at layer 2 for Blip, Extremely\_Loud and
+Scattered\_Light (Violin\_Mode is in Figure~\ref{fig:gamma}).}
+\label{fig:gamma-others}
+\end{figure}
+
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=\linewidth]{feature_boxplots.png}
+\caption{Distributions of the twelve numerical Omicron descriptors over the full
+release. The quality factor collapses to a sentinel value of order $10^{20}$;
+amplitude and SNR are dominated by a long tail of outliers.}
+\label{fig:boxplots}
+\end{figure}
+
+\chapter{Reproducibility}
+\label{app:reproducibility}
+
+All code, configuration and result files are in the public repository
+\begin{center}\url{https://github.com/devs-glitch/Tesi}\end{center} Table~\ref{tab:repro} maps each
+result of this thesis to the script that produces it and the file it writes.
+Every script reads the model and the partition from
+\texttt{config/baseline\_manifest.json}.
+
+\begin{table}[htbp]
+\centering
+\small
+\resizebox{\linewidth}{!}{%
+\begin{tabular}{lll}
+\toprule
+Result & Script & Output \\
+\midrule
+Class selection, features & \texttt{scripts/data\_prep.py} & \texttt{selected\_dataset.csv} \\
+Frozen partition & \texttt{scripts/freeze\_split.py} & \texttt{split\_assignment.csv} \\
+Hyperparameter search & \texttt{scripts/tune.py} & \texttt{config/best\_hyperparams.json} \\
+Resolution study & \texttt{scripts/resolution\_study.py} & \texttt{results/resolution\_study.csv} \\
+FP32 reference & \texttt{scripts/fp32\_reference.py} & \texttt{config/baseline\_manifest.json} \\
+Dead neurons & \texttt{scripts/dead\_neurons\_check.py} & \texttt{results/dead\_neurons.json} \\
+Physical validation & \texttt{scripts/physical\_validation.py} & figures \\
+$\gamma$ sensitivity & \texttt{xai/gamma\_sensitivity\_analysis.py} & \texttt{results/gamma\_sensitivity.json} \\
+Deletion metric & \texttt{xai/deletion\_metric.py} & figure \\
+Independent solutions & \texttt{xai/noise\_floor.py} & \texttt{results/noise\_floor.json} \\
+Numerical floor & \texttt{xai/perturbation\_floor.py} & \texttt{results/perturbation\_floor.json} \\
+Membrane range & \texttt{scripts/membrane\_range.py} & \texttt{config/membrane.json} \\
+Clipping study & \texttt{scripts/test\_clipping.py} & \texttt{results/clipping\_test.json} \\
+Quantizers & \texttt{model/quantization.py} & --- \\
+\bottomrule
+\end{tabular}}
+\caption{From result to script.}
+\label{tab:repro}
+\end{table}
+
+\todo{Add the rows for the grid (\texttt{grid\_runner.py},
+\texttt{evaluate\_model.py}, \texttt{divergence\_metrics.py},
+\texttt{cross\_faithfulness.py}, \texttt{stratify.py}, \texttt{energy.py},
+\texttt{evaluate\_test.py}) once they exist, and check every path against the
+final repository layout.}
