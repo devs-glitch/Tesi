@@ -34,7 +34,7 @@ def arm_of(weight_bits, membrane_bits):
         return 'weight-only'
     if membrane_bits:
         return 'membrane-only'
-    return 'fp32'
+    return 'fp32-control'
 
 
 def config_tag(weight_bits, membrane_bits, input_size, seed):
@@ -60,7 +60,7 @@ def quantised_state_dict(net):
 
 def run_qat(input_size, seed, hyperparams, weight_bits=None, membrane_bits=None,
             tag=None, n_epochs=N_EPOCHS, patience=PATIENCE, lr_scale=FINETUNE_LR_SCALE,
-            device=None, verbose=True):
+            device=None, verbose=True, control = False):
     # fine tune one quantised configuration returning its summary
     tag = tag or config_tag(weight_bits, membrane_bits, input_size, seed)
     out_dir = RUNS_DIR / tag
@@ -72,7 +72,7 @@ def run_qat(input_size, seed, hyperparams, weight_bits=None, membrane_bits=None,
         with open(summary_path, encoding='utf-8') as f:
             return json.load(f)
 
-    if weight_bits is None and membrane_bits is None:
+    if weight_bits is None and membrane_bits is None and not control:
         raise ValueError('neither target is quantised')
 
     source = fp32_checkpoint_for(input_size, seed)
@@ -163,6 +163,9 @@ def run_qat(input_size, seed, hyperparams, weight_bits=None, membrane_bits=None,
             stopped_early = True
             break
 
+    final_firing_rates = measure_firing_rates(net, val_dl, time_steps, device)
+    torch.save(quantised_state_dict(net), out_dir / 'final_model.pt')
+
     quantisation = handle.config()
     weight_steps = handle.weight_steps() if weight_bits else {}
     handle.remove()
@@ -210,6 +213,8 @@ def run_qat(input_size, seed, hyperparams, weight_bits=None, membrane_bits=None,
         'val_recall_per_class': per_class,
         'val_support_per_class': dict(zip(dataset.classes, support)),
         'checkpoint_firing_rates': checkpoint_firing_rates,
+        'final_firing_rates': final_firing_rates,
+        'final_checkpoint': str(out_dir / 'final_model.pt'),
         'epochs_run': epoch + 1,
         'stopped_early': stopped_early,
         'checkpoint': str(checkpoint),
@@ -237,12 +242,16 @@ def main():
     parser.add_argument('--tag', type=str, default=None)
     parser.add_argument('--epochs', type=int, default=N_EPOCHS)
     parser.add_argument('--lr-scale', type=float, default=FINETUNE_LR_SCALE)
+    parser.add_argument('--control', action='store_true',
+                        help='FP32 control arm: identical fine-tuning, quantiser ')
     args = parser.parse_args()
 
     summary = run_qat(args.input_size, args.seed, load_hyperparams(),
                       weight_bits=args.weight_bits,
                       membrane_bits=args.membrane_bits,
-                      tag=args.tag, n_epochs=args.epochs, lr_scale=args.lr_scale)
+                      tag=args.tag, n_epochs=args.epochs, lr_scale=args.lr_scale,
+                      control=args.control)
+    
     print(f"\nSummary in {RUNS_DIR / summary['tag'] / 'run.json'}")
 
 
