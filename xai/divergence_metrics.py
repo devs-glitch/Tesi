@@ -66,6 +66,20 @@ def load_quantised_run(run_dir, device):
                                 membrane_range=membrane_range)
     return net, handle, summary
 
+def load_fp32_for_seed(seed, input_size, device):
+    # The FP32 model a quantised run was fine-tuned from
+
+    with open(MANIFEST, encoding='utf-8') as f:
+        manifest = json.load(f)
+    path = RUNS_DIR / f'fp32_{input_size}px_seed{seed}' / 'best_model.pt'
+    if not path.exists():
+        raise FileNotFoundError(
+            f'no FP32 reference for seed {seed}: {path}')
+    net = GWGlitchSNN(beta=manifest['hyperparameters']['beta'],
+                      input_size=input_size).to(device)
+    net.load_state_dict(torch.load(path, map_location=device))
+    net.eval()
+    return net
 
 def load_manifest_checkpoint(index, device):
     # one of the FP32 checkpoints named in the manifest for the self-test
@@ -233,10 +247,11 @@ def main():
     output['runs'] = {}
     for run_dir in run_dirs:
         net, handle, summary = load_quantised_run(run_dir, device)
-        results = compare_models(reference, net, samples, class_names, time_steps,
-                                 device, layer_index, gamma, use_ssim)
+        reference_for_seed = load_fp32_for_seed(summary['seed'], input_size, device)
+        results = compare_models(reference_for_seed, net, samples, class_names,
+                                 time_steps, device, layer_index, gamma, use_ssim)
         handle.remove()
-
+        
         output['runs'][run_dir.name] = {
             'arm': summary['arm'],
             'weight_bits': summary['quantisation'].get('weight_bits'),

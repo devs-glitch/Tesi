@@ -1,56 +1,6 @@
-"""
-Does the explanation degrade evenly, or only on the hard glitches?
-
-THE QUESTION
-------------
-An overall divergence number averages over a population that is not uniform. A
-model may keep its explanation on loud, obvious glitches and lose it on faint
-ones, and the mean would show a moderate degradation everywhere instead — which
-is a different claim, and the wrong one.
-
-This stratifies the SAM divergence by the physical properties of the glitch:
-signal-to-noise ratio, peak frequency, duration, bandwidth. Those come from the
-Gravity Spy metadata already in selected_dataset.csv, so they cost nothing and
-they describe the EVENT rather than the rendering of it. Image statistics would
-describe the PNG; "the explanation degrades on low-SNR glitches" is a statement
-a physicist can act on, "on dim images" is not.
-
-WHY THE QUANTILES ARE WITHIN CLASS, AND WHY THAT IS NOT OPTIONAL
-----------------------------------------------------------------
-The four classes differ enormously in these quantities. Median SNR runs from
-10.4 for Violin_Mode to 880.8 for Extremely_Loud, a factor of 85.
-
-A global tertile split on SNR therefore does not split by intensity, it splits
-by class: measured on this dataset, the top global tertile is 71.9 %
-Extremely_Loud and the bottom is 1.1 %. Any "effect of SNR" found that way is
-a class effect wearing a disguise.
-
-Quantiles are taken WITHIN each class, which makes the cells balanced by
-construction — about 117 validation samples per (class, tertile) cell — and
-makes the comparison one of intensity at fixed class.
-
-HOW THE METADATA JOINS TO THE IMAGES
-------------------------------------
-03_image_downloader.py names each file glitch_{index}.png using the GLOBAL
-dataframe index, and saves it under its own class folder. So the integer in the
-filename is the row number in selected_dataset.csv, and the folder name must
-equal that row's ml_label.
-
-That second condition is a real check rather than a formality: if the CSV were
-ever re-sorted or regenerated, the indices would still parse and the join would
-silently attach the wrong physics to every image. This script verifies it on
-every run and refuses to continue if it fails.
-
-ORDER
------
-The sample order is taken from the dataloader itself, not reconstructed. File
-listings sort glitch_10.png before glitch_2.png, so any attempt to rebuild the
-order by parsing names would be wrong in a way that produces a complete and
-plausible table. The script also asserts the loader is not shuffled, since a
-shuffled validation loader would make the row indices meaningless.
-
-Validation set only.
-"""
+'''
+Assess whether explanations degrate evenly between glitch classes
+'''
 
 import argparse
 import csv
@@ -63,7 +13,7 @@ import torch
 from torch.utils.data import SequentialSampler
 
 from scripts.dataloader import build_dataloaders
-from xai.divergence_metrics import load_quantised_run, compare_stacks
+from xai.divergence_metrics import (load_quantised_run, compare_stacks, load_fp32_for_seed)
 from xai.sam import MANIFEST, load_reference_model
 from xai.sam_metrics import sam_stacks
 
@@ -78,11 +28,10 @@ BIN_NAMES = ['low', 'mid', 'high']
 N_PER_CELL = 15
 
 
-# --------------------------------------------------------------------------- #
-# The feature table
-# --------------------------------------------------------------------------- #
+# Feature table
+
 def load_metadata(path):
-    """selected_dataset.csv, as a list of dicts indexed by row number."""
+    # selected_dataset.csv, as a list of dicts indexed by row number."""
     with open(path, newline='', encoding='utf-8') as f:
         rows = list(csv.DictReader(f))
     for row in rows:
@@ -286,9 +235,12 @@ def main():
 
     for run_dir in run_dirs:
         net, handle, summary = load_quantised_run(run_dir, device)
-        results = divergence_by_cell(reference, net, cells, dataset, time_steps,
-                                     device, layer_index, gamma, args.column)
+        reference_for_seed = load_fp32_for_seed(summary['seed'], input_size, device)
+        results = divergence_by_cell(reference_for_seed, net, cells, dataset,
+                                     time_steps, device, layer_index, gamma,
+                                     args.column)
         handle.remove()
+
         output['runs'][run_dir.name] = {'arm': summary['arm'], **{'cells': results}}
 
         print(f'\n{run_dir.name}  ({summary["arm"]})')

@@ -1,0 +1,685 @@
+{
+  "column": "snr",
+  "n_bins": 3,
+  "n_per_cell": 15,
+  "runs": {
+    "qat_wxu2_112px_seed1234": {
+      "arm": "membrane-only",
+      "cells": {
+        "Blip|low": {
+          "class": "Blip",
+          "bin": "low",
+          "n": 15,
+          "pcc": 0.8626760913019051,
+          "iou": 0.06822611815315138,
+          "com_shift": -0.13420639038085938,
+          "median_snr": 8.31270027160645
+        },
+        "Blip|mid": {
+          "class": "Blip",
+          "bin": "mid",
+          "n": 15,
+          "pcc": 0.9475331462083459,
+          "iou": 0.11074097064141969,
+          "com_shift": -0.11369787851969401,
+          "median_snr": 12.0867700576782
+        },
+        "Blip|high": {
+          "class": "Blip",
+          "bin": "high",
+          "n": 15,
+          "pcc": 0.9775908975125989,
+          "iou": 0.18900043030521466,
+          "com_shift": -0.0882703463236491,
+          "median_snr": 29.7150993347168
+        },
+        "Extremely_Loud|low": {
+          "class": "Extremely_Loud",
+          "bin": "low",
+          "n": 15,
+          "pcc": 0.990467078659525,
+          "iou": 0.8716711710033357,
+          "com_shift": -0.016031265258789062,
+          "median_snr": 150.345687866211
+        },
+        "Extremely_Loud|mid": {
+          "class": "Extremely_Loud",
+          "bin": "mid",
+          "n": 15,
+          "pcc": 0.9894047890342896,
+          "iou": 0.6753021490386223,
+          "com_shift": -0.00793453852335612,
+          "median_snr": 1089.16564941406
+        },
+        "Extremely_Loud|high": {
+          "class": "Extremely_Loud",
+          "bin": "high",
+          "n": 15,
+          "pcc": 0.9960288001463786,
+          "iou": 0.40260420792366813,
+          "com_shift": -0.019516754150390624,
+          "median_snr": 2635.20166015625
+        },
+        "Scattered_Light|low": {
+          "class": "Scattered_Light",
+          "bin": "low",
+          "n": 15,
+          "pcc": 0.7985643689573984,
+          "iou": 0.17866327949713856,
+          "com_shift": -0.10598341623942058,
+          "median_snr": 8.99139976501465
+        },
+        "Scattered_Light|mid": {
+          "class": "Scattered_Light",
+          "bin": "mid",
+          "n": 15,
+          "pcc": 0.8704160707403936,
+          "iou": 0.3277661894718881,
+          "com_shift": -0.07640972137451171,
+          "median_snr": 11.2626695632935
+        },
+        "Scattered_Light|high": {
+          "class": "Scattered_Light",
+          "bin": "high",
+          "n": 15,
+          "pcc": 0.9494874884032348,
+          "iou": 0.6215852714280439,
+          "com_shift": -0.037108389536539714,
+          "median_snr": 30.788330078125
+        },
+        "Violin_Mode|low": {
+          "class": "Violin_Mode",
+          "bin": "low",
+          "n": 15,
+          "pcc": 0.7788676193987276,
+          "iou": 0.10323655259537445,
+          "com_shift": -0.11661599477132162,
+          "median_snr": 8.10966014862061
+        },
+        "Violin_Mode|mid": {
+          "class": "Violin_Mode",
+          "bin": "mid",
+          "n": 15,
+          "pcc": 0.8135083237703756,
+          "iou": 0.10843657329767717,
+          "com_shift": -0.11436748504638672,
+          "median_snr": 11.0730400085449
+        },
+        "Violin_Mode|high": {
+          "class": "Violin_Mode",
+          "bin": "high",
+          "n": 15,
+          "pcc": 0.8833899259497399,
+          "iou": 0.2375848058595494,
+          "com_shift": -0.08989508946736653,
+          "median_snr": 23.662769317627
+        }
+      }
+    },
+    "qat_wxu2_112px_seed2345": {
+      "arm": "membrane-only",
+      "cells": {
+        "Blip|low": {
+          "class": "Blip",
+          "bin": "low",
+          "n": 15,
+          "pcc": 0.9400380228372291,
+          "iou": 0.6196424680879898,
+          "com_shift": -0.04772631327311198,
+          "median_snr": 8.31270027160645
+        },
+        "Blip|mid": {
+          "class": "Blip",
+          "bin": "mid",
+          "n": 15,
+          "pcc": 0.9399409382859871,
+          "iou": 0.6541940077529347,
+          "com_shift": -0.03372344970703125,
+          "median_snr": 12.0867700576782
+        },
+        "Blip|high": {
+          "class": "Blip",
+          "bin": "high",
+          "n": 15,
+          "pcc": 0.9395200255206271,
+          "iou": 0.6571892668056672,
+          "com_shift": -0.027707608540852864,
+          "median_snr": 29.7150993347168
+        },
+        "Extremely_Loud|low": {
+          "class": "Extremely_Loud",
+          "bin": "low",
+          "n": 15,
+          "pcc": 0.9590701573706127,
+          "iou": 0.7499765767799838,
+          "com_shift": 0.019945557912190756,
+          "median_snr": 150.345687866211
+        },
+        "Extremely_Loud|mid": {
+          "class": "Extremely_Loud",
+          "bin": "mid",
+          "n": 15,
+          "pcc": 0.9731921899304757,
+          "iou": 0.6976001472714022,
+          "com_shift": 0.0349612553914388,
+          "median_snr": 1089.16564941406
+        },
+        "Extremely_Loud|high": {
+          "class": "Extremely_Loud",
+          "bin": "high",
+          "n": 15,
+          "pcc": 0.9833627398659266,
+          "iou": 0.5476791481752722,
+          "com_shift": 0.029274463653564453,
+          "median_snr": 2635.20166015625
+        },
+        "Scattered_Light|low": {
+          "class": "Scattered_Light",
+          "bin": "low",
+          "n": 15,
+          "pcc": 0.9445790497776285,
+          "iou": 0.6475157080159216,
+          "com_shift": 0.020499293009440103,
+          "median_snr": 8.99139976501465
+        },
+        "Scattered_Light|mid": {
+          "class": "Scattered_Light",
+          "bin": "mid",
+          "n": 15,
+          "pcc": 0.9441064627072756,
+          "iou": 0.6224178313149274,
+          "com_shift": 0.029907925923665365,
+          "median_snr": 11.2626695632935
+        },
+        "Scattered_Light|high": {
+          "class": "Scattered_Light",
+          "bin": "high",
+          "n": 15,
+          "pcc": 0.9377644920725153,
+          "iou": 0.6261171869082703,
+          "com_shift": 0.024228986104329428,
+          "median_snr": 30.788330078125
+        },
+        "Violin_Mode|low": {
+          "class": "Violin_Mode",
+          "bin": "low",
+          "n": 15,
+          "pcc": 0.9384468719944276,
+          "iou": 0.6683515855203404,
+          "com_shift": 0.0037819544474283853,
+          "median_snr": 8.10966014862061
+        },
+        "Violin_Mode|mid": {
+          "class": "Violin_Mode",
+          "bin": "mid",
+          "n": 15,
+          "pcc": 0.9394012954169547,
+          "iou": 0.6300987370284815,
+          "com_shift": 0.0003123283386230469,
+          "median_snr": 11.0730400085449
+        },
+        "Violin_Mode|high": {
+          "class": "Violin_Mode",
+          "bin": "high",
+          "n": 15,
+          "pcc": 0.9390438917373699,
+          "iou": 0.630236354342665,
+          "com_shift": -0.0011471748352050782,
+          "median_snr": 23.662769317627
+        }
+      }
+    },
+    "qat_wxu2_112px_seed3456": {
+      "arm": "membrane-only",
+      "cells": {
+        "Blip|low": {
+          "class": "Blip",
+          "bin": "low",
+          "n": 15,
+          "pcc": 0.8724781139389962,
+          "iou": 0.13662757853005825,
+          "com_shift": -0.14489558537801106,
+          "median_snr": 8.31270027160645
+        },
+        "Blip|mid": {
+          "class": "Blip",
+          "bin": "mid",
+          "n": 15,
+          "pcc": 0.8875724829465167,
+          "iou": 0.2162737166236055,
+          "com_shift": -0.1378167470296224,
+          "median_snr": 12.0867700576782
+        },
+        "Blip|high": {
+          "class": "Blip",
+          "bin": "high",
+          "n": 15,
+          "pcc": 0.9176350000169881,
+          "iou": 0.30016420826036005,
+          "com_shift": -0.11228783925374348,
+          "median_snr": 29.7150993347168
+        },
+        "Extremely_Loud|low": {
+          "class": "Extremely_Loud",
+          "bin": "low",
+          "n": 15,
+          "pcc": 0.9864198251826112,
+          "iou": 0.8946041326391772,
+          "com_shift": -0.011494096120198567,
+          "median_snr": 150.345687866211
+        },
+        "Extremely_Loud|mid": {
+          "class": "Extremely_Loud",
+          "bin": "mid",
+          "n": 15,
+          "pcc": 0.9908593825335432,
+          "iou": 0.7543158840854163,
+          "com_shift": 0.010884443918863932,
+          "median_snr": 1089.16564941406
+        },
+        "Extremely_Loud|high": {
+          "class": "Extremely_Loud",
+          "bin": "high",
+          "n": 15,
+          "pcc": 0.9944359976714203,
+          "iou": 0.5410024541893174,
+          "com_shift": 0.007349268595377604,
+          "median_snr": 2635.20166015625
+        },
+        "Scattered_Light|low": {
+          "class": "Scattered_Light",
+          "bin": "low",
+          "n": 15,
+          "pcc": 0.8770487469393228,
+          "iou": 0.4793337288134983,
+          "com_shift": -0.08367665608723958,
+          "median_snr": 8.99139976501465
+        },
+        "Scattered_Light|mid": {
+          "class": "Scattered_Light",
+          "bin": "mid",
+          "n": 15,
+          "pcc": 0.8789173832102338,
+          "iou": 0.5373218880980077,
+          "com_shift": -0.05581111907958984,
+          "median_snr": 11.2626695632935
+        },
+        "Scattered_Light|high": {
+          "class": "Scattered_Light",
+          "bin": "high",
+          "n": 15,
+          "pcc": 0.9416678565532889,
+          "iou": 0.6175698403005067,
+          "com_shift": -0.031079546610514323,
+          "median_snr": 30.788330078125
+        },
+        "Violin_Mode|low": {
+          "class": "Violin_Mode",
+          "bin": "low",
+          "n": 15,
+          "pcc": 0.8828171251188498,
+          "iou": 0.5192709474528299,
+          "com_shift": -0.0913831075032552,
+          "median_snr": 8.10966014862061
+        },
+        "Violin_Mode|mid": {
+          "class": "Violin_Mode",
+          "bin": "mid",
+          "n": 15,
+          "pcc": 0.8895203595082506,
+          "iou": 0.365049119351344,
+          "com_shift": -0.10080318450927735,
+          "median_snr": 11.0730400085449
+        },
+        "Violin_Mode|high": {
+          "class": "Violin_Mode",
+          "bin": "high",
+          "n": 15,
+          "pcc": 0.9224017717112816,
+          "iou": 0.3952261745937057,
+          "com_shift": -0.09864880243937174,
+          "median_snr": 23.662769317627
+        }
+      }
+    },
+    "qat_wxu4_112px_seed1234": {
+      "arm": "membrane-only",
+      "cells": {
+        "Blip|low": {
+          "class": "Blip",
+          "bin": "low",
+          "n": 15,
+          "pcc": 0.9772363055523283,
+          "iou": 0.6213128264545257,
+          "com_shift": 0.05269346237182617,
+          "median_snr": 8.31270027160645
+        },
+        "Blip|mid": {
+          "class": "Blip",
+          "bin": "mid",
+          "n": 15,
+          "pcc": 0.9924626702058511,
+          "iou": 0.635996600908431,
+          "com_shift": 0.0583070437113444,
+          "median_snr": 12.0867700576782
+        },
+        "Blip|high": {
+          "class": "Blip",
+          "bin": "high",
+          "n": 15,
+          "pcc": 0.9969261081382687,
+          "iou": 0.6817201925712778,
+          "com_shift": 0.04841744105021159,
+          "median_snr": 29.7150993347168
+        },
+        "Extremely_Loud|low": {
+          "class": "Extremely_Loud",
+          "bin": "low",
+          "n": 15,
+          "pcc": 0.9994377411569169,
+          "iou": 0.9364782211618555,
+          "com_shift": 0.006684525807698568,
+          "median_snr": 150.345687866211
+        },
+        "Extremely_Loud|mid": {
+          "class": "Extremely_Loud",
+          "bin": "mid",
+          "n": 15,
+          "pcc": 0.9991153402139727,
+          "iou": 0.8232476434298371,
+          "com_shift": -0.002042229970296224,
+          "median_snr": 1089.16564941406
+        },
+        "Extremely_Loud|high": {
+          "class": "Extremely_Loud",
+          "bin": "high",
+          "n": 15,
+          "pcc": 0.9995100515069113,
+          "iou": 0.702616474929319,
+          "com_shift": -0.0040542920430501304,
+          "median_snr": 2635.20166015625
+        },
+        "Scattered_Light|low": {
+          "class": "Scattered_Light",
+          "bin": "low",
+          "n": 15,
+          "pcc": 0.9613648675201597,
+          "iou": 0.5811821587510583,
+          "com_shift": 0.04216893513997396,
+          "median_snr": 8.99139976501465
+        },
+        "Scattered_Light|mid": {
+          "class": "Scattered_Light",
+          "bin": "mid",
+          "n": 15,
+          "pcc": 0.9815291861616031,
+          "iou": 0.6892280149795663,
+          "com_shift": 0.029587809244791666,
+          "median_snr": 11.2626695632935
+        },
+        "Scattered_Light|high": {
+          "class": "Scattered_Light",
+          "bin": "high",
+          "n": 15,
+          "pcc": 0.9936789374179846,
+          "iou": 0.8232052764771055,
+          "com_shift": 0.018535455067952473,
+          "median_snr": 30.788330078125
+        },
+        "Violin_Mode|low": {
+          "class": "Violin_Mode",
+          "bin": "low",
+          "n": 15,
+          "pcc": 0.9564815382690434,
+          "iou": 0.600855336674711,
+          "com_shift": 0.04901905059814453,
+          "median_snr": 8.10966014862061
+        },
+        "Violin_Mode|mid": {
+          "class": "Violin_Mode",
+          "bin": "mid",
+          "n": 15,
+          "pcc": 0.9664494149697153,
+          "iou": 0.621354945482772,
+          "com_shift": 0.04639654159545899,
+          "median_snr": 11.0730400085449
+        },
+        "Violin_Mode|high": {
+          "class": "Violin_Mode",
+          "bin": "high",
+          "n": 15,
+          "pcc": 0.9825055313234334,
+          "iou": 0.6940334587627831,
+          "com_shift": 0.034661070505778,
+          "median_snr": 23.662769317627
+        }
+      }
+    },
+    "qat_wxu4_112px_seed2345": {
+      "arm": "membrane-only",
+      "cells": {
+        "Blip|low": {
+          "class": "Blip",
+          "bin": "low",
+          "n": 15,
+          "pcc": 0.9888924832795312,
+          "iou": 0.8027836692016888,
+          "com_shift": 0.051400407155354814,
+          "median_snr": 8.31270027160645
+        },
+        "Blip|mid": {
+          "class": "Blip",
+          "bin": "mid",
+          "n": 15,
+          "pcc": 0.9891115129826832,
+          "iou": 0.8096746731987425,
+          "com_shift": 0.05468330383300781,
+          "median_snr": 12.0867700576782
+        },
+        "Blip|high": {
+          "class": "Blip",
+          "bin": "high",
+          "n": 15,
+          "pcc": 0.9893682056307559,
+          "iou": 0.8149938990804504,
+          "com_shift": 0.05243345896402995,
+          "median_snr": 29.7150993347168
+        },
+        "Extremely_Loud|low": {
+          "class": "Extremely_Loud",
+          "bin": "low",
+          "n": 15,
+          "pcc": 0.9959271164399891,
+          "iou": 0.9023276609574312,
+          "com_shift": 0.029666805267333986,
+          "median_snr": 150.345687866211
+        },
+        "Extremely_Loud|mid": {
+          "class": "Extremely_Loud",
+          "bin": "mid",
+          "n": 15,
+          "pcc": 0.9973569163381516,
+          "iou": 0.8464228876070009,
+          "com_shift": 0.020960203806559243,
+          "median_snr": 1089.16564941406
+        },
+        "Extremely_Loud|high": {
+          "class": "Extremely_Loud",
+          "bin": "high",
+          "n": 15,
+          "pcc": 0.9982884916158156,
+          "iou": 0.8014344870538286,
+          "com_shift": 0.013567924499511719,
+          "median_snr": 2635.20166015625
+        },
+        "Scattered_Light|low": {
+          "class": "Scattered_Light",
+          "bin": "low",
+          "n": 15,
+          "pcc": 0.9882117125807499,
+          "iou": 0.7942119221718454,
+          "com_shift": 0.06805321375528971,
+          "median_snr": 8.99139976501465
+        },
+        "Scattered_Light|mid": {
+          "class": "Scattered_Light",
+          "bin": "mid",
+          "n": 15,
+          "pcc": 0.9888076834577564,
+          "iou": 0.779009952935236,
+          "com_shift": 0.06978009541829427,
+          "median_snr": 11.2626695632935
+        },
+        "Scattered_Light|high": {
+          "class": "Scattered_Light",
+          "bin": "high",
+          "n": 15,
+          "pcc": 0.9897925517168016,
+          "iou": 0.8107364737338177,
+          "com_shift": 0.06194318135579427,
+          "median_snr": 30.788330078125
+        },
+        "Violin_Mode|low": {
+          "class": "Violin_Mode",
+          "bin": "low",
+          "n": 15,
+          "pcc": 0.9873450887260203,
+          "iou": 0.7941812742499432,
+          "com_shift": 0.06264591217041016,
+          "median_snr": 8.10966014862061
+        },
+        "Violin_Mode|mid": {
+          "class": "Violin_Mode",
+          "bin": "mid",
+          "n": 15,
+          "pcc": 0.9881234551282141,
+          "iou": 0.8189067955484448,
+          "com_shift": 0.061041069030761716,
+          "median_snr": 11.0730400085449
+        },
+        "Violin_Mode|high": {
+          "class": "Violin_Mode",
+          "bin": "high",
+          "n": 15,
+          "pcc": 0.9893541236980603,
+          "iou": 0.8159926242873056,
+          "com_shift": 0.05660788218180338,
+          "median_snr": 23.662769317627
+        }
+      }
+    },
+    "qat_wxu4_112px_seed3456": {
+      "arm": "membrane-only",
+      "cells": {
+        "Blip|low": {
+          "class": "Blip",
+          "bin": "low",
+          "n": 15,
+          "pcc": 0.9748832663251475,
+          "iou": 0.7484811166013483,
+          "com_shift": 0.06609455744425456,
+          "median_snr": 8.31270027160645
+        },
+        "Blip|mid": {
+          "class": "Blip",
+          "bin": "mid",
+          "n": 15,
+          "pcc": 0.9789877136927427,
+          "iou": 0.745592799419309,
+          "com_shift": 0.06335252126057943,
+          "median_snr": 12.0867700576782
+        },
+        "Blip|high": {
+          "class": "Blip",
+          "bin": "high",
+          "n": 15,
+          "pcc": 0.9859619913365566,
+          "iou": 0.7872280576162939,
+          "com_shift": 0.05833644866943359,
+          "median_snr": 29.7150993347168
+        },
+        "Extremely_Loud|low": {
+          "class": "Extremely_Loud",
+          "bin": "low",
+          "n": 15,
+          "pcc": 0.9983955232717692,
+          "iou": 0.9399124194403422,
+          "com_shift": 0.011106268564860026,
+          "median_snr": 150.345687866211
+        },
+        "Extremely_Loud|mid": {
+          "class": "Extremely_Loud",
+          "bin": "mid",
+          "n": 15,
+          "pcc": 0.9987097218796571,
+          "iou": 0.8734729874342642,
+          "com_shift": -0.0026560147603352864,
+          "median_snr": 1089.16564941406
+        },
+        "Extremely_Loud|high": {
+          "class": "Extremely_Loud",
+          "bin": "high",
+          "n": 15,
+          "pcc": 0.998814044855018,
+          "iou": 0.7976024877432749,
+          "com_shift": -0.007224877675374349,
+          "median_snr": 2635.20166015625
+        },
+        "Scattered_Light|low": {
+          "class": "Scattered_Light",
+          "bin": "low",
+          "n": 15,
+          "pcc": 0.9721618260536112,
+          "iou": 0.6594606539987168,
+          "com_shift": 0.07639563878377278,
+          "median_snr": 8.99139976501465
+        },
+        "Scattered_Light|mid": {
+          "class": "Scattered_Light",
+          "bin": "mid",
+          "n": 15,
+          "pcc": 0.9742633260283973,
+          "iou": 0.688144449192586,
+          "com_shift": 0.06597124735514323,
+          "median_snr": 11.2626695632935
+        },
+        "Scattered_Light|high": {
+          "class": "Scattered_Light",
+          "bin": "high",
+          "n": 15,
+          "pcc": 0.9897421405909044,
+          "iou": 0.768749048295986,
+          "com_shift": 0.05090541839599609,
+          "median_snr": 30.788330078125
+        },
+        "Violin_Mode|low": {
+          "class": "Violin_Mode",
+          "bin": "low",
+          "n": 15,
+          "pcc": 0.9735346708835214,
+          "iou": 0.7064308187558022,
+          "com_shift": 0.07500483194986979,
+          "median_snr": 8.10966014862061
+        },
+        "Violin_Mode|mid": {
+          "class": "Violin_Mode",
+          "bin": "mid",
+          "n": 15,
+          "pcc": 0.9759799025163542,
+          "iou": 0.7331677254602964,
+          "com_shift": 0.06554079055786133,
+          "median_snr": 11.0730400085449
+        },
+        "Violin_Mode|high": {
+          "class": "Violin_Mode",
+          "bin": "high",
+          "n": 15,
+          "pcc": 0.983876570343019,
+          "iou": 0.7339742417670306,
+          "com_shift": 0.05761591593424479,
+          "median_snr": 23.662769317627
+        }
+      }
+    }
+  }
+}

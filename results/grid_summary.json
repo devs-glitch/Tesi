@@ -1,0 +1,525 @@
+{
+  "input_size": 112,
+  "seeds": [
+    1234,
+    2345,
+    3456
+  ],
+  "epochs": 20,
+  "patience": 5,
+  "lr_scale": 0.1,
+  "total_seconds": 46923.94089818001,
+  "failures": [],
+  "results": {
+    "qat_wxux_112px_seed1234": {
+      "arm": "fp32-control",
+      "bits": null,
+      "seed": 1234,
+      "ptq_accuracy": 0.9832752613240419,
+      "qat_accuracy": 0.9832752613240419,
+      "fp32_start_accuracy": 0.9832752613240419,
+      "recovered_over_ptq": 0.0,
+      "epochs_run": 6,
+      "stopped_early": true,
+      "checkpoint_firing_rates": {
+        "layer1": 0.14887730856701886,
+        "layer2": 0.15092224076338345,
+        "layer3": 0.15267158290858052,
+        "layer4": 0.11483981680475461
+      }
+    },
+    "qat_w8ux_112px_seed1234": {
+      "arm": "weight-only",
+      "bits": 8,
+      "seed": 1234,
+      "ptq_accuracy": 0.981184668989547,
+      "qat_accuracy": 0.9818815331010453,
+      "fp32_start_accuracy": 0.9832752613240419,
+      "recovered_over_ptq": 0.0006968641114982743,
+      "epochs_run": 6,
+      "stopped_early": true,
+      "checkpoint_firing_rates": {
+        "layer1": 0.15022627168727667,
+        "layer2": 0.15284428927748875,
+        "layer3": 0.1581075284123836,
+        "layer4": 0.11885778636571007
+      }
+    },
+    "qat_wxu8_112px_seed1234": {
+      "arm": "membrane-only",
+      "bits": 8,
+      "seed": 1234,
+      "ptq_accuracy": 0.9832752613240419,
+      "qat_accuracy": 0.9832752613240419,
+      "fp32_start_accuracy": 0.9832752613240419,
+      "recovered_over_ptq": 0.0,
+      "epochs_run": 6,
+      "stopped_early": true,
+      "checkpoint_firing_rates": {
+        "layer1": 0.14890223707263894,
+        "layer2": 0.15103054291695253,
+        "layer3": 0.15293066434120883,
+        "layer4": 0.11505836414543179
+      }
+    },
+    "qat_w8u8_112px_seed1234": {
+      "arm": "joint",
+      "bits": 8,
+      "seed": 1234,
+      "ptq_accuracy": 0.9832752613240419,
+      "qat_accuracy": 0.98397212543554,
+      "fp32_start_accuracy": 0.9832752613240419,
+      "recovered_over_ptq": 0.0006968641114981633,
+      "epochs_run": 6,
+      "stopped_early": true,
+      "checkpoint_firing_rates": {
+        "layer1": 0.1511562477213165,
+        "layer2": 0.15444999887552827,
+        "layer3": 0.16301589448796747,
+        "layer4": 0.1243383131635729
+      }
+    },
+    "qat_w4ux_112px_seed1234": {
+      "arm": "weight-only",
+      "bits": 4,
+      "seed": 1234,
+      "ptq_accuracy": 0.9519163763066202,
+      "qat_accuracy": 0.9853658536585366,
+      "fp32_start_accuracy": 0.9832752613240419,
+      "recovered_over_ptq": 0.03344947735191639,
+      "epochs_run": 12,
+      "stopped_early": true,
+      "checkpoint_firing_rates": {
+        "layer1": 0.15530581878245084,
+        "layer2": 0.15892261047604192,
+        "layer3": 0.17871447610522811,
+        "layer4": 0.13653340664163283
+      }
+    },
+    "qat_wxu4_112px_seed1234": {
+      "arm": "membrane-only",
+      "bits": 4,
+      "seed": 1234,
+      "ptq_accuracy": 0.981184668989547,
+      "qat_accuracy": 0.9832752613240419,
+      "fp32_start_accuracy": 0.9832752613240419,
+      "recovered_over_ptq": 0.002090592334494823,
+      "epochs_run": 6,
+      "stopped_early": true,
+      "checkpoint_firing_rates": {
+        "layer1": 0.151562203928984,
+        "layer2": 0.15444484256493504,
+        "layer3": 0.1630633449045623,
+        "layer4": 0.12160153491260282
+      }
+    },
+    "qat_w4u4_112px_seed1234": {
+      "arm": "joint",
+      "bits": 4,
+      "seed": 1234,
+      "ptq_accuracy": 0.9547038327526133,
+      "qat_accuracy": 0.9846689895470383,
+      "fp32_start_accuracy": 0.9832752613240419,
+      "recovered_over_ptq": 0.02996515679442502,
+      "epochs_run": 12,
+      "stopped_early": true,
+      "checkpoint_firing_rates": {
+        "layer1": 0.15394531374712855,
+        "layer2": 0.15512707210064766,
+        "layer3": 0.17424866185371055,
+        "layer4": 0.12786386788722115
+      }
+    },
+    "qat_w2ux_112px_seed1234": {
+      "arm": "weight-only",
+      "bits": 2,
+      "seed": 1234,
+      "ptq_accuracy": 0.4069686411149826,
+      "qat_accuracy": 0.6682926829268293,
+      "fp32_start_accuracy": 0.9832752613240419,
+      "recovered_over_ptq": 0.2613240418118467,
+      "epochs_run": 20,
+      "stopped_early": false,
+      "checkpoint_firing_rates": {
+        "layer1": 0.19208471537259397,
+        "layer2": 0.26806426864467847,
+        "layer3": 0.3680580725237883,
+        "layer4": 0.11373084254484975
+      }
+    },
+    "qat_wxu2_112px_seed1234": {
+      "arm": "membrane-only",
+      "bits": 2,
+      "seed": 1234,
+      "ptq_accuracy": 0.9428571428571428,
+      "qat_accuracy": 0.9825783972125436,
+      "fp32_start_accuracy": 0.9832752613240419,
+      "recovered_over_ptq": 0.03972125435540075,
+      "epochs_run": 20,
+      "stopped_early": false,
+      "checkpoint_firing_rates": {
+        "layer1": 0.1639113789028407,
+        "layer2": 0.18105878541278506,
+        "layer3": 0.19670201515071484,
+        "layer4": 0.143964114364639
+      }
+    },
+    "qat_w2u2_112px_seed1234": {
+      "arm": "joint",
+      "bits": 2,
+      "seed": 1234,
+      "ptq_accuracy": 0.39930313588850175,
+      "qat_accuracy": 0.6655052264808362,
+      "fp32_start_accuracy": 0.9832752613240419,
+      "recovered_over_ptq": 0.26620209059233446,
+      "epochs_run": 20,
+      "stopped_early": false,
+      "checkpoint_firing_rates": {
+        "layer1": 0.1756948184468605,
+        "layer2": 0.25877171373741137,
+        "layer3": 0.3680505853496778,
+        "layer4": 0.11086533404497319
+      }
+    },
+    "qat_wxux_112px_seed2345": {
+      "arm": "fp32-control",
+      "bits": null,
+      "seed": 2345,
+      "ptq_accuracy": 0.9818815331010453,
+      "qat_accuracy": 0.9818815331010453,
+      "fp32_start_accuracy": 0.9818815331010453,
+      "recovered_over_ptq": 0.0,
+      "epochs_run": 14,
+      "stopped_early": true,
+      "checkpoint_firing_rates": {
+        "layer1": 0.38839967387893887,
+        "layer2": 0.2470977796598594,
+        "layer3": 0.20597715853398685,
+        "layer4": 0.13874327268334632
+      }
+    },
+    "qat_w8ux_112px_seed2345": {
+      "arm": "weight-only",
+      "bits": 8,
+      "seed": 2345,
+      "ptq_accuracy": 0.981184668989547,
+      "qat_accuracy": 0.9818815331010453,
+      "fp32_start_accuracy": 0.9818815331010453,
+      "recovered_over_ptq": 0.0006968641114982743,
+      "epochs_run": 15,
+      "stopped_early": true,
+      "checkpoint_firing_rates": {
+        "layer1": 0.38924498410590436,
+        "layer2": 0.2516528596757596,
+        "layer3": 0.21085266651592188,
+        "layer4": 0.1516173007077041
+      }
+    },
+    "qat_wxu8_112px_seed2345": {
+      "arm": "membrane-only",
+      "bits": 8,
+      "seed": 2345,
+      "ptq_accuracy": 0.9804878048780488,
+      "qat_accuracy": 0.9832752613240419,
+      "fp32_start_accuracy": 0.9818815331010453,
+      "recovered_over_ptq": 0.0027874564459930973,
+      "epochs_run": 13,
+      "stopped_early": true,
+      "checkpoint_firing_rates": {
+        "layer1": 0.39052625963081466,
+        "layer2": 0.2556949970614204,
+        "layer3": 0.21448314646810604,
+        "layer4": 0.15473642562116896
+      }
+    },
+    "qat_w8u8_112px_seed2345": {
+      "arm": "joint",
+      "bits": 8,
+      "seed": 2345,
+      "ptq_accuracy": 0.9797909407665505,
+      "qat_accuracy": 0.9825783972125436,
+      "fp32_start_accuracy": 0.9818815331010453,
+      "recovered_over_ptq": 0.0027874564459930973,
+      "epochs_run": 12,
+      "stopped_early": true,
+      "checkpoint_firing_rates": {
+        "layer1": 0.3903197727759956,
+        "layer2": 0.25493622941422545,
+        "layer3": 0.21262266550745282,
+        "layer4": 0.15458956914288657
+      }
+    },
+    "qat_w4ux_112px_seed2345": {
+      "arm": "weight-only",
+      "bits": 4,
+      "seed": 2345,
+      "ptq_accuracy": 0.9560975609756097,
+      "qat_accuracy": 0.9825783972125436,
+      "fp32_start_accuracy": 0.9818815331010453,
+      "recovered_over_ptq": 0.02648083623693387,
+      "epochs_run": 14,
+      "stopped_early": true,
+      "checkpoint_firing_rates": {
+        "layer1": 0.40342329171476465,
+        "layer2": 0.2743001936412439,
+        "layer3": 0.23888340521772564,
+        "layer4": 0.18179147806317134
+      }
+    },
+    "qat_wxu4_112px_seed2345": {
+      "arm": "membrane-only",
+      "bits": 4,
+      "seed": 2345,
+      "ptq_accuracy": 0.9777003484320558,
+      "qat_accuracy": 0.9825783972125436,
+      "fp32_start_accuracy": 0.9818815331010453,
+      "recovered_over_ptq": 0.004878048780487809,
+      "epochs_run": 16,
+      "stopped_early": true,
+      "checkpoint_firing_rates": {
+        "layer1": 0.39265963227491346,
+        "layer2": 0.2552458268632457,
+        "layer3": 0.2153136738709041,
+        "layer4": 0.15634288281098477
+      }
+    },
+    "qat_w4u4_112px_seed2345": {
+      "arm": "joint",
+      "bits": 4,
+      "seed": 2345,
+      "ptq_accuracy": 0.956794425087108,
+      "qat_accuracy": 0.9818815331010453,
+      "fp32_start_accuracy": 0.9818815331010453,
+      "recovered_over_ptq": 0.02508710801393732,
+      "epochs_run": 10,
+      "stopped_early": true,
+      "checkpoint_firing_rates": {
+        "layer1": 0.4032559796077449,
+        "layer2": 0.27315240552201087,
+        "layer3": 0.2429106568417898,
+        "layer4": 0.1736476553026392
+      }
+    },
+    "qat_w2ux_112px_seed2345": {
+      "arm": "weight-only",
+      "bits": 2,
+      "seed": 2345,
+      "ptq_accuracy": 0.3003484320557491,
+      "qat_accuracy": 0.4445993031358885,
+      "fp32_start_accuracy": 0.9818815331010453,
+      "recovered_over_ptq": 0.1442508710801394,
+      "epochs_run": 20,
+      "stopped_early": false,
+      "checkpoint_firing_rates": {
+        "layer1": 0.4395670830165052,
+        "layer2": 0.3754494978160393,
+        "layer3": 0.27535782895644784,
+        "layer4": 0.12335245847598185
+      }
+    },
+    "qat_wxu2_112px_seed2345": {
+      "arm": "membrane-only",
+      "bits": 2,
+      "seed": 2345,
+      "ptq_accuracy": 0.9693379790940767,
+      "qat_accuracy": 0.9818815331010453,
+      "fp32_start_accuracy": 0.9818815331010453,
+      "recovered_over_ptq": 0.012543554006968605,
+      "epochs_run": 12,
+      "stopped_early": true,
+      "checkpoint_firing_rates": {
+        "layer1": 0.4073419868738394,
+        "layer2": 0.2879469899765706,
+        "layer3": 0.24067866741987887,
+        "layer4": 0.16558016530312727
+      }
+    },
+    "qat_w2u2_112px_seed2345": {
+      "arm": "joint",
+      "bits": 2,
+      "seed": 2345,
+      "ptq_accuracy": 0.3003484320557491,
+      "qat_accuracy": 0.443205574912892,
+      "fp32_start_accuracy": 0.9818815331010453,
+      "recovered_over_ptq": 0.14285714285714285,
+      "epochs_run": 17,
+      "stopped_early": true,
+      "checkpoint_firing_rates": {
+        "layer1": 0.4369375717349169,
+        "layer2": 0.39134822321685764,
+        "layer3": 0.25557785997822724,
+        "layer4": 0.1076875303420871
+      }
+    },
+    "qat_wxux_112px_seed3456": {
+      "arm": "fp32-control",
+      "bits": null,
+      "seed": 3456,
+      "ptq_accuracy": 0.9846689895470383,
+      "qat_accuracy": 0.9846689895470383,
+      "fp32_start_accuracy": 0.9846689895470383,
+      "recovered_over_ptq": 0.0,
+      "epochs_run": 6,
+      "stopped_early": true,
+      "checkpoint_firing_rates": {
+        "layer1": 0.23691945745762216,
+        "layer2": 0.159891919734586,
+        "layer3": 0.19534343245345126,
+        "layer4": 0.12545075933173144
+      }
+    },
+    "qat_w8ux_112px_seed3456": {
+      "arm": "weight-only",
+      "bits": 8,
+      "seed": 3456,
+      "ptq_accuracy": 0.9832752613240419,
+      "qat_accuracy": 0.9832752613240419,
+      "fp32_start_accuracy": 0.9846689895470383,
+      "recovered_over_ptq": 0.0,
+      "epochs_run": 8,
+      "stopped_early": true,
+      "checkpoint_firing_rates": {
+        "layer1": 0.23695274443991923,
+        "layer2": 0.15988020196505123,
+        "layer3": 0.1957382580025271,
+        "layer4": 0.1257847331022967
+      }
+    },
+    "qat_wxu8_112px_seed3456": {
+      "arm": "membrane-only",
+      "bits": 8,
+      "seed": 3456,
+      "ptq_accuracy": 0.9804878048780488,
+      "qat_accuracy": 0.9832752613240419,
+      "fp32_start_accuracy": 0.9846689895470383,
+      "recovered_over_ptq": 0.0027874564459930973,
+      "epochs_run": 6,
+      "stopped_early": true,
+      "checkpoint_firing_rates": {
+        "layer1": 0.2381240589797289,
+        "layer2": 0.16198261536995293,
+        "layer3": 0.2037698403779638,
+        "layer4": 0.13097036870825995
+      }
+    },
+    "qat_w8u8_112px_seed3456": {
+      "arm": "joint",
+      "bits": 8,
+      "seed": 3456,
+      "ptq_accuracy": 0.9825783972125436,
+      "qat_accuracy": 0.9832752613240419,
+      "fp32_start_accuracy": 0.9846689895470383,
+      "recovered_over_ptq": 0.0006968641114982743,
+      "epochs_run": 6,
+      "stopped_early": true,
+      "checkpoint_firing_rates": {
+        "layer1": 0.24000769818286033,
+        "layer2": 0.16686340329019866,
+        "layer3": 0.21969615022687547,
+        "layer4": 0.14237654616193074
+      }
+    },
+    "qat_w4ux_112px_seed3456": {
+      "arm": "weight-only",
+      "bits": 4,
+      "seed": 3456,
+      "ptq_accuracy": 0.9560975609756097,
+      "qat_accuracy": 0.9825783972125436,
+      "fp32_start_accuracy": 0.9846689895470383,
+      "recovered_over_ptq": 0.02648083623693387,
+      "epochs_run": 9,
+      "stopped_early": true,
+      "checkpoint_firing_rates": {
+        "layer1": 0.24330759029770563,
+        "layer2": 0.16537864385270076,
+        "layer3": 0.20655592293689476,
+        "layer4": 0.13033398846716
+      }
+    },
+    "qat_wxu4_112px_seed3456": {
+      "arm": "membrane-only",
+      "bits": 4,
+      "seed": 3456,
+      "ptq_accuracy": 0.9832752613240419,
+      "qat_accuracy": 0.9846689895470383,
+      "fp32_start_accuracy": 0.9846689895470383,
+      "recovered_over_ptq": 0.0013937282229964376,
+      "epochs_run": 9,
+      "stopped_early": true,
+      "checkpoint_firing_rates": {
+        "layer1": 0.2416660082257168,
+        "layer2": 0.17013565911960105,
+        "layer3": 0.22122937994343894,
+        "layer4": 0.1418399542206671
+      }
+    },
+    "qat_w4u4_112px_seed3456": {
+      "arm": "joint",
+      "bits": 4,
+      "seed": 3456,
+      "ptq_accuracy": 0.9407665505226481,
+      "qat_accuracy": 0.98397212543554,
+      "fp32_start_accuracy": 0.9846689895470383,
+      "recovered_over_ptq": 0.0432055749128919,
+      "epochs_run": 20,
+      "stopped_early": false,
+      "checkpoint_firing_rates": {
+        "layer1": 0.2454964113775446,
+        "layer2": 0.17318388719488104,
+        "layer3": 0.22667642194219584,
+        "layer4": 0.1459825699545365
+      }
+    },
+    "qat_w2ux_112px_seed3456": {
+      "arm": "weight-only",
+      "bits": 2,
+      "seed": 3456,
+      "ptq_accuracy": 0.3700348432055749,
+      "qat_accuracy": 0.4418118466898955,
+      "fp32_start_accuracy": 0.9846689895470383,
+      "recovered_over_ptq": 0.07177700348432059,
+      "epochs_run": 15,
+      "stopped_early": true,
+      "checkpoint_firing_rates": {
+        "layer1": 0.27213614159344796,
+        "layer2": 0.2616101588417844,
+        "layer3": 0.3345242610376471,
+        "layer4": 0.11545896180726925
+      }
+    },
+    "qat_wxu2_112px_seed3456": {
+      "arm": "membrane-only",
+      "bits": 2,
+      "seed": 3456,
+      "ptq_accuracy": 0.9428571428571428,
+      "qat_accuracy": 0.9825783972125436,
+      "fp32_start_accuracy": 0.9846689895470383,
+      "recovered_over_ptq": 0.03972125435540075,
+      "epochs_run": 7,
+      "stopped_early": true,
+      "checkpoint_firing_rates": {
+        "layer1": 0.24700666012871972,
+        "layer2": 0.18383826643020848,
+        "layer3": 0.2505760230876843,
+        "layer4": 0.1438680761419107
+      }
+    },
+    "qat_w2u2_112px_seed3456": {
+      "arm": "joint",
+      "bits": 2,
+      "seed": 3456,
+      "ptq_accuracy": 0.39581881533101043,
+      "qat_accuracy": 0.445993031358885,
+      "fp32_start_accuracy": 0.9846689895470383,
+      "recovered_over_ptq": 0.050174216027874585,
+      "epochs_run": 20,
+      "stopped_early": false,
+      "checkpoint_firing_rates": {
+        "layer1": 0.2772674866669685,
+        "layer2": 0.29815475564800487,
+        "layer3": 0.37948941796083485,
+        "layer4": 0.12158893808359053
+      }
+    }
+  }
+}
