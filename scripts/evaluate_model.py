@@ -5,11 +5,13 @@ One validation pass per model collecting everything that pass can give
 import argparse
 import csv
 import json
+import re
 from pathlib import Path
 
 import numpy as np
 import torch
 
+from model.snn_model import GWGlitchSNN
 from scripts.dataloader import build_dataloaders
 from scripts.training_utils import direct_encode
 from xai.divergence_metrics import load_quantised_run
@@ -138,7 +140,7 @@ def evaluate(net, dataloader, time_steps, device, cv_sample_cap=4096):
     return aggregates, rates, rows
 
 def load_model(name, device):
-
+    # The manifest reference, an FP32 run of a given seed, or a quantised run
     if name in ('fp32', 'reference'):
         net, time_steps, input_size, _, _ = load_reference_model(device, MANIFEST)
         return net, None, time_steps, input_size, {'arm': 'fp32-reference'}
@@ -146,9 +148,45 @@ def load_model(name, device):
     run_dir = RUNS_DIR / name
     if not (run_dir / 'run.json').exists():
         raise FileNotFoundError(f'no run.json in {run_dir}')
+
+    with open(run_dir / 'run.json', encoding='utf-8') as f:
+        summary = json.load(f)
+
+    if not summary.get('quantisation'):
+        with open(MANIFEST, encoding='utf-8') as f:
+            manifest = json.load(f)
+        # This directory's own checkpoint. Rebuilding the path from the seed
+        # collapses every fp32_*_seed<N> directory onto one model, silently.
+        input_size = summary.get('input_size', manifest['input_size'])
+        time_steps = manifest['hyperparameters']['time_steps']
+        net = GWGlitchSNN(beta=manifest['hyperparameters']['beta'],
+                          input_size=input_size).to(device)
+        net.load_state_dict(torch.load(run_dir / 'best_model.pt',
+                                       map_location=device))
+        net.eval()
+        seed = summary.get('seed')
+        if seed is None:
+            seed = int(re.search(r'seed(\d+)', run_dir.name).group(1))
+        return net, None, time_steps, input_size, {**summary, 'seed': seed,
+                                                   'arm': 'fp32'}
+
     net, handle, summary = load_quantised_run(run_dir, device)
     return net, handle, summary['hyperparameters']['time_steps'], \
         summary['input_size'], summary
+
+
+def default_models(input_size):
+    # the runs this analysis is about: the manifest resolution only.
+    # energy.py computes the MAC counts once at that resolution, so a 64 px
+    # model scored with 112 px MAC counts would be wrong without ever failing.
+    # The hyperparameter variants are excluded for the same reason the grid
+    # was not run from them.
+    fp32_pattern = re.compile(rf'^fp32_{input_size}px_seed\d+$')
+    qat_pattern = re.compile(rf'^qat_\w+_{input_size}px_seed\d+$')
+    names = [d.name for d in RUNS_DIR.iterdir()
+             if d.is_dir() and (d / 'run.json').exists()]
+    return (sorted(n for n in names if fp32_pattern.match(n))
+            + sorted(n for n in names if qat_pattern.match(n)))
 
 
 def write_outputs(tag, aggregates, rates, rows, metadata):
@@ -193,9 +231,9 @@ def main():
 
     device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 
-    names = args.models or (
-        ['fp32'] + sorted(d.name for d in RUNS_DIR.glob('qat_*')
-                          if (d / 'run.json').exists()))
+    with open(MANIFEST, encoding='utf-8') as f:
+        manifest_input_size = json.load(f)['input_size']
+    names = args.models or default_models(manifest_input_size)
 
     for name in names:
         tag = name
@@ -217,13 +255,13 @@ def main():
         write_outputs(tag, aggregates, rates, rows, {
             'tag': tag,
             'arm': summary.get('arm'),
-            'weight_bits': summary.get('quantisation', {}).get('weight_bits'),
-            'membrane_bits': summary.get('quantisation', {}).get('membrane_bits'),
             'seed': summary.get('seed'),
             'input_size': input_size,
             'time_steps': time_steps,
             'dead_threshold': DEAD_THRESHOLD,
             'saturated_threshold': SATURATED_THRESHOLD,
+            'weight_bits': (summary.get('quantisation') or {}).get('weight_bits'),
+            'membrane_bits': (summary.get('quantisation') or {}).get('membrane_bits'),
         })
         report(tag, aggregates)
 

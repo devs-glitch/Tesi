@@ -226,7 +226,7 @@ def main():
     run_dirs = ([RUNS_DIR / name for name in args.runs] if args.runs else
                 sorted(d for d in RUNS_DIR.glob('qat_*') if (d / 'run.json').exists()))
     if not run_dirs:
-        print('\nno qat_* runs yet — the feature table and its design are written,')
+        print('\nno qat_* runs yet - the feature table and its design are written,')
         print('and the divergence can be added later without recomputing them.')
         return
 
