@@ -3,48 +3,59 @@
 
 \section{Motivation}
 
-In 2015 LIGO (Laser Interferometer Gravitational-Wave Observatory) detected
-for the first time the collision of two black holes, and in 2017 the gravitational wave
-signal GW170817 measured by LIGO and Virgo demonstrated that the fusion of
-neutron stars could be observed via telescopes.
+In September 2015 the two Advanced LIGO (Laser Interferometer Gravitational-Wave
+Observatory) detectors made the first direct detection of a gravitational wave,
+GW150914, produced by the merger of two black holes. % TODO: cite discovery paper
+Two years later, LIGO and Virgo jointly observed GW170817, the first signal from a
+binary neutron star merger. Its electromagnetic counterpart, from a short
+gamma-ray burst to a kilonova, was then followed by telescopes around the world,
+marking the beginning of multi-messenger astronomy. % TODO: cite GW170817 papers
 
-Since then, gravitational waves have become a continuous stream of data requiring analysis,
-often in real time. In this context, the real challenge is not the faintness of the signals but the noise.
-The detectors are so sensitive that they constantly record instrumental and environmental
-disturbances known as "glitches".
+Since then, detections have gone from exceptional events to routine ones, and
+gravitational-wave astronomy now produces a continuous stream of data that must be
+analyzed, often in real time. In this setting, the main obstacle is not the
+faintness of the astrophysical signals but the noise. The detectors are sensitive
+enough to record a constant stream of short, non-Gaussian transients of
+instrumental and environmental origin, known as \emph{glitches}. Glitches can mimic
+genuine signals or overlap with them, which raises the false-alarm rate and reduces
+the effective sensitivity of searches.
 
-This is the purpose of Gravity Spy, the source of the data used in this project: to identify
-glitch families and trace them back to their causes, as recognizing a glitch
-helps in correcting the instrument.
+Gravity Spy, the source of the data used in this work, was created to address this
+problem. By combining citizen-science classification with machine learning, it
+sorts glitches into morphological families based on their time--frequency
+spectrograms. % TODO: cite Zevin et al. 2017
+Knowing which family a glitch belongs to is the first step towards tracing it back
+to its physical cause and, where possible, removing that cause at the instrument.
 
-Meanwhile, machine learning has become indispensable for managing data quality,
-though it brings with it a cost-related challenge. The demand for computing power
-is growing faster than available resources, alerts must be issued within minutes,
-and the volume of data is set to increase further.
+More broadly, machine learning has become indispensable to data-quality work, but
+it comes at a cost. The demand for computing power is growing faster than the
+resources available, public alerts must be issued within minutes of a detection,
+and data volumes will grow further with future observing runs and next-generation
+detectors. Making models lighter and cheaper to run is therefore a natural goal.
+Two approaches are particularly relevant: quantization, which compresses an
+existing network, and spiking neural networks, which are designed from the outset
+for energy-efficient, event-driven computation.
 
-It is only natural to want to make models more lightweight, and this is where
-quantization and spiking neural networks come into play, as they were specifically
-designed for low energy consumption.
+Running a neural network outside a data center generally means making it smaller,
+and the standard tool for this is indeed quantization. Quantization represents weights
+and activations with fewer bits, trading numerical precision for savings in memory
+and energy. A quantized model is routinely validated by checking that its accuracy
+has not dropped, and for many applications this is a sufficient test.
 
-Deploying a neural network outside a data centre means making it smaller. The
-standard tool is indeed quantization, a practice that involves representing weights and activations with fewer
-bits, trading numerical precision for memory and energy. The operation is
-routinely validated by checking that accuracy does not fall, and for many
-applications that is a sufficient test.
+It is not sufficient, however, when the model is also expected to explain its
+decisions. Rabbi et al.~\cite{rabbi2026} evaluated five convolutional architectures
+at INT8 and INT4, comparing the attribution maps of the quantized models with those
+of their full-precision counterparts. They found that explanation similarity
+degrades measurably between INT8 and INT4 even where accuracy differences are
+negligible. They also found that when quantization does cause a misclassification,
+the quantized model is generally attending to \emph{different} regions of the input,
+rather than weighing the same evidence differently.
 
-Npnetheless, it is not sufficient when the model is used to explain something. Rabbi et
-al.~\cite{rabbi2026} evaluated five convolutional architectures at INT8 and
-INT4, comparing the attribution maps of the quantized models with those of their
-full-precision counterparts. They found that explanation similarity degrades
-measurably between INT8 and INT4 even where accuracy differences are negligible,
-and that when quantization does cause a misclassification, the quantized model
-is generally attending to \emph{different} regions of the input rather than
-weighing the same evidence differently. Accuracy and interpretability, in other
-words, do not degrade together.
+In other words, accuracy and interpretability do not degrade together.
 
-That finding is confined to conventional artificial neural networks. Spiking
-neural networks (SNNs), the architecture most closely associated with low-power
-deployment~\cite{roy2019towards}, differ from them in ways that make the
+This finding, however, is limited to conventional artificial neural networks (ANNs).
+Spiking neural networks (SNNs), the architecture most closely associated with
+low-power deployment~\cite{roy2019towards}, differ from ANNs in ways that make the
 question both harder and more interesting.
 
 \section{Research question}
@@ -123,18 +134,32 @@ quantization grid.
 
   \item \textbf{A bit-width characterization of explanation fidelity for a
         spiking classifier}, with weight and membrane quantization separated and
-        then combined, measured with spatial and temporal divergence metrics read
-        against the calibrated thresholds, reported per class, and stratified by
-        event strength.
+        then combined over thirty fine-tuning runs, measured with spatial and
+        temporal divergence metrics read against the calibrated thresholds,
+        tested for faithfulness, reported per class and per seed, and stratified
+        by event strength.
 
   \item \textbf{An analytical energy and memory account} of every operating
         point, so that accuracy, explanation fidelity and energy can be read on
         a common bit-width axis.
 \end{enumerate}
 
-\todo{Once the grid is complete, add two or three sentences here stating the
-central quantization result (hypothesis confirmed or refuted, and at which
-bit-width), mirroring the abstract.}
+The central result is a configuration that the accuracy criterion cannot tell
+apart from its neighbours. Quantizing the membrane potential to 2 bits leaves
+accuracy at parity, $0.982$, yet the region its explanations highlight overlaps
+the full-precision one by $0.44$, well below the numerical floor of $0.70$; a
+4-bit weight model of the same accuracy keeps an overlap of $0.74$. The change
+is real but bounded: the new explanations still point at evidence the model
+uses, as the deletion metric confirms, just not at the evidence the original
+model pointed at. The hypothesis stated above is not supported in the form
+it was written --- both arms first move the explanation at the same bit-width,
+and the 2-bit membrane changes \emph{where} the explanation points more than
+\emph{when} --- but its mechanism is: the same quantization makes the spike
+trains of the first layer perfectly periodic, a temporal change that the
+temporal metric of the explanation does not register. The configuration with the
+changed explanation is also dominated on energy and memory, so in this network
+there is no trade-off to make: a joint 4-bit model keeps both accuracy and
+explanation at about $1/60$ of the estimated energy and one eighth of the memory.
 
 \section{Application domain}
 
@@ -150,17 +175,6 @@ the label while corrupting the diagnostic cue. The classes have physically
 interpretable morphology, so a domain expert can judge whether an attention map
 falls where the glitch actually is, which is not true of a generic image
 benchmark. And the data is public, large and labelled.
-
-\section{Scope}
-
-This work characterizes explanation fidelity under \emph{simulated}
-quantization, with analytical energy and memory accounting. Hardware deployment
-is explicitly out of scope: no model is exported to a neuromorphic device or
-microcontroller, and no latency or power is measured on one.
-
-Every design decision in this thesis is taken on the validation partition. The
-test partition is opened once, for the final estimates reported in
-Section~\ref{sec:test}.
 
 \section{Structure}
 

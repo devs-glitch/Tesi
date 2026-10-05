@@ -29,8 +29,16 @@ Zoya Bylinskii, Tilke Judd, Aude Oliva, Antonio Torralba, and Fr{\'e}do Durand.
 \newblock {\em IEEE Transactions on Pattern Analysis and Machine Intelligence},
   41(3):740--757, 2019.
 
+\bibitem{snntorch_tutorial2}
+Jason~K. Eshraghian.
+\newblock {snnTorch} tutorial 2: The leaky integrate-and-fire neuron.
+\newblock
+  \url{https://snntorch.readthedocs.io/en/latest/tutorials/tutorial_2.html}.
+\newblock Accessed: 2026-10-05.
+
 \bibitem{eshraghian2023}
-Jason~K. Eshraghian, Max Ward, Emre~O. Neftci, et~al.
+Jason~K. Eshraghian, Max Ward, Emre~O. Neftci, Xinxin Wang, Gregor Lenz, Girish
+  Dwivedi, Mohammed Bennamoun, Doo~Seok Jeong, and Wei~D. Lu.
 \newblock Training spiking neural networks using lessons from deep learning.
 \newblock {\em Proceedings of the IEEE}, 111(9):1016--1054, 2023.
 
@@ -128,7 +136,7 @@ Ramprasaath~R. Selvaraju, Michael Cogswell, Abhishek Das, Ramakrishna Vedantam,
   pages 618--626, 2017.
 
 \bibitem{smith2026}
-R.~Smith, J.~Whitehill, and R.~Ganji.
+Evan~Gibson Smith, Jacob Whitehill, and Fatemeh Ganji.
 \newblock Quantization of spiking neural networks beyond accuracy.
 \newblock {\em arXiv preprint arXiv:2604.14487}, 2026.
 

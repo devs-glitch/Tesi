@@ -65,14 +65,19 @@ Numerical floor & \texttt{xai/perturbation\_floor.py} & \texttt{results/perturba
 Membrane range & \texttt{scripts/membrane\_range.py} & \texttt{config/membrane.json} \\
 Clipping study & \texttt{scripts/test\_clipping.py} & \texttt{results/clipping\_test.json} \\
 Quantizers & \texttt{model/quantization.py} & --- \\
+PTQ gate & \texttt{scripts/ptq\_check.py} & \texttt{results/ptq\_check.json} \\
+Fine-tuning grid & \texttt{scripts/grid\_runner.py}, \texttt{train\_quantised.py} & \texttt{results/grid\_summary.json} \\
+Per-model validation pass & \texttt{scripts/evaluate\_model.py} & \texttt{results/grid/*.json, *.csv, *.npz} \\
+SAM divergence & \texttt{xai/divergence\_metrics.py} & \texttt{results/divergence.json} \\
+Cross-faithfulness & \texttt{xai/cross\_faithfulness.py} & \texttt{results/cross\_faithfulness.json} \\
+SNR stratification & \texttt{xai/stratify.py} & \texttt{results/stratified.json} \\
+Energy and memory & \texttt{xai/energy.py --rates evaluated} & \texttt{results/energy.json} \\
 \bottomrule
 \end{tabular}}
 \caption{From result to script.}
 \label{tab:repro}
 \end{table}
 
-\todo{Add the rows for the grid (\texttt{grid\_runner.py},
-\texttt{evaluate\_model.py}, \texttt{divergence\_metrics.py},
-\texttt{cross\_faithfulness.py}, \texttt{stratify.py}, \texttt{energy.py},
-\texttt{evaluate\_test.py}) once they exist, and check every path against the
-final repository layout.}
+\todo{Add the scripts for the Earth Mover's Distance, the disagreement subset and
+the concluding figure once they are in the repository, and check every path
+against the final layout.}

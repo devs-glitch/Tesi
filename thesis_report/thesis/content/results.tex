@@ -740,113 +740,437 @@ models indistinguishable in accuracy therefore differ by more than half in
 estimated energy, and every energy comparison in the grid is made at matched
 seed.
 
-In memory, the 295\,332 weights occupy $1\,154$\,KiB in 32-bit float, and the
-membrane state of the $94\,080$ hidden neurons another $368$\,KiB. At 8, 4 and 2
+In memory, the $295\,088$ weights occupy $1\,152.7$\,KiB in 32-bit float (the
+244 biases, kept in full precision, are negligible), and the membrane state of
+the $94\,080$ hidden neurons another $367.5$\,KiB. At 8, 4 and 2
 bits these become $288$, $144$ and $72$\,KiB for the weights and $92$, $46$ and
 $23$\,KiB for the state.
+
 
 \section{The quantization grid}
 \label{sec:grid-results}
 
-\todo{Everything in this section depends on the grid (schedule: launch 4
-October, GATE 2 on 7 October). The structure, tables and the questions each
-subsection must answer are in place; fill them from
-\texttt{results/grid/}, \texttt{results/divergence.json},
-\texttt{results/cross\_faithfulness.json}, \texttt{results/stratified.json} and
-\texttt{results/energy.json}. Report every table per class and with the
-three-seed spread.}
+All thirty fine-tuning runs completed without failure. Unless stated otherwise,
+every figure below is a mean over the three seeds, each quantized model being
+compared with the full-precision parent of its own seed, on validation.
+Figure~\ref{fig:headline} summarizes the grid; the sections that follow take it
+apart.
 
-\subsection{Sanity gate}
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=\linewidth]{grid_headline.pdf}
+\caption{The grid on a common bit-width axis. (a) Validation accuracy after
+fine-tuning. (b) Top-20\,\% IoU between the SAM maps of each quantized model and
+those of its parent, mean over the four classes; the dashed line is the
+numerical floor of the calibration, the dotted line chance. (c) Estimated energy
+per inference relative to the parent, logarithmic scale; the shaded region uses
+extrapolated per-operation costs. Points are means over three seeds, bars span
+the seeds. Markers are offset horizontally for legibility.}
+\label{fig:headline}
+\end{figure}
 
-The joint 8-bit model of seed \tbd{} reaches \tbd{} validation accuracy against
-\tbd{} for its parent, a difference of \tbd{} samples out of $1\,435$, within
-the four-sample tolerance. \todo{Report the number even if the gate passes
-trivially: it is the check that separates a bug from a result.}
+\subsection{Gates and control}
+\label{sec:grid-gates}
+
+The quantizer passed both gates. Attaching and removing it restores the original
+weights exactly, and a quantized checkpoint reloads with zero drift. With no
+fine-tuning, the joint 8-bit model of seed 1234 reaches $0.98328$ validation
+accuracy, identical to its parent; the 8-bit weight arm loses three samples out
+of $1\,435$, inside the four-sample tolerance.
+
+The control arm, which runs the full fine-tuning procedure with no quantizer,
+returns a spatial correlation of exactly $1$, an IoU of exactly $1$ and a
+centre-of-mass shift of exactly $0$ with its parent, in every class and every
+seed. Fine-tuning at the reduced learning rate never improved on the parent's
+validation accuracy, so the selected control checkpoint is the parent itself:
+the pipeline --- reload, fine-tune, select, re-evaluate --- introduces nothing
+when nothing is quantized.
+
+The guard of Section~\ref{sec:reading} holds as well: the 8-bit weight arm keeps
+a spatial correlation of at least $0.982$ with its parent in every class of every
+seed.
 
 \subsection{Accuracy}
 
 \begin{table}[htbp]
 \centering
-\begin{tabular}{lcccc}
+\begin{tabular}{lccccc}
 \toprule
-Arm & 32 bit & 8 bit & 4 bit & 2 bit \\
+Arm & Bits & PTQ & After fine-tuning & $\Delta$ samples & Epochs \\
 \midrule
-Weight-only   & 0.9833 & \tbd & \tbd & \tbd \\
-Membrane-only & 0.9833 & \tbd & \tbd & \tbd \\
-Joint         & 0.9833 & \tbd & \tbd & \tbd \\
+Weights  & 8 & 0.9819 & $0.9823 \pm 0.0008$ & $-1.3$ & 9.7 \\
+Membrane & 8 & 0.9814 & $0.9833 \pm 0.0000$ & $0.0$  & 8.3 \\
+Joint    & 8 & 0.9819 & $0.9833 \pm 0.0007$ & $0.0$  & 8.0 \\
+\midrule
+Weights  & 4 & 0.9547 & $0.9835 \pm 0.0016$ & $+0.3$ & 11.7 \\
+Membrane & 4 & 0.9807 & $0.9835 \pm 0.0011$ & $+0.3$ & 10.3 \\
+Joint    & 4 & 0.9508 & $0.9835 \pm 0.0015$ & $+0.3$ & 14.0 \\
+\midrule
+Weights  & 2 & 0.3591 & $0.5182 \pm 0.1300$ & $-667$ & 18.3 \\
+Membrane & 2 & 0.9517 & $\mathbf{0.9823 \pm 0.0004}$ & $-1.3$ & 13.0 \\
+Joint    & 2 & 0.3652 & $0.5182 \pm 0.1275$ & $-667$ & 19.0 \\
 \bottomrule
 \end{tabular}
-\caption{Validation accuracy across the grid, mean over three seeds.}
+\caption{Validation accuracy across the grid: post-training quantization (PTQ,
+no fine-tuning) and after fine-tuning, mean $\pm$ standard deviation over three
+seeds. $\Delta$ is the difference from the FP32 reference
+($0.9833 \pm 0.0014$) in validation samples out of $1\,435$.}
 \label{tab:grid-accuracy}
 \end{table}
 
-\todo{Add per-class recall (as Table~\ref{tab:fp32}) and the relative $L_2$
-distance of the quantized weights from the parent, per layer. Comment on whether
-2-bit membrane collapses as predicted by Table~\ref{tab:membrane-grid}.}
+\textbf{At 8 and 4 bits accuracy is indistinguishable from full precision in
+every arm} (Table~\ref{tab:grid-accuracy}); every difference is below one
+validation sample on average. Fine-tuning matters at 4 bits: post-training
+quantization of the weights costs about 40 samples, and fine-tuning recovers all
+of them.
+
+\textbf{At 2 bits the arms separate completely.} The membrane arm keeps parity,
+$0.9823$, within three samples of its parent in every seed. The weight and
+joint arms collapse to $0.518$, and the collapse is not uniform across classes:
+no 2-bit weight model ever predicts Scattered\_Light, and two of the three
+never predict Violin\_Mode either, assigning every image to Blip or
+Extremely\_Loud. Fine-tuning recovers 16 points over post-training
+quantization but cannot recover a ternary network. A 2-bit membrane, with a
+single level between rest and threshold, is enough to classify; ternary weights
+are not.
+
+The asymmetry inverts the prediction derived from Smith et
+al.~\cite{smith2026} in Section~\ref{sec:membrane-quantizer}, that the membrane
+would need at least four bits while weights would survive two. In this network
+and with this grid, it is the other way round.
 
 \subsection{Explanation divergence}
 
 \begin{table}[htbp]
 \centering
 \small
-\begin{tabular}{llcccc}
+\resizebox{\linewidth}{!}{%
+\begin{tabular}{llcccccc}
 \toprule
-Arm, bits & Metric & Blip & Extremely\_Loud & Scattered\_Light & Violin\_Mode \\
+Arm & Bits & Blip & Extremely\_Loud & Scattered\_Light & Violin\_Mode & Mean & Worst cell \\
 \midrule
-W, 8 & PCC / CoM & \tbd & \tbd & \tbd & \tbd \\
-W, 4 & PCC / CoM & \tbd & \tbd & \tbd & \tbd \\
-W, 2 & PCC / CoM & \tbd & \tbd & \tbd & \tbd \\
-U, 8 & PCC / CoM & \tbd & \tbd & \tbd & \tbd \\
-U, 4 & PCC / CoM & \tbd & \tbd & \tbd & \tbd \\
-U, 2 & PCC / CoM & \tbd & \tbd & \tbd & \tbd \\
-W+U, 8 & PCC / CoM & \tbd & \tbd & \tbd & \tbd \\
-W+U, 4 & PCC / CoM & \tbd & \tbd & \tbd & \tbd \\
-W+U, 2 & PCC / CoM & \tbd & \tbd & \tbd & \tbd \\
+Weights  & 8 & 0.821 & 0.854 & 0.841 & 0.841 & 0.839 & 0.716 \\
+Membrane & 8 & 0.845 & 0.876 & 0.843 & 0.858 & 0.856 & 0.766 \\
+Joint    & 8 & 0.753 & 0.779 & 0.749 & 0.766 & 0.762 & 0.674 \\
 \midrule
-\multicolumn{2}{l}{Numerical floor (Table~\ref{tab:calibration})} & 0.9921 / --- & 0.9997 / --- & 0.9901 / --- & 0.9749 / --- \\
+Weights  & 4 & 0.719 & 0.787 & 0.717 & 0.733 & 0.739 & 0.649 \\
+Membrane & 4 & 0.726 & 0.773 & 0.719 & 0.743 & 0.740 & 0.628 \\
+Joint    & 4 & 0.696 & 0.752 & 0.691 & 0.715 & 0.714 & 0.595 \\
+\midrule
+Weights  & 2 & 0.269 & 0.335 & 0.415 & 0.344 & 0.341 & 0.127 \\
+Membrane & 2 & \textbf{0.300} & \textbf{0.559} & \textbf{0.490} & \textbf{0.404} & \textbf{0.438} & \textbf{0.102} \\
+Joint    & 2 & 0.217 & 0.339 & 0.344 & 0.171 & 0.268 & 0.057 \\
 \bottomrule
-\end{tabular}
-\caption{Spatial PCC and temporal CoM difference against the parent at the same
-seed, layer 2, $\gamma = 0.5$, fifteen validation images per class, mean over
-three seeds. Values beyond the numerical floor are a measured effect.}
-\label{tab:grid-divergence}
+\end{tabular}}
+\caption{Top-20\,\% IoU between the SAM maps of each quantized model and those of
+its parent, layer 2, $\gamma = 0.5$, twenty validation images per class, mean
+over three seeds. ``Worst cell'' is the lowest class-and-seed value. Numerical
+floor $0.704$, chance $0.111$.}
+\label{tab:grid-iou}
 \end{table}
 
-\todo{Fill from \texttt{divergence.json}; add the per-class CoM floors from the
-perturbation experiment in the last row (only the worst-class value, $0.029$, is
-currently in the text), and give IoU and SSIM in an analogous table. Plot the
-per-timestep correlation curves for U-only against W-only at 4 bits.}
+\begin{table}[htbp]
+\centering
+\small
+\begin{tabular}{llccccc}
+\toprule
+Arm & Bits & PCC mean & PCC worst & CoM $|\Delta|$ mean & CoM $|\Delta|$ worst & CoM signed \\
+\midrule
+Weights  & 8 & 0.995 & 0.982 & 0.007 & 0.015 & $-0.005$ \\
+Membrane & 8 & 0.995 & 0.989 & 0.010 & 0.025 & $-0.009$ \\
+Joint    & 8 & 0.989 & 0.973 & 0.022 & 0.049 & $-0.022$ \\
+\midrule
+Weights  & 4 & 0.982 & 0.960 & 0.049 & 0.094 & $-0.048$ \\
+Membrane & 4 & 0.985 & 0.963 & 0.044 & 0.064 & $+0.043$ \\
+Joint    & 4 & 0.977 & 0.949 & 0.021 & 0.043 & $+0.018$ \\
+\midrule
+Weights  & 2 & 0.827 & 0.748 & 0.211 & 0.369 & $-0.211$ \\
+Membrane & 2 & 0.923 & 0.799 & 0.068 & 0.137 & $-0.053$ \\
+Joint    & 2 & 0.780 & 0.580 & 0.235 & 0.367 & $-0.235$ \\
+\bottomrule
+\end{tabular}
+\caption{Spatial Pearson correlation and temporal centre-of-mass shift (in time
+steps) against the parent, same protocol as Table~\ref{tab:grid-iou}. A negative
+signed shift means that the spike energy of the explanation moves earlier.
+Numerical floors: PCC $0.975$, CoM $0.029$; independent-solutions level: PCC
+$0.153$, CoM $0.115$.}
+\label{tab:grid-pcc-com}
+\end{table}
+
+\paragraph{At 8 and 4 bits the explanations stay at the floor.} Spatial
+correlation remains above $0.977$ on average in every arm, and the IoU between
+$0.71$ and $0.86$, around the numerical floor of $0.704$: at 4 bits four of the
+twelve class-and-seed cells of each arm fall marginally below it, the lowest at
+$0.595$, all far above the independent-solutions level of $0.234$
+(Tables~\ref{tab:grid-iou} and~\ref{tab:grid-pcc-com}). The temporal centre of
+mass is the only metric that moves at 4 bits, by $0.044$ to $0.049$ steps in the
+two single-target arms, above its floor of $0.029$ and below the $0.115$ that
+separates independent solutions. The direction is informative: quantizing the
+weights moves the spike energy of the explanation \emph{earlier}, quantizing the
+membrane moves it \emph{later}, and in the joint arm the two shifts partly
+cancel ($+0.018$).
+
+\paragraph{At 2 bits the weight and joint arms explain a different classifier.}
+Their IoU falls to $0.34$ and $0.27$ and their centre of mass shifts by more
+than the independent-solutions level. Since those models no longer classify, the
+divergence of their explanations is a consequence of the collapse rather than a
+measurement of explanation fidelity at constant accuracy, and it is not read as
+such.
+
+\paragraph{The membrane arm at 2 bits is the result the grid was built to find.}
+Accuracy is at parity, yet the IoU with the parent's explanation is $0.438$,
+38\,\% below the numerical floor. All twelve class-and-seed cells are below the
+floor, and two are below chance (the lowest $0.102$): for those, the 20\,\% of
+the image that SAM highlights in the quantized model overlaps the parent's no
+more than two random selections would.
+
+\textbf{The comparison that carries the thesis is between two models with the
+same accuracy.} The 4-bit weight model and the 2-bit membrane model both reach
+$0.983$ ($0.9835$ and $0.9823$). The first explains its decisions with
+essentially the same pixels as its parent, IoU $0.739$; the second shares less
+than half of them, IoU $0.438$. Selected on accuracy, the two are
+interchangeable; their explanations are not.
+
+\textbf{The spatial correlation alone would have given the wrong answer.} The
+2-bit membrane model scores a PCC of $0.923$. Against the values that the
+literature presents as preserved explanations, around $0.85$, that figure would
+be reported as a surviving explanation; it is below the numerical floor, but by
+an amount that understates what changed. Pearson correlation is dominated by the
+broad, low-intensity structure that every map of a class shares, while the
+top-$k$ overlap measures the region a reader is actually shown. This is the
+disagreement between metrics that Bylinskii et al.~\cite{bylinskii2019metrics}
+warn of, and it is why both are reported.
+
+\textbf{The effect depends on the seed.} The 2-bit membrane IoU is $0.255$,
+$0.624$ and $0.435$ for the three seeds, a spread larger than any effect
+measured within a seed below. The class ordering is also not the one of the
+calibration: Blip, not Violin\_Mode, loses the most ($0.300$), and
+Extremely\_Loud, which registered no perturbation in the calibration, now moves
+($0.559$).
 
 \subsection{The hypothesis}
+\label{sec:hypothesis-result}
 
-\todo{The single paragraph the thesis is built around. State at which bit-width
-the U-only arm first displaces the CoM beyond $0.029$ steps and at which
-bit-width the W-only arm first lowers PCC below the floor, per class; conclude
-whether the ordering predicted in Chapter~\ref{ch:introduction} holds. If the
-CoM never moves, check first that the temporal metric is not insensitive in
-this regime (Section~\ref{sec:gamma}: the CoM is dominated by near-continuously
-firing neurons).}
+The hypothesis predicted an ordering: the membrane arm displaces the temporal
+centre of mass at a higher bit-width than the one at which the weight arm lowers
+the spatial correlation. The grid does not show that ordering. Both effects
+first appear at the same bit-width, 4 bits, where the weight arm lowers the PCC
+below the per-class floor on every class and both
+single-target arms shift the centre of mass by the same amount. At 2 bits, where
+the arms do separate, the visible effect of membrane quantization on the
+explanation is \emph{spatial} --- which pixels are highlighted --- while its
+centre-of-mass shift ($0.068$) stays below the independent-solutions level.
+\textbf{As formulated in terms of SAM metrics, the hypothesis is not supported.}
 
-\subsection{Faithfulness and behaviour}
+Its mechanism, however, is visible elsewhere. The per-model validation pass
+measures the regularity of firing, and there the membrane arm at 2 bits does
+something no other configuration does.
 
-\todo{Cross-faithfulness on Blip and Extremely\_Loud (own map vs parent map);
-EMD between firing-rate distributions, compared with the range reported by
-Smith et al.\ and with the seed-to-seed value of $0.039$; dead and saturated
-fractions and CV-ISI per configuration.}
+\begin{table}[htbp]
+\centering
+\begin{tabular}{lcccc}
+\toprule
+Configuration & Seed 1234 & Seed 2345 & Seed 3456 & Neurons with defined CV \\
+\midrule
+FP32 parent     & 0.132 & 0.241 & 0.051 & 2.7 / 24.1 / 10.4\,\% \\
+Membrane, 4 bit & 0.134 & 0.236 & 0.051 & 2.5 / 23.4 / 10.3\,\% \\
+Weights, 2 bit  & 0.140 & 0.104 & 0.208 & 4.0 / 25.3 / 10.0\,\% \\
+Membrane, 2 bit & \textbf{0.000} & \textbf{0.000} & \textbf{0.000} & 3.2 / 28.5 / 10.7\,\% \\
+Joint, 2 bit    & \textbf{0.000} & \textbf{0.000} & \textbf{0.000} & 5.1 / 27.2 / 10.6\,\% \\
+\bottomrule
+\end{tabular}
+\caption{Mean coefficient of variation of the inter-spike intervals in layer 1,
+per seed, and the fraction of neurons for which it is defined. The values are
+from the single validation pass of Section~\ref{sec:reading} and are not
+comparable with Figure~\ref{fig:cvisi}.}
+\label{tab:cv-isi-grid}
+\end{table}
+
+\textbf{In every model with a 2-bit membrane, the inter-spike intervals of layer
+1 become perfectly regular} (Table~\ref{tab:cv-isi-grid}): the CV is exactly
+zero in all six measurements, while it is unchanged with 2-bit weights and with
+a 4-bit membrane. The fraction of neurons for which the CV is defined is
+comparable in every configuration, so the effect is not a change in which neurons
+are measured. The mechanism follows from Table~\ref{tab:membrane-grid}: with a
+single level between rest and threshold, the state of a neuron between two spikes can
+take only one intermediate value, so under the constant drive of direct encoding
+the number of steps from reset to threshold cannot vary, and firing becomes
+periodic. Membrane quantization does act
+on the temporal dynamics first, as the hypothesis argued; but the change is in
+the \emph{regularity} of the spike trains, and the temporal centre of mass,
+which measures where the spike mass falls in time and not how regularly it
+arrives, cannot see it.
+
+The other diagnostics behave accordingly. The 2-bit membrane raises the firing
+rate of every layer (from $0.258 / 0.186 / 0.185 / 0.126$ to
+$0.273 / 0.218 / 0.229 / 0.151$) with little change in the dead fraction, whereas 2-bit
+weights double the dead fraction of layer 4 (from $23.6$ to $43.1\,\%$) and
+saturate up to $6.8\,\%$ of layer 1.
+
+\subsection{Faithfulness}
+
+The deletion metric was repeated on the 2-bit membrane models, the only
+configuration with intact accuracy and a changed explanation, with the baseline
+recomputed on the parent of each seed (Table~\ref{tab:cross-faith}).
+
+\begin{table}[htbp]
+\centering
+\small
+\begin{tabular}{llccc}
+\toprule
+Seed & Class & Parent baseline & Own map & Parent's map \\
+\midrule
+1234 & Blip            & 0.153 & 0.166 & 0.117 \\
+1234 & Extremely\_Loud & 0.255 & 0.248 & 0.236 \\
+2345 & Blip            & 0.087 & 0.083 & 0.099 \\
+2345 & Extremely\_Loud & 0.222 & 0.136 & 0.149 \\
+2345 & Scattered\_Light & 0.056 & 0.074 & 0.083 \\
+2345 & Violin\_Mode    & 0.106 & 0.187 & 0.193 \\
+3456 & Blip            & 0.111 & \textbf{0.033} & 0.037 \\
+3456 & Extremely\_Loud & 0.207 & 0.186 & 0.180 \\
+3456 & Scattered\_Light & 0.112 & 0.094 & 0.056 \\
+\bottomrule
+\end{tabular}
+\caption{Deletion gap (AUC of random deletion minus AUC of SAM-guided deletion;
+larger means more faithful) for the 2-bit membrane models, ten validation images
+per class. Only the nine class-and-seed cells whose parent baseline is at least
+$0.05$ are shown; the other three have no signal to degrade.}
+\label{tab:cross-faith}
+\end{table}
+
+\textbf{The explanation is changed, not broken.} In every interpretable cell the
+quantized model's own map still separates from random deletion; the median gap
+is $0.95$ of the parent's, and only one cell comes close to losing it --- Blip
+on seed 3456, from $0.111$ to $0.033$. Explaining the quantized model with its
+parent's maps works as well as with its own: the mean difference between the two
+gaps is $+0.0065$ over the nine cells, four positive and five negative, never
+more than $0.049$, although the two maps share only 44\,\% of their highlighted
+pixels.
+
+The two measurements are therefore not in contradiction; they answer different
+questions. The deletion metric rewards any map that points at evidence the model
+uses, and when the evidence is redundant --- a Blip stroke covers many
+positions, any large part of which suffices --- several disjoint sets of pixels
+satisfy it. The IoU says which of those sets a reader is shown. A commissioner
+looking at the quantized model's map would be sent to a region that does carry
+evidence, but not to the one the original model would have shown.
+
+\textbf{Which classes SAM can explain at all depends on the seed.} Only nine of
+the twelve class-and-seed cells have a baseline signal: Violin\_Mode is
+explainable in one parent of three, Scattered\_Light in two of three, and even
+Blip's baseline gap ranges from $0.087$ to $0.153$ across networks of equal
+accuracy. The set of classes on which faithfulness can be assessed is a property
+of the individual network, not of the class.
 
 \subsection{Stratification by event strength}
 
-\todo{Divergence per within-class SNR tercile, for each arm. Prediction:
-steep dependence for the membrane arm, flatter for weights. Characterize the
-disagreement subset by its physical descriptors.}
+\begin{table}[htbp]
+\centering
+\begin{tabular}{lcccccc}
+\toprule
+ & \multicolumn{3}{c}{Membrane, 2 bit} & \multicolumn{3}{c}{Membrane, 4 bit} \\
+\cmidrule(lr){2-4}\cmidrule(lr){5-7}
+Class & 1234 & 2345 & 3456 & 1234 & 2345 & 3456 \\
+\midrule
+Blip            & $+0.121$ & $+0.038$ & $+0.164$ & $+0.060$ & $+0.012$ & $+0.039$ \\
+Scattered\_Light & $+0.443$ & $-0.021$ & $+0.138$ & $+0.242$ & $+0.017$ & $+0.109$ \\
+Violin\_Mode    & $+0.134$ & $-0.038$ & $-0.124$ & $+0.093$ & $+0.022$ & $+0.028$ \\
+\midrule
+Mean of the three & $+0.233$ & $-0.007$ & $+0.059$ & $+0.132$ & $+0.017$ & $+0.059$ \\
+\midrule
+Extremely\_Loud & $-0.469$ & $-0.202$ & $-0.354$ & $-0.234$ & $-0.101$ & $-0.142$ \\
+\bottomrule
+\end{tabular}
+\caption{IoU gradient with event strength: IoU in the high-SNR tercile minus IoU
+in the low-SNR tercile, terciles computed within each class, fifteen images per
+cell. A positive value means that weak events lose their explanation more.}
+\label{tab:stratified}
+\end{table}
 
-\subsection{Accuracy, fidelity and energy}
+\textbf{The data do not support the hypothesis that degradation concentrates on
+weak glitches.} The mean gradient over Blip, Scattered\_Light and Violin\_Mode is
+$+0.233$, $-0.007$ and $+0.059$ in the three seeds at 2 bits
+(Table~\ref{tab:stratified}): positive on average, but the spread between seeds
+is as large as the effect, and the between-seed range of the 2-bit IoU itself
+($0.255$ to $0.624$) exceeds the largest within-seed gradient.
 
-\todo{Energy and memory per configuration (extend Table~\ref{tab:energy-fp32}
-with the integer coefficients and the per-layer rates measured on each quantized
-checkpoint), then the concluding figure: accuracy, explanation fidelity and
-energy on a common bit-width axis. Identify, if it exists, the operating point
-where accuracy is intact and energy reduced but the explanation has diverged.}
+One effect is consistent, and of opposite sign. On Extremely\_Loud the gradient
+is negative in all six measurements: the \emph{strongest} events lose their
+explanation most. These are the events that saturate the spectrogram, so that
+most of the image carries evidence and the top-20\,\% region is least
+constrained; a small change of the network is enough to move it.
+
+\subsection{Energy and memory}
+\label{sec:energy-grid}
+
+\begin{table}[htbp]
+\centering
+\begin{tabular}{llrrrr}
+\toprule
+Arm & Bits & SOP ($10^6$) & Energy ($\mu$J) & $\times$ FP32 & Memory (KiB) \\
+\midrule
+FP32 & 32 & 50.50 & 62.76 & 1.000 & 1520.2 \\
+\midrule
+Weights  & 8 & 51.02 & 2.28  & 0.037 & 655.7 \\
+Membrane & 8 & 51.34 & 63.52 & 1.011 & 1244.6 \\
+Joint    & 8 & 52.29 & 2.32  & 0.037 & 380.0 \\
+\midrule
+Weights  & 4 & 54.21 & 1.00\rlap{$^*$}  & 0.016 & 511.6 \\
+Membrane & 4 & 52.62 & 64.67 & 1.031 & 1198.6 \\
+Joint    & 4 & 54.84 & 1.01\rlap{$^*$}  & \textbf{0.016} & \textbf{190.0} \\
+\midrule
+Weights  & 2 & 74.60 & 0.61\rlap{$^*$}  & 0.010 & 439.5 \\
+Membrane & 2 & 57.81 & 69.34 & 1.108 & 1175.7 \\
+Joint    & 2 & 76.06 & 0.62\rlap{$^*$}  & 0.010 & 95.0 \\
+\bottomrule
+\end{tabular}
+\caption{Synaptic operations, estimated energy and memory per inference, mean
+over three seeds, from the firing rates of each selected checkpoint. ``$\times$
+FP32'' is the mean of the per-seed ratios to the parent. $^*$Extrapolated
+per-operation costs. Memory is weights plus membrane state.}
+\label{tab:energy-grid}
+\end{table}
+
+\textbf{The membrane arm does not save energy; it costs more.} Its weights stay
+in full precision, so the cost of each operation never falls, while the
+quantized membrane raises the firing rates and with them the number of
+operations: $+1.1\,\%$ at 8 bits, $+3.1\,\%$ at 4, $+10.8\,\%$ at 2
+(Table~\ref{tab:energy-grid}). What it does save is state memory, 344\,KiB at
+2 bits, almost a quarter of the total footprint.
+
+Quantization raises the operation count in every arm, mildly at 8 and 4 bits
+(1--8\,\%) and sharply at 2 bits, where it grows by half with quantized weights:
+the collapsed networks fire more, not less. In the weight and joint arms the
+saving still comes entirely from the cheaper operations.
+
+\textbf{There is no trade-off between efficiency and explainability in this
+grid.} The configuration that changes the explanation at constant accuracy, the
+2-bit membrane, is dominated on every axis by the 4-bit weight model: same
+accuracy, IoU $0.739$ against $0.438$, energy $0.016$ against $1.108$ times the
+parent, memory $512$ against $1\,176$\,KiB. The configuration to deploy is the
+\textbf{joint 4-bit model}: accuracy at parity ($0.9835$), explanation at the
+floor (IoU $0.714$ against $0.704$), estimated energy about $1/60$ of the parent, and
+one eighth of its memory ($190$\,KiB).
+
+\paragraph{One assumption decides the size of the saving.} The first
+convolution receives the analog image, and Table~\ref{tab:energy-grid} costs it
+at the weight bit-width, which assumes the input is quantized to the same
+width. At 4 bits that layer is 19\,\% of the joint model's energy. If it is
+instead costed in floating point, the joint 4-bit saving factor falls from 62 to
+3.5. The operation counts and the memory column do not depend on the assumption,
+and neither does the conclusion that the membrane arm is dominated; the factor
+by which the deployable model is cheaper does.
+
+\subsection{Still to be measured}
+
+\todo{Two analyses need no GPU, the data being already on disk: the Earth
+Mover's Distance between the per-neuron firing-rate distributions of each model
+and its parent (from the \texttt{\_rates.npz} files; compare with Smith et
+al.\ and with the seed-to-seed $0.039$), and the disagreement subset
+(validation images correct in the parent and wrong after quantization, joined on
+the \texttt{index} column of the \texttt{\_per\_sample.csv} files and
+characterized by their physical descriptors). Add them here or drop the two
+mentions in Section~\ref{sec:reading} and Section~\ref{sec:stratified-method}.}
 
 \section{Test-set evaluation}
 \label{sec:test}
@@ -858,12 +1182,14 @@ where accuracy is intact and energy reduced but the explanation has diverged.}
 Model & Test accuracy & 95\,\% Wilson interval \\
 \midrule
 FP32 reference & \tbd & \tbd \\
-\tbd{} (selected quantized) & \tbd & \tbd \\
+Joint, 4 bit & \tbd & \tbd \\
+Membrane, 2 bit & \tbd & \tbd \\
 \bottomrule
 \end{tabular}
 \caption{Accuracy on the test partition ($1\,436$ images), opened once.}
 \label{tab:test}
 \end{table}
 
-\todo{Run \texttt{evaluate\_test.py} once, after every design decision
-(schedule: 11 October). Add per-class recall.}
+\todo{Run \texttt{evaluate\_test.py} once, last, on the three models above (the
+reference, the recommended deployment configuration, and the configuration with
+the changed explanation). Add per-class recall.}

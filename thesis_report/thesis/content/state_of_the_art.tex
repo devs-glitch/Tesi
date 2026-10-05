@@ -3,29 +3,107 @@
 
 \section{Spiking neural networks}
 
-A spiking neural network communicates through discrete binary events rather than
-continuous activations. The neuron model used throughout this work is the leaky
-integrate-and-fire (LIF) unit in its discrete-time form: the membrane potential
-decays by a factor $\beta$ at each step, integrates the incoming current, emits a
-spike when it crosses a threshold, and is reset.
+SNNs are often described as the third generation of neural networks.
+% TODO: cite Maass 1997
+They take their inspiration from biological neurons, which communicate through
+brief, all-or-nothing electrical impulses called \emph{spikes}. In a conventional
+ANN, each neuron outputs a continuous value computed once per input. In an SNN,
+information is carried by sequences of binary events distributed over time: at
+each of $T$ discrete time steps, a neuron either emits a spike or stays silent.
+The network therefore processes an input as a short temporal sequence. This holds
+even when the input is static, as with a spectrogram, which is presented
+repeatedly or encoded as spikes over the $T$ steps.
 
+This representation is what makes SNNs attractive for low-power computing. Because
+activations are binary, the multiply--accumulate operations that dominate the cost
+of an ANN reduce to simple accumulations, performed only when a spike actually
+arrives. Computation is therefore sparse and event-driven: a silent neuron costs
+almost nothing. Neuromorphic processors such as Intel's Loihi are built to exploit
+this sparsity directly, % TODO: cite Davies et al. 2018
+and the energy advantage of an SNN grows as its firing activity decreases.
+
+The most widely used neuron model in deep SNNs is the leaky integrate-and-fire
+(LIF) neuron. % TODO: cite Gerstner et al., Neuronal Dynamics
+Each neuron maintains an internal state, its membrane potential $U$, which
+integrates incoming input, decays (``leaks'') towards rest over time, and triggers
+a spike when it crosses a threshold $\theta$.
+
+As shown in Figure~\ref{fig:neuron_models}, the LIF model sits between
+biologically detailed neuron models and the artificial neurons of
+conventional deep learning.
+
+\begin{figure}[htbp]
+  \centering
+  \includegraphics[width=\linewidth]{lif_neuron_models.png}
+  \caption[Neuron models: from Hodgkin--Huxley to the artificial neuron]{%
+    Neuron models ordered from biological realism to computational
+    utility. Left: the Hodgkin--Huxley model describes the generation of
+    action potentials through voltage-dependent ionic conductances, at a
+    high computational cost. Centre: the leaky integrate-and-fire (LIF)
+    neuron reduces the membrane to an RC circuit: the capacitor $C$
+    integrates the input current $I_{\mathrm{in}}$, the resistor $R$ makes
+    the stored charge leak away over time, and a spike is emitted when the
+    membrane potential reaches the threshold (denoted $\vartheta$ in the
+    figure and $\theta$ in the text), after which the potential is reset.
+    Unlike the Hodgkin--Huxley model, the membrane potential is an internal
+    state and the spike is the output. Right: the artificial neuron of
+    conventional ANNs computes a weighted sum of its inputs followed by an
+    activation function, with no temporal dynamics and no spikes.
+    Reproduced from the snnTorch documentation~\cite{snntorch_tutorial2}
+    (MIT License).}
+  \label{fig:neuron_models}
+\end{figure}
+
+In the discrete-time formulation used
+by snnTorch~\cite{eshraghian2023}, % TODO: check citation key
+the dynamics of a neuron at time step $t$ are
 \begin{equation}
-U[t+1] = \beta U[t] + W X[t+1] - S[t] U_{\text{thr}},
-\qquad
-S[t] = \begin{cases}
-1 & \text{if } U[t] > U_{\text{thr}} \\
-0 & \text{otherwise}
-\end{cases}
-\label{eq:lif}
+  U[t] = \beta\, U[t-1] + W X[t] - S[t-1]\,\theta ,
+  \label{eq:lif}
 \end{equation}
+\begin{equation}
+  S[t] =
+  \begin{cases}
+    1 & \text{if } U[t] > \theta, \\
+    0 & \text{otherwise},
+  \end{cases}
+  \label{eq:spike}
+\end{equation}
+where $W X[t]$ is the weighted input from the previous layer, $S[t]$ is the binary
+output spike, and the subtraction term resets the potential by $\theta$ after each
+spike. The decay factor $\beta \in [0,1)$ sets how much of its past state the
+neuron retains. Values close to $1$ give a long memory, so the neuron integrates
+evidence over many time steps; smaller values make it respond mainly to recent
+input.
 
-Two properties follow from Equation~\ref{eq:lif} and shape everything in this
-thesis. First, the activation $S[t]$ is binary, so a synaptic operation is an
-accumulation rather than a multiply-accumulate; this is the origin of the energy
-advantage discussed in Section~\ref{sec:energy-background}. Second, $U[t]$ is a
-\emph{state}: it must be stored between time steps for every neuron in the
-network, which makes it the dominant memory cost at deployment and a
-quantization target in its own right.
+The membrane potential gives the LIF neuron a memory, and this is what separates
+it from a stateless activation function: the output at time $t$ depends on the
+entire history of inputs up to $t$. The same mechanism also creates the main
+difficulty in training. The spike function in Eq.~\eqref{eq:spike} is a step
+function, whose derivative is zero almost everywhere and undefined at the
+threshold, so standard backpropagation cannot pass through it. The usual solution
+is the \emph{surrogate gradient} approach:
+% TODO: cite Neftci et al. 2019
+the step function is kept in the forward pass, but in the backward pass its
+derivative is replaced with that of a smooth approximation, such as an arctangent.
+Combined with backpropagation through time over the $T$ steps, this lets deep SNNs
+be trained with the same gradient-based tools as conventional networks.
+
+These properties change the quantization problem in three ways. First, SNN
+activations are already binary, so the precision that quantization removes lies
+in the weights and in the membrane potential, a state variable with no direct
+equivalent in an ANN. Second, the threshold makes the network highly sensitive to
+small numerical changes: a perturbation that moves $U$ slightly above or below
+$\theta$ turns a spike into silence, or the reverse. Because the membrane carries
+its state forward, such an error does not stay local; it can propagate through
+later time steps and layers. Third, explanations of an SNN can be temporal as well
+as spatial. Methods such as Spike Activation Map (SAM)~\cite{kim2021sam}
+% TODO: check citation key
+build attribution maps directly from the timing of spikes, without computing
+gradients, and therefore show not only \emph{where} the network finds evidence in
+the input but also \emph{when} during the $T$ time steps it does so. Whether
+quantization preserves this temporal reasoning, and not only accuracy, is the
+question this thesis sets out to answer.
 
 \subsection{Training by surrogate gradients}
 \label{sec:surrogate}

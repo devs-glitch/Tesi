@@ -59,17 +59,76 @@ grid at one bit less than a symmetric one would need.
 
 \section{Quantization and explanation fidelity}
 
-\todo{The main discussion of the thesis, written from Section~\ref{sec:grid-results}.
-Answer, in this order: (1) was the hypothesis confirmed or refuted, and at which
-bit-widths, per class; (2) do accuracy, explanation fidelity and energy diverge,
-and where; (3) how the results compare with Rabbi et al.\ (CNN, spatial) and
-Smith et al.\ (SNN, firing statistics) --- in particular whether the 4-bit
-minimum for the membrane is reproduced in the explanations as well as in the
-accuracy; (4) what the stratification says about which events lose their
-explanation first. If the three curves move together, say so plainly: it
-establishes that for this architecture accuracy is an adequate proxy for
-explanation fidelity, which is the assumption the literature makes without
-testing.}
+\paragraph{Accuracy is not a sufficient criterion for spiking networks either.}
+The finding of Rabbi et al.~\cite{rabbi2026} on convolutional networks carries
+over, in a sharper form. Two configurations of this network classify equally
+well, a 4-bit weight model and a 2-bit membrane model, and their explanations
+differ by a factor of almost two in agreement with the original. Anyone selecting
+a configuration on accuracy alone could have chosen the second and deployed a
+model that reaches the right labels while showing a different part of the
+spectrogram. In the detector-characterization setting of
+Chapter~\ref{ch:introduction}, that is the scenario that matters: the label is
+correct, the diagnostic cue is not the one the original model would have given.
+
+\paragraph{The divergence is real but bounded.} The changed explanations are
+still faithful: deleting the pixels they highlight degrades the model's
+confidence almost as much as deleting the parent's highlights does, and the
+quantized model can be explained with its parent's maps as well as with its own.
+The quantized network has not stopped using spectrogram evidence; among
+several redundant sets of evidence it now highlights a different one. A
+faithfulness test alone would have declared the explanation intact; an overlap
+test alone would have suggested it was lost. Both are needed to say what
+happened.
+
+\paragraph{The hypothesis was wrong in its form and right in its mechanism.}
+The prediction that the membrane would move the temporal axis of the explanation
+before the weights moved its spatial axis is not supported: both arms first
+register at 4 bits, and at 2 bits the membrane changes where the explanation
+points more than when. What the membrane does change first is the temporal
+dynamics of the network itself: at 2 bits, with a single representable level
+between rest and threshold, the first layer fires with perfectly regular
+intervals. The temporal centre of mass, built to capture the time axis of the
+explanation, is blind to this, because it measures where the spike mass falls,
+not how it is spaced. A temporal explanation metric for spiking networks needs
+to see regularity as well as timing, and the present instrument does not.
+
+\paragraph{The comparison with Smith et al.\ inverts.} Smith et
+al.~\cite{smith2026} report that the membrane needs at least four bits while
+learned weights survive two. Here the membrane survives two bits in accuracy and
+the weights do not. The difference has a plausible source in the design: the
+membrane grid of this thesis was fitted to a measured range and made unsigned
+after a clipping study, which concentrates all of its levels where the network
+uses them, whereas a ternary weight quantizer has no comparable freedom. The
+result does not contradict their mechanism --- at 2 bits the membrane does
+change the network, in its regularity and in its explanations --- but it shows
+that the bit-width at which membrane quantization breaks a network depends on
+how the grid is fitted.
+
+\paragraph{Weak events are not where the explanation fails.} The expectation that
+quantization would disturb spike decisions mostly in weak events, whose
+potentials sit near threshold, finds no consistent support: the gradient with
+event strength changes sign across seeds. The only consistent effect is
+reversed: the most saturated Extremely\_Loud events lose their explanation most,
+because their evidence is spread over the whole image and the highlighted region
+is least constrained.
+
+\paragraph{Efficiency and explainability do not trade off here.} The
+configuration that changes the explanation at constant accuracy is the
+2-bit membrane, and it is the one that saves no energy: with weights in full
+precision the per-operation cost stays the same while firing rates rise. The
+deployable configuration, joint 4-bit, keeps accuracy at parity and the
+explanation at the numerical floor, at about one sixtieth of the estimated
+energy and one eighth of the memory. The divergence between the three curves of
+Figure~\ref{fig:headline} exists, but it occurs at a point no one would choose
+for efficiency.
+
+\paragraph{Seed variance is the dominant source of variation.} Three
+full-precision networks of equal accuracy differ by a factor of 2.6 in the
+firing rate of their first layer, by more than half in estimated energy, and in
+which classes SAM can explain faithfully at all. The 2-bit membrane IoU ranges
+from $0.26$ to $0.62$ across seeds. Every comparison in this thesis was made
+within a seed, and a single-seed study of the same question could have reached
+any conclusion from ``the explanation is preserved'' to ``it is lost''.
 
 \section{Limitations}
 
@@ -120,17 +179,37 @@ changes in that minority and may under-report changes elsewhere.
 integer implementation would hold, not its arithmetic: the membrane is quantized
 as a stored state after each spike decision, while on integer hardware the
 comparison with threshold would itself be performed on integers. The energy
-figures are analytical, at a 45\,nm reference node, and below eight bits they are
-an upper bound rather than an estimate.
+figures are analytical, at a 45\,nm reference node, and below eight bits they
+rest on an extrapolation of the per-operation costs.
 
-\paragraph{Sample sizes of the explanation analyses.} Divergence and
-faithfulness are measured on fifteen validation images per class, and the
-membrane range on a single checkpoint. Both are sufficient for the effects
-reported here but limit the resolution with which small differences between
-configurations can be ranked.
+\paragraph{Sample sizes of the explanation analyses.} Divergence is measured on
+twenty validation images per class, faithfulness on ten, stratification on
+fifteen per class and tercile, and the membrane range on a single checkpoint.
+These are sufficient for the effects reported here, which are large, but limit
+the resolution with which small differences between configurations can be
+ranked; the faithfulness analysis covers only the 2-bit membrane arm.
 
-\todo{Add any limitation that emerges from the grid (e.g.\ PTQ fallback used at
-2 bits, a single seed for some configuration, instability of QAT).}
+\paragraph{One grid, one fitting procedure.} Each bit-width was fitted once per
+seed, with one fine-tuning schedule and one membrane range. The collapse of the
+2-bit weight arm and the survival of the 2-bit membrane are properties of these
+quantizers; a different weight quantizer (learned scales, a wider grid for the
+readout) could move the weight arm's breaking point.
+
+\paragraph{The control does not isolate the fine-tuning.} Fine-tuning without a
+quantizer never improved the parent's validation accuracy, so the selected
+control checkpoint is the parent itself. The control therefore shows that the
+pipeline is inert, but not what the extra epochs alone would do to a model that
+does change; the quantized checkpoints combine both effects.
+
+\paragraph{Checkpoints are selected on the validation partition} on which they
+are then analyzed. With selection by accuracy and analysis of explanations, the
+dependence is weak, but the test-set evaluation is the only fully independent
+estimate.
+
+\paragraph{The saving factor rests on an assumption.} Costing the analog first
+convolution at the weight bit-width gives a joint 4-bit saving of 62; costing it
+in floating point gives 3.5. The operation counts, the memory and the ranking of
+configurations do not depend on it.
 
 \section{Future work}
 
@@ -157,11 +236,14 @@ comparable with the published benchmark.
 
 \section{Closing remark}
 
-\todo{Rewrite once the grid is in. The draft below closes the instrument part
-only.}
-
 Compressed models are increasingly deployed where their explanations are acted
-upon. This thesis showed that before asking whether such a model still decides
-for the same reasons, one has to know what the instruments used to ask the
-question report when nothing has changed --- and that for spiking networks, the
-answer depends on whether the comparison is with a sibling or with a parent.
+upon. This thesis asked whether a quantized spiking network still decides for
+the same reasons as the network it came from, and found that the question has
+two prerequisites: knowing what the comparison metrics report when nothing has
+changed, and comparing every model with its own parent. With both in place, the
+answer for this network is that it mostly does --- down to four bits, in every
+arm --- and that the one configuration that does not is invisible to accuracy,
+partly invisible to correlation and to faithfulness, and visible to a metric
+that asks which pixels a reader is shown. That is the configuration a
+deployment chosen on accuracy could have picked, and the reason the question was
+worth asking.

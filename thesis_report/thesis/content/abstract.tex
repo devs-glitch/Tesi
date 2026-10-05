@@ -1,51 +1,39 @@
 \chapter*{Abstract}
 \addcontentsline{toc}{chapter}{Abstract}
 
-Quantization reduces the numerical precision of a neural network so that it can
-be deployed under tight energy and memory budgets. A recent study on
-convolutional networks showed that accuracy is not a sufficient criterion for
-this operation: some architectures keep their accuracy at reduced precision
-while the explanations of their decisions degrade substantially. This thesis
-asks the spiking analogue of that question: \emph{does a quantized spiking
-neural network base its decisions on the same evidence as its full-precision
-counterpart, and at what energy cost?}
-
-Spiking neural networks differ from convolutional ones in two ways that matter
-here. They carry a membrane potential, a state variable that can be quantized
-independently of the weights, and their explanations are sequences of maps
-rather than single images. The working hypothesis is that quantizing the
-membrane potential degrades the \emph{temporal} structure of an explanation
-before quantizing the weights degrades its \emph{spatial} structure.
+Quantization makes a neural network cheap enough to deploy, and it is usually
+validated by checking that accuracy does not fall. On convolutional networks,
+accuracy has been shown to survive quantization while the explanations of the
+model's decisions do not. This thesis asks the spiking analogue: \emph{does a
+quantized spiking neural network base its decisions on the same evidence as its
+full-precision counterpart, and at what energy cost?} A spiking network carries
+a membrane potential that can be quantized independently of the weights, and its
+explanations are sequences of maps; the working hypothesis is that quantizing
+the membrane degrades the temporal structure of an explanation before
+quantizing the weights degrades its spatial structure.
 
 A four-block convolutional spiking network is trained on four classes of
-transient noise from the LIGO Gravity Spy release, reaching
-$0.9833 \pm 0.0014$ validation accuracy over three seeds under constraints that
-keep the configuration hardware-realizable. Its decisions are explained with
-the Spike Activation Map, a gradient-free method that reads the spike trains
-directly; the free parameter of the method is fixed on the temporal axis it
-governs, and its faithfulness is tested against a random baseline.
+transient noise from the LIGO Gravity Spy release, reaching $0.9833 \pm 0.0014$
+validation accuracy over three seeds under hardware-realizable constraints, and
+its decisions are explained with the gradient-free Spike Activation Map. Before
+any comparison, the explanation metrics are calibrated: two full-precision
+models differing only in seed produce maps correlating at $0.153$ on the worst
+class, against a numerical floor of $0.975$. Spatial metrics are therefore valid
+only between a model and its own parent, and every quantized model is
+fine-tuned from, and compared with, the full-precision model of its own seed.
 
-Before any quantized model is compared with its parent, the comparison metrics
-are calibrated at three levels: the divergence produced by numerical noise, by a
-thirtyfold change of the explainer, and by initialization alone. The third level
-is far larger than expected. Two full-precision models differing only in random
-seed, and agreeing to within one validation sample in accuracy, produce maps
-whose Pearson correlation falls to $0.153$ on the worst class, against a
-numerical floor of $0.975$. Spatial explanation-similarity metrics are therefore
-valid only between a model and its own parent, while the temporal centre of mass
-of the spike energy survives both comparisons. This calibration dictates the
-design of the quantization study: every quantized model is fine-tuned from its
-own full-precision parent and read against the numerical floor.
-
-The study quantizes weights only, membrane potential only, and both together, at
-8, 4 and 2 bits. A preliminary clipping study shows that the membrane potential
-can be restricted to the unsigned range $[0, 2]$ at a cost of one validation
-sample, which fixes the membrane grid.
-\tbd~\emph{[Main result of the grid: whether the membrane arm displaces the
-temporal centre of mass at a higher bit-width than the one at which the weight
-arm lowers the spatial correlation; the bit-width at which accuracy, explanation
-fidelity and estimated energy diverge.]}
-
-\todo{Complete the last paragraph once \texttt{results/divergence.json} and
-\texttt{results/energy.json} exist (GATE 2, 7 October). Keep the abstract under
-one page.}
+Weights only, membrane only, and both are quantized at 8, 4 and 2 bits. At 8
+and 4 bits accuracy and explanations stay at the level of the parent in every
+arm. At 2 bits the arms separate: ternary weights collapse the classifier, while
+a 2-bit membrane keeps accuracy at parity ($0.982$) and yet changes the
+explanation, whose highlighted region overlaps the parent's by $0.44$ against a
+floor of $0.70$ --- a change the spatial correlation ($0.92$) would have reported
+as a preserved explanation. The new maps remain faithful by the deletion metric:
+they point at evidence the model uses, but not at the evidence the original
+pointed at. The hypothesis is not supported as an ordering of explanation
+metrics, but its mechanism is: the 2-bit membrane makes the spike trains of the
+first layer perfectly periodic, a temporal change the explanation's temporal
+metric cannot see. That configuration is also dominated on energy and memory, so
+there is no trade-off between efficiency and explainability here: a joint 4-bit
+model keeps both at about one sixtieth of the estimated energy and one eighth of
+the memory of its parent.
