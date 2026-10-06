@@ -23,7 +23,7 @@ Loihi~\cite{davies2018loihi} are built to exploit this sparsity directly, and th
 energy advantage of an SNN is set to grow as its firing activity decreases.
 
 The most widely used neuron model in deep SNNs is the leaky integrate-and-fire
-(LIF) neuron~\cite{gerstner2014neuronal}. In this configuration, neuron maintains an internal state,
+(LIF) neuron~\cite{gerstner2014neuronal}. In this configuration, each neuron maintains an internal state,
 its membrane potential $U$, which
 integrates incoming input, decays (``leaks'') towards rest over time, and triggers
 a spike when it crosses a threshold $\theta$.
@@ -98,7 +98,7 @@ its state forward, such an error does not stay local, but can propagate through
 later time steps and layers. Third, explanations of an SNN can be temporal as well
 as spatial. The Spike Activation Map (SAM)~\cite{kim2021sam} builds
 attribution maps directly from the timing of spikes, without computing
-gradients, and therefore show not only \emph{where} the network finds evidence in
+gradients, and therefore shows not only \emph{where} the network finds evidence in
 the input but also \emph{when} during the $T$ time steps it does so. Whether
 quantization preserves this temporal reasoning, and not only accuracy, is the
 question this thesis sets out to answer.
@@ -156,8 +156,8 @@ the spike itself with a soft or probabilistic function and so change the model
 that is deployed.
 
 \paragraph{The choice of surrogate.} Piecewise-linear, fast-sigmoid and
-exponential surrogates have all been used successfully, all three sharing non-linearity 
-and monotonically increasing towards the threshold. The
+exponential surrogates have all been used successfully, all three nonlinear and monotonically
+increasing towards the threshold. The
 diversity of working choices suggests that the method does not depend
 critically on the exact shape~\cite{neftci2019surrogate}. This work uses the
 arctangent surrogate~\cite{fang2021plif} as implemented in
@@ -197,7 +197,7 @@ used as the probability of emitting a spike at every step, and the value is
 carried by the spike count; in \emph{direct} (or \emph{constant}) encoding, the
 analog frame itself is presented, identical, at every time step.
 
-Rate coding trades its simplicity in time steps: a pixel is represented by
+Rate coding pays its simplicity in time steps: a pixel is represented by
 counting spikes, so with $T$ steps it can take only $T + 1$ distinct values, and
 the sampling makes the representation stochastic: the discretization error
 shrinks only as $T$ grows, which is why rate-coded and converted networks
@@ -266,8 +266,8 @@ nearest integer, clips to the representable range, and multiplies back,
 
 where $q_{\min}$ and $q_{\max}$ are the smallest and largest integer levels
 representable with $b$ bits: $-(2^{b-1}-1)$ and $2^{b-1}-1$ for a symmetric
-signed grid-- which keeps zero exactly representable at the cost of one unused
-code-- $2^b - 1$ levels in all; $0$ and $2^b - 1$ for an unsigned one, which uses
+signed grid, which keeps zero exactly representable at the cost of one unused
+code, $2^b - 1$ levels in all; $0$ and $2^b - 1$ for an unsigned one, which uses
 all $2^b$. The largest representable value is therefore $\Delta\, q_{\max}$.
 
 For a symmetric grid over $[-w_{\max}, +w_{\max}]$ the largest level must reach
@@ -286,7 +286,7 @@ works per channel, and most channels have a smaller maximum than the network as
 a whole, that unit is coarser than the steps the quantizer actually applies, and
 the floor it defines is conservative.
 
-There are two main errors that follow from Equation~\ref{eq:quantizer}, with the choice of range
+Two main errors follow from Equation~\ref{eq:quantizer}, with the choice of range
 trades one against the other: values inside the range are moved by at most
 $\Delta/2$ (\emph{rounding} error), values outside it are cut to the nearest
 bound (\emph{clipping} error). For values spread over many steps the rounding
@@ -380,8 +380,8 @@ which part of the computation remains in floating point.
 Smith et al.~\cite{smith2026} argue independently that accuracy is an
 insufficient criterion for quantized spiking networks. They in fact propose an Earth
 Mover's Distance between per-neuron firing-rate distributions as a diagnostic of
-behavioural divergence. Separating weight from membrane quantization as this
-thesis does, and reporting that membrane-potential quantization requires at least
+behavioural divergence. They separate weight from membrane quantization as this
+thesis does, and report that membrane-potential quantization requires at least
 four bits to preserve both accuracy and dynamics while learned weight
 quantization remains viable at two. They ground the asymmetry mechanistically: a
 weight quantization error is fixed for an entire forward pass, whereas a membrane
@@ -416,7 +416,7 @@ and by the number of time steps,
 \end{equation}
 In 32-bit floating point a MAC costs $4.6$\,pJ (a $3.7$\,pJ multiplication plus a
 $0.9$\,pJ addition) and an accumulate $0.9$\,pJ. That factor of five is the
-physical reason a spiking network can be cheaper and lighter, and it also sets the limit:
+physical reason a spiking network can be cheaper, and it also sets the limit:
 a spiking layer saves energy only while $f \cdot T < 4.6 / 0.9 \approx 5$, so
 sparsity and a short time window are both necessary. The first layer is an
 exception, since under direct encoding it receives analog values and performs
@@ -508,7 +508,7 @@ validate the method on Tiny-ImageNet, finding SAM more discriminative than
 Grad-CAM adapted to spiking networks.
 
 Feature-attribution methods for spiking networks have also been surveyed more
-broadly~\cite{nguyen2023attribution}, but SAM remained the method that reads the
+broadly~\cite{nguyen2023attribution}, but SAM remains the method that reads the
 spike trains directly, and it is the explainer used throughout this work. Its
 one free parameter, $\gamma$, is fixed in Section~\ref{sec:gamma}.
 
@@ -545,10 +545,10 @@ form of that test, run in the opposite direction.
 \section{Gravitational-wave glitch classification}
 \label{sec:gravityspy}
 
-The sensitivity of the LIGO interferometers is primarily limited by non-Gaussian transient
+The sensitivity of the LIGO interferometers is limited by non-Gaussian transient
 noise of instrumental and environmental origin. As introduced in
 Chapter~\ref{ch:introduction}, these glitches are short, can mimic astrophysical
-signals, and cna be grouped into morphological families that correlate with
+signals, and can be grouped into morphological families that correlate with
 distinct physical causes.
 
 The Gravity Spy project~\cite{zevin2017, bahaadini2018} combines machine

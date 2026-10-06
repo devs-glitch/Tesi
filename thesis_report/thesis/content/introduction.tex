@@ -18,12 +18,12 @@ data that must be analyzed, often in real time. In this setting, the main obstac
 faintness of the astrophysical signals but the noise. The detectors are sensitive
 enough to record a constant stream of short, non-Gaussian transients of
 instrumental and environmental origin, known as \emph{glitches}. What makes
-glitches both intresting and detrimental to astronomical analysis is that they can mimic
+glitches both interesting and detrimental to astronomical analysis is that they can mimic
 genuine signals or overlap with them, which raises the false-alarm rate and reduces
 the effective sensitivity of searches.
 
 Gravity Spy, the source of the data used in this work, is an Open Source project
-specifically created created to address this problem.
+specifically created to address this problem.
 It combines citizen-science classification with machine learning, aiming to
 sort glitches into morphological families based on their time--frequency
 spectrograms~\cite{zevin2017}.
@@ -49,7 +49,7 @@ has not dropped, and for many applications this is a sufficient test.
 It is not sufficient, however, when the model is also expected to explain its
 decisions. Rabbi et al.~\cite{rabbi2026} evaluated five convolutional architectures
 at INT8 and INT4, comparing the attribution maps of the quantized models with those
-of their full-precision counterparts. Their core founding was that explanation similarity
+of their full-precision counterparts. Their core finding was that explanation similarity
 degrades measurably between INT8 and INT4, even where accuracy differences are
 negligible. They also discovered that when quantization does cause a misclassification,
 the quantized model is generally attending to \emph{different} regions of the input,
@@ -91,8 +91,8 @@ Quantization may preserve where a network looks while displacing when it decides
 a change to which spatial metrics are blind by construction.
 
 \paragraph{A native explainer.} The Spike Activation Map (SAM)~\cite{kim2021sam}
-reads spike activity directly. It requires neither gradients, nor side-stepping the
-approximation error a surrogate gradient injects into any transplanted
+reads spike activity directly. It requires neither gradients, which side-steps
+the approximation error a surrogate gradient injects into a transplanted
 Grad-CAM-style method~\cite{selvaraju2017gradcam}, nor ground-truth labels.
 
 The working hypothesis follows from the first two properties:
@@ -102,7 +102,7 @@ The working hypothesis follows from the first two properties:
 explanation before quantizing the weights degrades its spatial structure},
 \end{quote}
 
-an hypothesis that originates from the principle that the membrane potential
+a hypothesis that originates from the principle that the membrane potential
 is the variable that integrates evidence over time,
 while a weight error is fixed for a whole forward pass. The hypothesis is
 falsifiable, and testing it precisely requires quantizing the two targets separately: the
@@ -111,13 +111,6 @@ membrane arm should displace the temporal centre of mass of the explanation at a
 correlation.
 
 \section{Contributions}
-
-Answering the research question requires an instrument, and the metrics used to
-compare explanations return numbers between zero and one whatever is fed to them.
-Before a quantization result can be read, one must know what those metrics report
-when nothing has changed. The thesis is therefore organized in two parts: the
-construction and calibration of the instrument, and its application to the
-quantization grid.
 
 To address the research question, it is necessary to employ a measurement tool.
 However, since the metrics used throughout the work consistently yield values between zero and
@@ -130,13 +123,13 @@ of the tool, and the second to its operational application to the quantization g
 The core contributions are therefore:
 
 \begin{enumerate}
-  \item \textbf{A hardware-realizable full-precision baseline.} At a chosen
-        The input resolution of 112\,px based on network health,
+  \item \textbf{A hardware-realizable full-precision baseline.} The input resolution
+        of 112\,px was chosen based on network health,
         measured as dead and saturated neuron
         fractions, and on the resolution of the explanation maps, not on
         accuracy: at 64\,px the last feature map shrinks to $4\times4$, too
         coarse for spatial metrics. The membrane decay was also searched only among
-        values realizable with a shift and a subtraction, and the search
+        values realizable with a shift, alone or followed by a subtraction, and the search
         returned a value of $\beta = 0.75$. Over three seeds the reference reaches
         $0.9833 \pm 0.0014$ validation accuracy.
 
