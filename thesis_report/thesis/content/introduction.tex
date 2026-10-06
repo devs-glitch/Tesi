@@ -119,59 +119,65 @@ when nothing has changed. The thesis is therefore organized in two parts: the
 construction and calibration of the instrument, and its application to the
 quantization grid.
 
-\begin{enumerate}
-  \item \textbf{A hardware-realizable full-precision baseline}, with every
-        design choice settled on evidence and recorded in a frozen manifest: the
-        input resolution chosen on network health rather than accuracy, the
-        membrane decay restricted to shift-implementable values inside the
-        hyperparameter search rather than rounded afterwards, and a three-seed
-        reference at $0.9833 \pm 0.0014$ validation accuracy.
+To address the research question, it is necessary to employ a measurement tool.
+However, since the metrics used throughout the work consistently yield values between zero and
+one--regardless of the input data--establishing a reference baseline is essential.
+Indeed, before interpreting the final analysis results, one must determine the values
+these metrics produce in the absence of variations. The thesis is therefore
+structured into two main sections: the first dedicated to the design and calibration
+of the tool, and the second to its operational application to the quantization grid.
 
-  \item \textbf{A corrected implementation of the Spike Activation Map}, with
-        its decay parameter fixed on the temporal axis it actually governs, and
-        its faithfulness tested quantitatively against a random baseline rather
-        than judged by visual plausibility.
+The core contributions are therefore:
+
+\begin{enumerate}
+  \item \textbf{A hardware-realizable full-precision baseline.} At a chosen
+        The input resolution of 112\,px based on network health,
+        measured as dead and saturated neuron
+        fractions, and on the resolution of the explanation maps, not on
+        accuracy: at 64\,px the last feature map shrinks to $4\times4$, too
+        coarse for spatial metrics. The membrane decay was also searched only among
+        values realizable with a shift and a subtraction, and the search
+        returned a value of $\beta = 0.75$. Over three seeds the reference reaches
+        $0.9833 \pm 0.0014$ validation accuracy.
+
+  \item \textbf{A corrected implementation of the Spike Activation Map.}
+        The decay parameter $\gamma$ is fixed on the
+        temporal axis it actually governs. The neuron contribution score now
+        sums over strictly earlier time steps ($t' < t$), which removes a
+        constant pedestal that had inflated map correlations.
 
   \item \textbf{A calibration of the explanation-divergence metrics} at three
-        levels: numerical noise, a thirtyfold change in the explainer, and
-        initialization variance. Neither of the two closest
-        works~\cite{rabbi2026, smith2026} establishes any of the three, and the
-        result has the widest scope of the thesis: spatial metrics are valid only
-        between a model and its own parent.
+        levels: numerical noise, a thirtyfold change in $\gamma$, and
+        independently initialized networks of equal accuracy. Spatial metrics are validated
+        only between a model and its own parent, so every quantized model is
+        compared with the full-precision counterpart model of its own seed.
 
-  \item \textbf{A bit-width characterization of explanation fidelity for a
-        spiking classifier}, with weight and membrane quantization separated and
-        then combined over thirty fine-tuning runs (in five of which fine-tuning
-        never improved on the starting model, so that the checkpoint evaluated is
-        the starting model itself), measured with spatial and
-        temporal divergence metrics read against the calibrated thresholds,
-        tested for faithfulness, reported per class and per seed, and stratified
-        by event strength.
+  \item \textbf{A bit-width characterization of explanation fidelity.} Weight and membrane quantization are applied
+        separately and then together, at 8, 4 and 2 bits and three seeds,
+        alongside a full-precision fine-tuning control.
 
   \item \textbf{An analytical energy and memory account} of every operating
-        point, so that accuracy, explanation fidelity and energy can be read on
-        a common bit-width axis.
+        point, with synaptic operations computed from per-layer firing rates,
+        in order that accuracy, explanation fidelity, and energy can be read on a
+        common bit-width axis.
 \end{enumerate}
 
-The central result is a configuration that the accuracy criterion cannot tell
-apart from its neighbours. Quantizing the membrane potential to 2 bits leaves
+The central result is a configuration that the accuracy criterion alone cannot discriminate
+from its neighbours. Quantizing the membrane potential to 2 bits leaves
 accuracy at parity, $0.982$, yet the region its explanations highlight overlaps
 the full-precision one by $0.44$, well below the numerical floor of $0.70$; a
 4-bit weight model of the same accuracy keeps an overlap of $0.74$. The change
-is real but bounded. For the classes on which SAM is faithful at all, the
+is real but bounded, as for the classes on which SAM is faithful, the
 deletion metric shows that the new explanations still point at evidence the
-model uses, just not at the evidence the original model pointed at.
+model uses, but not at the evidence the original model pointed and looked at.
 
-The hypothesis stated above is not supported in the form it was written. Read
+The hypothesis stated above is ultimately not supported. Read
 against the floor of each class, the two effects it orders appear at the same
 bit-width: at 4 bits the membrane arm moves the temporal centre of mass above
 its floor, and the weight arm lowers the spatial correlation below its floor in
 all four classes, while moving the centre of mass by a similar amount in the
-opposite direction. Against the single floor of the worst class, $0.975$, the
-weight arm would seem to hold until 2 bits and the predicted order to appear;
-the per-class reading is the one that matches how the floor is measured. At
-2 bits the membrane changes \emph{where} the explanation points more than
-\emph{when}. The mechanism behind the hypothesis is supported. The same
+opposite direction.  At 2 bits the membrane modifies \emph{where} the explanation points more than
+\emph{when}. The mechanism behind the hypothesis is supported, as the same
 quantization makes the inter-spike intervals of the first layer exactly
 regular, with a coefficient of variation of zero in all six models with a 2-bit
 membrane, over the $3$ to $28\,\%$ of neurons that fire often enough within
@@ -191,16 +197,18 @@ The classification task is the identification of transient noise --- known as
 \emph{glitches} --- in the data of the LIGO gravitational-wave detectors, using
 the Gravity Spy release~\cite{zevin2017, glanzer2023, glanzer2021}.
 
-The domain was chosen for three reasons. Explanation fidelity has an
-\emph{operational} consequence there: glitch classification guides detector
-characterization, where a commissioner acts physically on the instrument, so a
+The domain was chosen for three reasons. Explanation fidelity particularly has an
+\emph{operational} consequence: glitch classification guides detector
+characterization, where a commissioner can act physically on the instrument: a
 compressed model reaching the same label from different evidence would preserve
-the label while corrupting the diagnostic cue. The classes have physically
+the label but would be corrupting the diagnostic cue.
+
+The classes have physically
 interpretable morphology, so a domain expert can judge whether an attention map
-falls where the glitch actually is, which is not true of a generic image
-benchmark. And the data is public and large, with every trigger labelled by the
-Gravity Spy classifier. Those labels are machine labels rather than a verified
-ground truth, and Section~\ref{sec:gravityspy} reports how far the scores
+falls where the glitch actually is, which is not necessarily the case of a generic image
+benchmark. Moreover, the data is public and large, with every trigger labelled by the
+Gravity Spy classifier. The labels are machine labels (not a verified
+ground truth), and in Section~\ref{sec:gravityspy} it is reported how far the scores 
 released with them support them.
 
 \section{Structure}

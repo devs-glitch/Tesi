@@ -8,14 +8,13 @@
 \backcite {smith2026}{{6}{1.2}{section*.4}}
 \backcite {kim2021sam}{{6}{1.2}{section*.6}}
 \backcite {selvaraju2017gradcam}{{6}{1.2}{section*.6}}
-\backcite {rabbi2026, smith2026}{{7}{3}{Item.3}}
-\backcite {zevin2017, glanzer2023, glanzer2021}{{7}{1.4}{section.1.4}}
+\backcite {zevin2017, glanzer2023, glanzer2021}{{8}{1.4}{section.1.4}}
 \backcite {maass1997networks}{{9}{2.1}{section.2.1}}
 \backcite {davies2018loihi}{{9}{2.1}{section.2.1}}
 \backcite {gerstner2014neuronal}{{9}{2.1}{section.2.1}}
 \backcite {eshraghian2023}{{9}{2.1}{figure.caption.7}}
-\backcite {neftci2019surrogate}{{9}{2.1}{equation.2.2}}
 \backcite {snntorch_tutorial2}{{10}{2.1}{figure.caption.7}}
+\backcite {neftci2019surrogate}{{11}{2.1}{equation.2.2}}
 \backcite {kim2021sam}{{11}{2.1}{equation.2.2}}
 \backcite {neftci2019surrogate}{{11}{2.1.1}{subsection.2.1.1}}
 \backcite {neftci2019surrogate}{{11}{2.1.1}{section*.8}}
@@ -41,7 +40,7 @@
 \backcite {liu2026hardfsnn}{{14}{2.2.1}{subsection.2.2.1}}
 \backcite {smith2026}{{15}{2.2.1}{subsection.2.2.1}}
 \backcite {horowitz2014}{{15}{2.2.2}{subsection.2.2.2}}
-\backcite {horowitz2014}{{15}{2.2.2}{section*.20}}
+\backcite {horowitz2014}{{16}{2.2.2}{section*.20}}
 \backcite {selvaraju2017gradcam}{{16}{2.3}{section.2.3}}
 \backcite {kim2021sam}{{16}{2.3}{section.2.3}}
 \backcite {ribeiro2016lime}{{16}{2.3}{section.2.3}}

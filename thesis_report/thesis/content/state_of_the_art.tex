@@ -5,30 +5,32 @@
 
 Spiking neural networks (SNNs) are often described as the third generation of
 neural networks~\cite{maass1997networks}. They take their inspiration from biological neurons, which communicate through
-brief, all-or-nothing electrical impulses called \emph{spikes}. In a conventional
-ANN, each neuron outputs a continuous value computed once per input. In an SNN,
+brief, all-or-nothing electrical impulses called \emph{spikes}.
+In a conventional
+ANN, each neuron outputs a continuous value computed once per input, while in an SNN,
 information is carried by sequences of binary events distributed over time: at
 each of $T$ discrete time steps, a neuron either emits a spike or stays silent.
 The network therefore processes an input as a short temporal sequence. This holds
-even when the input is static, as with a spectrogram, which is presented
+even when the input is static, as with a spectrogram, our specific case, which is presented
 repeatedly or encoded as spikes over the $T$ steps.
 
-This representation is what makes SNNs attractive for low-power computing. Because
+This representation is exactly what makes SNNs attractive for low-power computing. Because
 activations are binary, the multiply--accumulate operations that dominate the cost
 of an ANN reduce to simple accumulations, performed only when a spike actually
-arrives. Computation is therefore sparse and event-driven: a silent neuron costs
+is fired. Computation is therefore sparse and event-driven, with a silent neuron costing
 almost nothing. Neuromorphic processors such as Intel's
 Loihi~\cite{davies2018loihi} are built to exploit this sparsity directly, and the
-energy advantage of an SNN grows as its firing activity decreases.
+energy advantage of an SNN is set to grow as its firing activity decreases.
 
 The most widely used neuron model in deep SNNs is the leaky integrate-and-fire
-(LIF) neuron~\cite{gerstner2014neuronal}. Each neuron maintains an internal state, its membrane potential $U$, which
+(LIF) neuron~\cite{gerstner2014neuronal}. In this configuration, neuron maintains an internal state,
+its membrane potential $U$, which
 integrates incoming input, decays (``leaks'') towards rest over time, and triggers
 a spike when it crosses a threshold $\theta$.
 
 As shown in Figure~\ref{fig:neuron_models}, the LIF model sits between
 biologically detailed neuron models and the artificial neurons of
-conventional deep learning.
+conventional deep learning (ANNs).
 
 \begin{figure}[htbp]
   \centering
@@ -39,13 +41,13 @@ conventional deep learning.
     action potentials through voltage-dependent ionic conductances, at a
     high computational cost. Centre: the leaky integrate-and-fire (LIF)
     neuron reduces the membrane to an RC circuit: the capacitor $C$
-    integrates the input current $I_{\mathrm{in}}$, the resistor $R$ makes
+    integrates the input current $I_{\mathrm{in}}$, while the resistor $R$ makes
     the stored charge leak away over time, and a spike is emitted when the
     membrane potential reaches the threshold (denoted $\vartheta$ in the
     figure and $\theta$ in the text), after which the potential is reset.
-    Unlike the Hodgkin--Huxley model, the membrane potential is an internal
+    Unlike the Hodgkin--Huxley model, the membrane potential of a LIF neuron is an internal
     state and the spike is the output. Right: the artificial neuron of
-    conventional ANNs computes a weighted sum of its inputs followed by an
+    conventional ANNs, which computes a weighted sum of its inputs followed by an
     activation function, with no temporal dynamics and no spikes.
     Reproduced from the snnTorch documentation~\cite{snntorch_tutorial2}
     (MIT License).}
@@ -53,7 +55,7 @@ conventional deep learning.
 \end{figure}
 
 In the discrete-time formulation used by snnTorch~\cite{eshraghian2023}, the
-dynamics of a neuron at time step $t$ are
+dynamics of a neuron at time step $t$ are the following
 \begin{equation}
   U[t] = \beta\, U[t-1] + W X[t] - S[t-1]\,\theta ,
   \label{eq:lif}
@@ -69,31 +71,32 @@ dynamics of a neuron at time step $t$ are
 where $W X[t]$ is the weighted input from the previous layer, $S[t]$ is the binary
 output spike, and the subtraction term resets the potential by $\theta$ after each
 spike. The decay factor $\beta \in [0,1)$ sets how much of its past state the
-neuron retains. Values close to $1$ give a long memory, so the neuron integrates
+neuron retains: values close to $1$ give a long memory, so the neuron integrates
 evidence over many time steps; smaller values make it respond mainly to recent
 input.
 
-The membrane potential gives the LIF neuron a memory, and this is what separates
+The property of the membrane potential to give the LIF neuron a memory is what separates
 it from a stateless activation function: the output at time $t$ depends on the
-entire history of inputs up to $t$. The same mechanism also creates the main
+entire history of inputs up to $t$.
+The same mechanism, nonetheless, also creates the main
 difficulty in training. The spike function in Eq.~\eqref{eq:spike} is a step
 function, whose derivative is zero almost everywhere and undefined at the
 threshold, so standard backpropagation cannot pass through it. The usual solution
 is the \emph{surrogate gradient} approach~\cite{neftci2019surrogate}: the step
 function is kept in the forward pass, but in the backward pass its
 derivative is replaced with that of a smooth approximation, such as an arctangent.
-Combined with backpropagation through time over the $T$ steps, this lets deep SNNs
+Combined with backpropagation through time over the $T$ steps, this allows deep SNNs to
 be trained with the same gradient-based tools as conventional networks.
 
-These properties change the quantization problem in three ways. First, SNN
+These properties change the quantization problem in three main direct ways. First, SNN
 activations are already binary, so the precision that quantization removes lies
 in the weights and in the membrane potential, a state variable with no direct
 equivalent in an ANN. Second, the threshold makes the network highly sensitive to
-small numerical changes: a perturbation that moves $U$ slightly above or below
+small numerical changes. Indeed, a perturbation that moves $U$ slightly above or below
 $\theta$ turns a spike into silence, or the reverse. Because the membrane carries
-its state forward, such an error does not stay local; it can propagate through
+its state forward, such an error does not stay local, but can propagate through
 later time steps and layers. Third, explanations of an SNN can be temporal as well
-as spatial. Methods such as Spike Activation Map (SAM)~\cite{kim2021sam} build
+as spatial. The Spike Activation Map (SAM)~\cite{kim2021sam} builds
 attribution maps directly from the timing of spikes, without computing
 gradients, and therefore show not only \emph{where} the network finds evidence in
 the input but also \emph{when} during the $T$ time steps it does so. Whether
@@ -103,9 +106,9 @@ question this thesis sets out to answer.
 \subsection{Training by surrogate gradients}
 \label{sec:surrogate}
 
-Unrolled over its $T$ time steps, a network of LIF neurons is a recurrent
+Unrolled over its $T$ time steps, a network of LIF neurons is effectively a recurrent
 network: the membrane potential is a hidden state that each step reads and
-updates (Equation~\ref{eq:lif}). Training it by gradient descent means solving
+updates (Equation~\ref{eq:lif}). Training it by gradient descent requires solving
 two credit-assignment problems at once~\cite{neftci2019surrogate}: a
 \emph{spatial} one, across layers, as in any multi-layer network, and a
 \emph{temporal} one, since a weight influences the loss through every later
@@ -136,25 +139,25 @@ same problem met by networks with binary activations, and the solutions
 developed for spiking networks are inspired by those~\cite{neftci2019surrogate}.
 
 \paragraph{The surrogate.} A surrogate gradient leaves the model unchanged and
-alters only its derivative. The forward pass keeps the exact binary spike; in
+alters only its derivative. The forward pass keeps the exact binary spike, while in
 the backward pass every occurrence of $\Theta'$ is replaced by the derivative
 $\sigma'$ of a smooth function peaked at the threshold,
 \begin{equation}
 \frac{\partial S[t]}{\partial U[t]} \;\longrightarrow\;
 \sigma'\!\left(U[t] - \theta\right).
 \end{equation}
-Neurons close to threshold, those for which a small change could flip a spike,
+Neurons close to threshold, meaning those for which a small change could flip a spike,
 receive the largest gradient, and gradient flows through silent neurons as well.
 The resulting update is the gradient of a
 \emph{virtual} surrogate loss, never computed explicitly, which follows the true
 one while remaining continuous and finite~\cite{neftci2019surrogate}. This
-distinguishes the approach from \emph{smoothed} spiking networks, which replace
+distinguishes the approach from \emph{smoothed} spiking networks, which involve replacing
 the spike itself with a soft or probabilistic function and so change the model
 that is deployed.
 
 \paragraph{The choice of surrogate.} Piecewise-linear, fast-sigmoid and
-exponential surrogates have all been used successfully. What they share is
-being nonlinear and monotonically increasing towards the threshold, and the
+exponential surrogates have all been used successfully, all three sharing non-linearity 
+and monotonically increasing towards the threshold. The
 diversity of working choices suggests that the method does not depend
 critically on the exact shape~\cite{neftci2019surrogate}. This work uses the
 arctangent surrogate~\cite{fang2021plif} as implemented in
@@ -169,8 +172,8 @@ non-zero gradient. The reset term $-S[t-1]\,\theta$ of
 Equation~\ref{eq:lif} is treated as a constant in the backward pass: the
 recurrence then contributes $\partial U[t]/\partial U[t-1] = \beta$ alone, without
 a second surrogate factor through the reset, a simplification that has been
-found empirically to improve training~\cite{neftci2019surrogate}. Trained this
-way, spiking networks reach accuracies comparable to conventional architectures
+found empirically to improve training~\cite{neftci2019surrogate}. With this training
+configuration, spiking networks can manage to reach accuracies comparable to conventional architectures
 on image benchmarks~\cite{eshraghian2023}.
 
 The same device reappears in Section~\ref{sec:quantization-background}: the
@@ -188,13 +191,13 @@ gradients of the function the network actually computes.
 \label{sec:encoding}
 
 A spiking network processes its input over $T$ discrete time steps, while an
-image is a single static frame, so the frame must be turned into a sequence. Two
-strategies dominate. In \emph{rate coding}, each normalized pixel intensity is
+image is a single static frame, so the frame must be turned into a sequence. In this context, two
+strategies dominate. In \emph{rate coding} each normalized pixel intensity is
 used as the probability of emitting a spike at every step, and the value is
 carried by the spike count; in \emph{direct} (or \emph{constant}) encoding, the
 analog frame itself is presented, identical, at every time step.
 
-Rate coding pays for its simplicity in time steps. A pixel is represented by
+Rate coding trades its simplicity in time steps: a pixel is represented by
 counting spikes, so with $T$ steps it can take only $T + 1$ distinct values, and
 the sampling makes the representation stochastic: the discretization error
 shrinks only as $T$ grows, which is why rate-coded and converted networks
@@ -207,8 +210,8 @@ directly to the input layer of the SNN at each timestep'', and the first
 convolutional layer, followed by LIF neurons, becomes at once a feature
 extractor and a learned spike generator: it integrates the weighted pixel
 values and fires when its membrane potential crosses threshold. Since the
-input carries its full precision at every step, the number of steps no longer
-bounds the precision of the input. DIET-SNN combines this encoding with a
+input carries its full precision at every step, the number of steps is no longer
+bounding the precision of the input. DIET-SNN combines this encoding with a
 trained membrane leak and firing threshold per layer, which increase activation
 sparsity, and reaches $69\,\%$ top-1 accuracy on ImageNet with $5$ time steps
 and about $12\times$ less compute energy than the equivalent conventional
@@ -217,14 +220,14 @@ trained neuron parameters: $\beta$ and the threshold are shared by all layers,
 and $\beta$ is chosen by the constrained search of
 Section~\ref{sec:constrained-search}.
 
-Direct encoding has three consequences that the rest of this thesis relies on.
+Direct encoding has three remarkable consequences that the rest of this thesis relies on.
 
 \paragraph{Temporal structure is generated inside the network.} Since the
 stimulus does not vary, \textbf{all temporal structure in the network
 originates from the internal LIF dynamics} --- leak, integration and reset ---
-rather than from variation in the input. The time axis of a spike train, and
+and not from variation in the input. The time axis of a spike train, and
 therefore of a Spike Activation Map, is the time the network takes to integrate
-evidence, not the time of the glitch: in an Omega-scan spectrogram, physical
+evidence, which is not the time of the glitch: in an Omega-scan spectrogram, physical
 time runs along the horizontal axis of the image and is, for the network, a
 spatial dimension. Every temporal analysis in this thesis is to be read in that
 light.
@@ -233,12 +236,12 @@ light.
 receives binary spikes and only accumulates, but the first convolution receives
 analog pixel values and performs full multiply-accumulates. Because its input is
 identical at every step, so is its output current, which can be computed once
-rather than $T$ times; Section~\ref{sec:energy-method} shows that this choice
-alone decides whether the spiking network is cheaper than its conventional
+rather than $T$ times. Section~\ref{sec:energy-method} shows how this choice
+ decides whether the spiking network is cheaper than its conventional
 equivalent.
 
-\paragraph{The input is deterministic.} With no sampling, two forward passes on
-the same image produce identical spike trains. This is what allows two models to
+\paragraph{The input is deterministic.} Without sampling, two forward passes on
+the same image produce identical spike trains, which is what allows two models to
 be compared spike for spike on the same input, as the calibration of
 Section~\ref{sec:calibration} requires.
 
@@ -249,7 +252,7 @@ Quantization represents the parameters and intermediate values of a network with
 fewer bits than the 32 of floating point. Storing a value in $b$ bits divides its
 memory by $32/b$, and integer operations on narrow operands cost far less energy
 than floating-point ones (Section~\ref{sec:energy-background}), which is why
-quantization is the standard step between a trained model and its deployment on
+quantization is the standard practice adopted between a trained model and its deployment on
 constrained hardware~\cite{jacob2018quantization, nagel2021whitepaper}.
 
 \paragraph{The uniform quantizer.} A uniform quantizer maps a real value $x$ to
@@ -263,8 +266,8 @@ nearest integer, clips to the representable range, and multiplies back,
 
 where $q_{\min}$ and $q_{\max}$ are the smallest and largest integer levels
 representable with $b$ bits: $-(2^{b-1}-1)$ and $2^{b-1}-1$ for a symmetric
-signed grid, which keeps zero exactly representable at the price of one unused
-code, $2^b - 1$ levels in all; $0$ and $2^b - 1$ for an unsigned one, which uses
+signed grid-- which keeps zero exactly representable at the cost of one unused
+code-- $2^b - 1$ levels in all; $0$ and $2^b - 1$ for an unsigned one, which uses
 all $2^b$. The largest representable value is therefore $\Delta\, q_{\max}$.
 
 For a symmetric grid over $[-w_{\max}, +w_{\max}]$ the largest level must reach
@@ -277,12 +280,13 @@ the step the weight quantizer of Chapter~\ref{ch:quantization} computes for each
 output channel. Section~\ref{sec:perturbation} expresses a perturbation in a unit
 derived from it: the 8-bit step of a single per-tensor grid set by the largest
 weight of the whole network, computed there as $2 w_{\max}/(2^8 - 1)$, which is
-$0.4\,\%$ smaller than Equation~\ref{eq:step} at 8 bits. Since the quantizer
+$0.4\,\%$ smaller than Equation~\ref{eq:step} at 8 bits.
+Since the quantizer
 works per channel, and most channels have a smaller maximum than the network as
 a whole, that unit is coarser than the steps the quantizer actually applies, and
 the floor it defines is conservative.
 
-Two errors follow from Equation~\ref{eq:quantizer}, and the choice of range
+There are two main errors that follow from Equation~\ref{eq:quantizer}, with the choice of range
 trades one against the other: values inside the range are moved by at most
 $\Delta/2$ (\emph{rounding} error), values outside it are cut to the nearest
 bound (\emph{clipping} error). For values spread over many steps the rounding
@@ -301,39 +305,39 @@ are frequent --- in the first layer the median is $-0.08$ and the first
 percentile $-6.6$ --- yet clipping them to zero moves the validation accuracy by
 one image in $1\,435$ (Section~\ref{sec:membrane-prep}).
 
-The step can be shared by a whole tensor (\emph{per-tensor}) or computed
+More specifically, the step can be shared by a whole tensor (\emph{per-tensor}) or computed
 separately for each output channel (\emph{per-channel}). A per-tensor step is
 set by the largest value in the tensor, so channels whose weights are
 systematically smaller use only a fraction of the available levels; the
-per-channel scheme avoids this at the cost of one scale factor per
+per-channel scheme avoids this at the price of one scale factor per
 channel~\cite{krishnamoorthi2018whitepaper, nagel2021whitepaper}.
 
 Given a quantizer, two families of method decide \emph{when} it is applied:
 after training, or during it.
 
 \paragraph{Post-training quantization (PTQ).} PTQ converts an already trained
-full-precision model, with no retraining: the weights are rounded to their grid,
+full-precision model: the weights are rounded to their grid,
 and the ranges of the activations, which depend on the data, are estimated on a
-small unlabelled calibration set~\cite{nagel2021whitepaper}. It is fast and
+small unlabelled calibration set~\cite{nagel2021whitepaper}. It is a relatively fast method and
 needs neither labelled data nor a training pipeline, which makes it the
 ``push-button'' option and the one most used for rapid deployment. Its limit is
-precision. At 8 bits the rounding error is small compared with the spread of the
+precision: at 8 bits the rounding error is small compared with the spread of the
 weights, and per-channel PTQ keeps classification accuracy within about 2\,\% of
-floating point on standard convolutional networks; at 4 bits the step is sixteen
+floating point on standard convolutional networks. At 4 bits the step is sixteen
 times coarser, and accuracy typically degrades unless more elaborate correction
 methods are used~\cite{krishnamoorthi2018whitepaper, nagel2021whitepaper}. Rabbi et
 al.~\cite{rabbi2026} use static weight-only PTQ at INT8 and INT4, the setting in which
 they observe explanations degrading before accuracy.
 
 \paragraph{Quantization-aware training (QAT).} QAT includes the quantizer in
-training, so that the network can adapt its weights to the grid. In the forward pass every quantized tensor is
+training, so that the network can adapt its weights to the grid. Specifically, in the forward pass every quantized tensor is
 passed through Equation~\ref{eq:quantizer} --- \emph{simulated} or
 \emph{fake} quantization, since the values are rounded but still stored and
 processed in floating point --- so that the loss is computed on the network as
-it will be deployed~\cite{jacob2018quantization}. The difficulty is the backward
+it will be deployed~\cite{jacob2018quantization}. The difficulty lies in the backward
 pass: rounding is a step function, whose derivative is zero almost everywhere,
 and no gradient would reach the weights. The \emph{straight-through estimator}
-resolves it by treating rounding as the identity in the backward
+solves it by treating rounding as the identity in the backward
 pass~\cite{bengio2013ste}: the forward pass sees the quantized value, the
 gradient flows as if it had not been quantized. This is the same device, in a
 different guise, as the surrogate gradient of Section~\ref{sec:surrogate}, which
@@ -351,7 +355,8 @@ also to the membrane potential, as the next section describes.
 
 \subsection{Quantization for spiking networks}
 
-Spiking architectures add constraints of their own. The membrane decay $\beta$
+Spiking architectures add constraints of their own, as could already be inferred.
+The membrane decay $\beta$
 multiplies a stored state at every time step, so on integer hardware it is
 cheapest when realizable as a bit shift: $\beta = 2^{-k}$ is a right shift, and
 $\beta = 1 - 2^{-k}$ is a shift plus a subtraction. MINT~\cite{yin2024mint}
@@ -373,10 +378,10 @@ quantized spiking networks are still evaluated with simulated quantization, in
 which part of the computation remains in floating point.
 
 Smith et al.~\cite{smith2026} argue independently that accuracy is an
-insufficient criterion for quantized spiking networks, and propose an Earth
+insufficient criterion for quantized spiking networks. They in fact propose an Earth
 Mover's Distance between per-neuron firing-rate distributions as a diagnostic of
-behavioural divergence. They separate weight from membrane quantization as this
-thesis does, and report that membrane-potential quantization requires at least
+behavioural divergence. Separating weight from membrane quantization as this
+thesis does, and reporting that membrane-potential quantization requires at least
 four bits to preserve both accuracy and dynamics while learned weight
 quantization remains viable at two. They ground the asymmetry mechanistically: a
 weight quantization error is fixed for an entire forward pass, whereas a membrane
@@ -411,7 +416,7 @@ and by the number of time steps,
 \end{equation}
 In 32-bit floating point a MAC costs $4.6$\,pJ (a $3.7$\,pJ multiplication plus a
 $0.9$\,pJ addition) and an accumulate $0.9$\,pJ. That factor of five is the
-physical reason a spiking network can be cheaper, and it also sets the limit:
+physical reason a spiking network can be cheaper and lighter, and it also sets the limit:
 a spiking layer saves energy only while $f \cdot T < 4.6 / 0.9 \approx 5$, so
 sparsity and a short time window are both necessary. The first layer is an
 exception, since under direct encoding it receives analog values and performs
@@ -439,8 +444,8 @@ the energy of an access depends on where the data lives, which is a property of
 the hardware, whereas the number of bits to be stored is a property of the
 model. The footprint is computed as the bits needed for the weights plus the
 bits needed for the membrane state of every neuron. The second term is specific
-to spiking networks. A conventional network can discard the activations of a
-layer once the next one has been computed; a spiking network must keep the
+to spiking networks: a conventional network can discard the activations of a
+layer once the next one has been computed, but a spiking network must keep the
 potential of every neuron from one time step to the next for the whole
 inference. That state scales with the number of neurons rather than the number
 of parameters, and it can be quantized independently of the weights
@@ -450,7 +455,7 @@ of parameters, and it can be quantized independently of the weights
 \label{sec:sam-background}
 
 Attribution methods developed for conventional networks transfer badly to
-spiking ones, for two different reasons. Gradient-based methods such as
+spiking ones, for two different causes. Gradient-based methods such as
 Grad-CAM~\cite{selvaraju2017gradcam} weight feature maps by the gradient of the
 class score, and in a spiking network that gradient exists only as a surrogate
 (Section~\ref{sec:surrogate}). The approximation is applied again at every layer
@@ -467,7 +472,7 @@ Panda~\cite{kim2021sam} was designed for spiking networks from the start. It
 rests on a biological observation: spikes that follow each other at short
 inter-spike intervals are more likely to drive the membrane of the downstream
 neuron above threshold, and therefore carry more information than isolated
-ones. SAM turns this into a score computed in three steps. A \emph{temporal
+ones. SAM numerically quantifies this into a score computed in three steps. A \emph{temporal
 spike contribution score} weights a past spike at $t'$ by its recency with
 respect to the current step $t$,
 \begin{equation}
@@ -489,7 +494,7 @@ M_{ij,t} = \sum_{k} N^{k}_{ij,t}\, S^{k}_{ij,t},
 \end{equation}
 yielding one spatial heat map per time step and per layer.
 
-\paragraph{Properties.} Three properties of SAM matter for this thesis. It uses
+\paragraph{Properties.} Several properties of SAM matter for this thesis. It uses
 solely the spike trains of the forward pass, so the explanation describes the function the
 network actually computes, and its cost is marginal --- a store of recent spike
 times and a lookup table for the kernel, which Kim and Panda note could be
@@ -503,7 +508,7 @@ validate the method on Tiny-ImageNet, finding SAM more discriminative than
 Grad-CAM adapted to spiking networks.
 
 Feature-attribution methods for spiking networks have also been surveyed more
-broadly~\cite{nguyen2023attribution}, but SAM remains the method that reads the
+broadly~\cite{nguyen2023attribution}, but SAM remained the method that reads the
 spike trains directly, and it is the explainer used throughout this work. Its
 one free parameter, $\gamma$, is fixed in Section~\ref{sec:gamma}.
 
@@ -512,16 +517,16 @@ one free parameter, $\gamma$, is fixed in Section~\ref{sec:gamma}.
 A stable explanation can still be wrong, so stability requires a separate test
 of faithfulness. The \emph{deletion metric} of Petsiuk et
 al.~\cite{petsiuk2018rise} removes pixels in decreasing order of attributed
-importance and records how quickly the model's confidence falls, summarized as
-the area under that curve: the faster the fall, the smaller the area. The
+importance, and records how quickly the model's confidence falls, summarized as
+the area under that curve. The faster the fall, the smaller the area. The
 underlying hypothesis is that a faithful map degrades the prediction faster than
 a map that carries no information. Petsiuk et al. read the area on its own; this
 thesis compares it with the removal of pixels in random order on the same image
 (Section~\ref{sec:faithfulness}), so that a map counts as faithful only by the
 margin it gains over chance.
 
-The metrics used to compare two explanations with each other are borrowed from
-the saliency-model literature, where they were developed to compare a predicted
+The metrics used to quantitatively compare two explanations with each other are borrowed from
+the saliency-model literature, where they were specifically developed to compare a predicted
 map against human eye fixations~\cite{bylinskii2019metrics}: Pearson
 correlation, structural similarity~\cite{wang2004ssim}, and the
 intersection-over-union of the highest-scoring regions. Bylinskii et al. observe
@@ -540,10 +545,10 @@ form of that test, run in the opposite direction.
 \section{Gravitational-wave glitch classification}
 \label{sec:gravityspy}
 
-The sensitivity of the LIGO interferometers is limited by non-Gaussian transient
+The sensitivity of the LIGO interferometers is primarily limited by non-Gaussian transient
 noise of instrumental and environmental origin. As introduced in
 Chapter~\ref{ch:introduction}, these glitches are short, can mimic astrophysical
-signals, and are grouped into morphological families that correlate with
+signals, and cna be grouped into morphological families that correlate with
 distinct physical causes.
 
 The Gravity Spy project~\cite{zevin2017, bahaadini2018} combines machine
@@ -572,7 +577,7 @@ $98\,\%$ agreement with the reference classifier it is not difficult --- but
 that the explanations have a consumer. Glitch classification is directly
 connected with detector characterization, in which the
 morphology of a glitch family is traced back to an instrumental cause and the
-instrument is modified. An explanation that points at the wrong part of the
+instrument is modified accordingly. An explanation that points at the wrong part of the
 spectrogram sends a commissioner to the wrong causes.
 
 \section{The gap this thesis occupies}
