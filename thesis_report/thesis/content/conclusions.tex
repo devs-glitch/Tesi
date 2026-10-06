@@ -94,15 +94,10 @@ to see regularity as well as timing, and the present instrument does not.
 
 \paragraph{The comparison with Smith et al.\ inverts.} Smith et
 al.~\cite{smith2026} report that the membrane needs at least four bits while
-learned weights survive two. Here the membrane survives two bits in accuracy and
-the weights do not. The difference has a plausible source in the design: the
-membrane grid of this thesis was fitted to a measured range and made unsigned
-after a clipping study, which concentrates all of its levels where the network
-uses them, whereas a ternary weight quantizer has no comparable freedom. The
-result does not contradict their mechanism --- at 2 bits the membrane does
-change the network, in its regularity and in its explanations --- but it shows
-that the bit-width at which membrane quantization breaks a network depends on
-how the grid is fitted.
+learned weights survive two. The weight result agrees with theirs: uniform ternary weights fail, where they
+needed a learned quantizer to keep two bits. The membrane result does not: with
+a grid fitted to the measured range, a 2-bit membrane keeps accuracy at parity,
+where they lose $4$--$8\,\%$.
 
 \paragraph{Weak events are not where the explanation fails.} The expectation that
 quantization would disturb spike decisions mostly in weak events, whose

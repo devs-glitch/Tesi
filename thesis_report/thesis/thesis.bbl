@@ -42,6 +42,14 @@ Jason~K. Eshraghian, Max Ward, Emre~O. Neftci, Xinxin Wang, Gregor Lenz, Girish
 \newblock Training spiking neural networks using lessons from deep learning.
 \newblock {\em Proceedings of the IEEE}, 111(9):1016--1054, 2023.
 
+\bibitem{fang2021plif}
+Wei Fang, Zhaofei Yu, Yanqi Chen, Timoth{\'e}e Masquelier, Tiejun Huang, and
+  Yonghong Tian.
+\newblock Incorporating learnable membrane time constants to enhance learning
+  of spiking neural networks.
+\newblock In {\em IEEE/CVF International Conference on Computer Vision (ICCV)},
+  pages 2661--2671, 2021.
+
 \bibitem{glanzer2021}
 J.~Glanzer, S.~Banagiri, S.~Coughlin, et~al.
 \newblock Gravity spy machine learning classifications of {LIGO} glitches from
@@ -80,6 +88,12 @@ Diederik~P. Kingma and Jimmy Ba.
 \newblock In {\em International Conference on Learning Representations (ICLR)},
   2015.
 
+\bibitem{krishnamoorthi2018whitepaper}
+Raghuraman Krishnamoorthi.
+\newblock Quantizing deep convolutional networks for efficient inference: A
+  whitepaper.
+\newblock {\em arXiv preprint arXiv:1806.08342}, 2018.
+
 \bibitem{li2018hyperband}
 Lisha Li, Kevin Jamieson, Giulia DeSalvo, Afshin Rostamizadeh, and Ameet
   Talwalkar.
@@ -87,11 +101,25 @@ Lisha Li, Kevin Jamieson, Giulia DeSalvo, Afshin Rostamizadeh, and Ameet
   optimization.
 \newblock {\em Journal of Machine Learning Research}, 18(185):1--52, 2018.
 
+\bibitem{liu2026hardfsnn}
+Hanwen Liu, Kexin Shi, Jieyuan Zhang, Yimeng Shan, Jibin Wu, Wenyu Chen, and
+  Malu Zhang.
+\newblock {HardF-SNN}: Hardware-friendly quantization for spiking neural
+  networks with efficient integer-arithmetic-only inference.
+\newblock In {\em Proceedings of the AAAI Conference on Artificial
+  Intelligence}, volume~40, pages 1937--1945, 2026.
+
 \bibitem{mcinnes2018umap}
 Leland McInnes, John Healy, and James Melville.
 \newblock {UMAP}: Uniform manifold approximation and projection for dimension
   reduction.
 \newblock {\em arXiv preprint arXiv:1802.03426}, 2018.
+
+\bibitem{nagel2021whitepaper}
+Markus Nagel, Marios Fournarakis, Rana~Ali Amjad, Yelysei Bondarenko, Mart van
+  Baalen, and Tijmen Blankevoort.
+\newblock A white paper on neural network quantization.
+\newblock {\em arXiv preprint arXiv:2106.08295}, 2021.
 
 \bibitem{neftci2019surrogate}
 Emre~O. Neftci, Hesham Mostafa, and Friedemann Zenke.
@@ -121,6 +149,13 @@ Nitin Rathi and Kaushik Roy.
   encoding and leakage and threshold optimization.
 \newblock {\em IEEE Transactions on Neural Networks and Learning Systems},
   34(6):3174--3182, 2023.
+
+\bibitem{ribeiro2016lime}
+Marco~Tulio Ribeiro, Sameer Singh, and Carlos Guestrin.
+\newblock ``{Why} should {I} trust you?'': Explaining the predictions of any
+  classifier.
+\newblock In {\em Proceedings of the 22nd ACM SIGKDD International Conference
+  on Knowledge Discovery and Data Mining}, pages 1135--1144, 2016.
 
 \bibitem{roy2019towards}
 K.~Roy, A.~Jaiswal, and P.~Panda.

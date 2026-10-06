@@ -3,7 +3,7 @@
 
 \section{Spiking neural networks}
 
-SNNs are often described as the third generation of neural networks.
+Spiking neural networks (SNNs) are often described as the third generation of neural networks.
 % TODO: cite Maass 1997
 They take their inspiration from biological neurons, which communicate through
 brief, all-or-nothing electrical impulses called \emph{spikes}. In a conventional
@@ -108,68 +108,230 @@ question this thesis sets out to answer.
 \subsection{Training by surrogate gradients}
 \label{sec:surrogate}
 
-The spike-generating function in Equation~\ref{eq:lif} is a Heaviside step, whose
-derivative is zero almost everywhere and undefined at threshold. Backpropagation
-through time is therefore not directly applicable.
+Unrolled over its $T$ time steps, a network of LIF neurons is a recurrent
+network: the membrane potential is a hidden state that each step reads and
+updates (Equation~\ref{eq:lif}). Training it by gradient descent means solving
+two credit-assignment problems at once~\cite{neftci2019surrogate}: a
+\emph{spatial} one, across layers, as in any multi-layer network, and a
+\emph{temporal} one, since a weight influences the loss through every later
+state of the neurons it feeds. Backpropagation through time (BPTT) solves both
+by applying the chain rule to the unrolled graph. For a weight $W$ feeding a
+neuron with potential $U[t]$ and output $S[t]$,
+\begin{equation}
+\frac{\partial \mathcal{L}}{\partial W}
+= \sum_{t} \frac{\partial \mathcal{L}}{\partial S[t]}\,
+  \frac{\partial S[t]}{\partial U[t]}\,
+  \frac{\partial U[t]}{\partial W},
+\qquad
+\frac{\partial S[t]}{\partial U[t]} = \Theta'\!\left(U[t] - U_{\text{thr}}\right),
+\label{eq:bptt}
+\end{equation}
+where $\Theta$ is the Heaviside step of Equation~\ref{eq:lif}. The price is
+memory: every state of every time step must be kept until the backward pass,
+a cost that grows as $O(NT)$ for a layer of $N$ neurons.
 
-The standard remedy is the \emph{surrogate gradient}~\cite{neftci2019surrogate}:
-the forward pass keeps the exact discontinuous spike, while the backward pass
-substitutes the derivative of a smooth approximant. The choice of approximant
---- sigmoid, fast sigmoid, arctangent --- affects convergence but not the
-forward computation, and networks trained this way reach accuracies comparable
-to conventional architectures on image benchmarks~\cite{eshraghian2023}.
+\paragraph{The obstacle.} Every path through Equation~\ref{eq:bptt} contains the
+factor $\Theta'$, which is zero everywhere except at the threshold, where it is
+undefined. The gradient is therefore either zero or meaningless: a small change
+of a weight almost never flips a spike, so the loss is piecewise constant in the
+weights, with flat plateaus on which gradient descent cannot move. This is the
+same problem met by networks with binary activations, and the solutions
+developed for spiking networks are inspired by those~\cite{neftci2019surrogate}.
 
-The substitution has a consequence for explainability that motivates the choice
-of method in Section~\ref{sec:sam-background}: any gradient-based attribution
-computed on such a network inherits the approximation error of the surrogate,
-because the gradients it uses are not the gradients of the function the network
-actually computes.
+\paragraph{The surrogate.} A surrogate gradient leaves the model unchanged and
+alters only its derivative. The forward pass keeps the exact binary spike; in
+the backward pass every occurrence of $\Theta'$ is replaced by the derivative
+$\sigma'$ of a smooth function peaked at the threshold,
+\begin{equation}
+\frac{\partial S[t]}{\partial U[t]} \;\longrightarrow\;
+\sigma'\!\left(U[t] - U_{\text{thr}}\right).
+\end{equation}
+Neurons close to threshold, those for which a small change could flip a spike,
+receive the largest gradient, and gradient flows through silent neurons as well.
+The resulting update is the gradient of a
+\emph{virtual} surrogate loss, never computed explicitly, which follows the true
+one while remaining continuous and finite~\cite{neftci2019surrogate}. This
+distinguishes the approach from \emph{smoothed} spiking networks, which replace
+the spike itself with a soft or probabilistic function and so change the model
+that is deployed.
+
+\paragraph{The choice of surrogate.} Piecewise-linear, fast-sigmoid and
+exponential surrogates have all been used successfully. What they share is
+being nonlinear and monotonically increasing towards the threshold, and the
+diversity of working choices suggests that the method does not depend
+critically on the exact shape~\cite{neftci2019surrogate}. This work uses the
+arctangent surrogate~\cite{fang2021plif} as implemented in
+snnTorch~\cite{eshraghian2023},
+\begin{equation}
+\sigma'(x) = \frac{\alpha/2}{1 + \left(\frac{\pi}{2}\,\alpha\, x\right)^{2}},
+\qquad \alpha = 2,
+\end{equation}
+which equals $1$ at the threshold and falls off as the inverse square of the
+distance from it, so that neurons far from threshold still receive a small,
+non-zero gradient. The reset
+term $-S[t]\,U_{\text{thr}}$ is treated as a constant in the backward pass: the
+recurrence then contributes $\partial U[t+1]/\partial U[t] = \beta$ alone, without
+a second surrogate factor through the reset, a simplification that has been
+found empirically to improve training~\cite{neftci2019surrogate}. Trained this
+way, spiking networks reach accuracies comparable to conventional architectures
+on image benchmarks~\cite{eshraghian2023}.
+
+The same device reappears in Section~\ref{sec:quantization-background}: the
+straight-through estimator used to train through a rounding
+operation~\cite{bengio2013ste} replaces the zero derivative of a step function
+with that of a smooth one, exactly as the surrogate gradient does for the spike.
+
+\paragraph{A consequence for explainability.} The substitution motivates the
+choice of explanation method in Section~\ref{sec:sam-background}: any
+gradient-based attribution computed on such a network inherits the
+approximation error of the surrogate, because the gradients it uses are not the
+gradients of the function the network actually computes.
 
 \subsection{Input encoding}
+\label{sec:encoding}
 
-Spiking networks require an input that varies over time, while images do not. The
-two common strategies are \emph{rate coding}, in which pixel intensities become
-Bernoulli firing probabilities, and \emph{direct} or \emph{constant} encoding, in
-which the analog frame is presented identically at every time step and the first
-convolutional layer acts as a learned analog-to-spike converter.
+A spiking network processes its input over $T$ discrete time steps, while an
+image is a single static frame, so the frame must be turned into a sequence. Two
+strategies dominate. In \emph{rate coding}, each normalized pixel intensity is
+used as the probability of emitting a spike at every step, and the value is
+carried by the spike count; in \emph{direct} (or \emph{constant}) encoding, the
+analog frame itself is presented, identical, at every time step.
 
-Direct encoding, introduced in this form by DIET-SNN~\cite{rathi2023dietsnn},
-converges in fewer time steps because it does not inject sampling noise into the
-input. It carries an interpretive consequence that must be stated explicitly:
-since the stimulus does not vary, \textbf{all temporal structure in the network
+Rate coding pays for its simplicity in time steps. A pixel is represented by
+counting spikes, so with $T$ steps it can take only $T + 1$ distinct values, and
+the sampling makes the representation stochastic: the discretization error
+shrinks only as $T$ grows, which is why rate-coded and converted networks
+typically require between $100$ and $2\,000$ time steps to approach the
+accuracy of their non-spiking counterparts~\cite{rathi2023dietsnn}.
+
+Direct encoding, as introduced by DIET-SNN~\cite{rathi2023dietsnn}, removes
+that error at the source. ``The pixel intensities of an image are applied
+directly to the input layer of the SNN at each timestep'', and the first
+convolutional layer, followed by LIF neurons, becomes at once a feature
+extractor and a learned spike generator: it integrates the weighted pixel
+values and fires when its membrane potential crosses threshold. Since the
+input carries its full precision at every step, the number of steps no longer
+bounds the precision of the input. DIET-SNN combines this encoding with a
+trained membrane leak and firing threshold per layer, which increase activation
+sparsity, and reaches $69\,\%$ top-1 accuracy on ImageNet with $5$ time steps
+and about $12\times$ less compute energy than the equivalent conventional
+network~\cite{rathi2023dietsnn}. This work adopts the encoding but not the
+trained neuron parameters: $\beta$ and the threshold are shared by all layers,
+and $\beta$ is chosen by the constrained search of
+Section~\ref{sec:constrained-search}.
+
+Direct encoding has three consequences that the rest of this thesis relies on.
+
+\paragraph{Temporal structure is generated inside the network.} Since the
+stimulus does not vary, \textbf{all temporal structure in the network
 originates from the internal LIF dynamics} --- leak, integration and reset ---
-rather than from variation in the input. Every temporal analysis in this thesis
-is to be read in that light.
+rather than from variation in the input. The time axis of a spike train, and
+therefore of a Spike Activation Map, is the time the network takes to integrate
+evidence, not the time of the glitch: in an Omega-scan spectrogram, physical
+time runs along the horizontal axis of the image and is, for the network, a
+spatial dimension. Every temporal analysis in this thesis is to be read in that
+light.
+
+\paragraph{The first layer is the only one that multiplies.} Every other layer
+receives binary spikes and only accumulates, but the first convolution receives
+analog pixel values and performs full multiply-accumulates. Because its input is
+identical at every step, so is its output current, which can be computed once
+rather than $T$ times; Section~\ref{sec:energy-method} shows that this choice
+alone decides whether the spiking network is cheaper than its conventional
+equivalent.
+
+\paragraph{The input is deterministic.} With no sampling, two forward passes on
+the same image produce identical spike trains. This is what allows two models to
+be compared spike for spike on the same input, as the calibration of
+Section~\ref{sec:calibration} requires.
 
 \section{Quantization}
+\label{sec:quantization-background}
 
-Quantization maps a continuous parameter to one of $2^b$ discrete levels. For a
-symmetric uniform quantizer over $[-w_{\max}, +w_{\max}]$ the step is
+Quantization represents the parameters and intermediate values of a network with
+fewer bits than the 32 of floating point. Storing a value in $b$ bits divides its
+memory by $32/b$, and integer operations on narrow operands cost far less energy
+than floating-point ones (Section~\ref{sec:energy-background}), which is why
+quantization is the standard step between a trained model and its deployment on
+constrained hardware~\cite{jacob2018quantization, nagel2021whitepaper}.
+
+\paragraph{The uniform quantizer.} A uniform quantizer maps a real value $x$ to
+one of $2^b$ equally spaced levels: it divides by a step $\Delta$, rounds to the
+nearest integer, clips to the representable range, and multiplies back,
+\begin{equation}
+\hat{x} = \Delta \cdot \mathrm{clip}\!\left(\mathrm{round}\!\left(\frac{x}{\Delta}\right),
+\, q_{\min},\, q_{\max}\right)
+\label{eq:quantizer}
+\end{equation}
+
+where $q_{\min}$ and $q_{\max}$ are the smallest and largest integer levels
+representable with $b$ bits: $-(2^{b-1}-1)$ and $2^{b-1}-1$ for a symmetric
+signed grid, which keeps zero exactly representable, and $0$ and $2^b - 1$ for an
+unsigned one. The largest representable value is therefore $\Delta\, q_{\max}$.
+
+For a symmetric grid over $[-w_{\max}, +w_{\max}]$ the step is
 \begin{equation}
 \Delta = \frac{2 w_{\max}}{2^b - 1},
 \label{eq:step}
 \end{equation}
-and the maximum rounding error is $\Delta/2$. Equation~\ref{eq:step} is used in
-Section~\ref{sec:perturbation} to express a perturbation in units the
-quantization itself defines. When the quantized quantity is known to be
-non-negative, an \emph{unsigned} grid over $[0, x_{\max}]$ with step
-$x_{\max}/(2^b - 1)$ spends no levels on values that never occur; this is the
-scheme adopted for the membrane potential in Chapter~\ref{ch:quantization}.
+and Equation~\ref{eq:step} is used in Section~\ref{sec:perturbation} to express
+a perturbation in units the quantization itself defines. Two errors follow from
+Equation~\ref{eq:quantizer}, and the choice of range trades one against the
+other: values inside the range are moved by at most $\Delta/2$
+(\emph{rounding} error), values outside it are cut to the nearest bound
+(\emph{clipping} error). A wide range avoids clipping but makes $\Delta$ coarse;
+a narrow one refines $\Delta$ at the cost of saturating the tails. When the
+quantity is known to be non-negative, an \emph{unsigned} grid over
+$[0, x_{\max}]$, with step $x_{\max}/(2^b - 1)$, spends no levels on values that
+never occur.
 
-The scale can be shared by a whole tensor (\emph{per-tensor}) or computed
-separately for each output channel (\emph{per-channel}). A per-tensor scale is
-set by the largest weight in the tensor, so channels whose weights are
+The step can be shared by a whole tensor (\emph{per-tensor}) or computed
+separately for each output channel (\emph{per-channel}). A per-tensor step is
+set by the largest value in the tensor, so channels whose weights are
 systematically smaller use only a fraction of the available levels; the
 per-channel scheme avoids this at the cost of one scale factor per
-channel~\cite{jacob2018quantization}.
+channel~\cite{krishnamoorthi2018whitepaper, nagel2021whitepaper}.
 
-Two families of technique exist. \emph{Post-training quantization} rounds the
-weights of a trained model, and is what Rabbi et al.~\cite{rabbi2026} apply.
-\emph{Quantization-aware training} simulates the rounding during training through
-fake-quantization, and propagates gradients through the non-differentiable
-rounding operation with a straight-through estimator~\cite{bengio2013ste} ---
-the same device, in a different guise, as the surrogate gradient of
-Section~\ref{sec:surrogate}.
+Given a quantizer, two families of method decide \emph{when} it is applied:
+after training, or during it.
+
+\paragraph{Post-training quantization (PTQ).} PTQ converts an already trained
+full-precision model, with no retraining: the weights are rounded to their grid,
+and the ranges of the activations, which depend on the data, are estimated on a
+small unlabelled calibration set~\cite{nagel2021whitepaper}. It is fast and
+needs neither labelled data nor a training pipeline, which makes it the
+``push-button'' option and the one most used for rapid deployment. Its limit is
+precision. At 8 bits the rounding error is small compared with the spread of the
+weights, and per-channel PTQ keeps classification accuracy within about 2\,\% of
+floating point on standard convolutional networks; at 4 bits the step is sixteen
+times coarser, and accuracy typically degrades unless more elaborate correction
+methods are used~\cite{krishnamoorthi2018whitepaper, nagel2021whitepaper}. Rabbi et
+al.~\cite{rabbi2026} use weight-only PTQ at INT8 and INT4, the setting in which
+they observe explanations degrading before accuracy.
+
+\paragraph{Quantization-aware training (QAT).} QAT includes the quantizer in
+training, so that the network can adapt its weights to the grid. In the forward pass every quantized tensor is
+passed through Equation~\ref{eq:quantizer} --- \emph{simulated} or
+\emph{fake} quantization, since the values are rounded but still stored and
+processed in floating point --- so that the loss is computed on the network as
+it will be deployed~\cite{jacob2018quantization}. The difficulty is the backward
+pass: rounding is a step function, whose derivative is zero almost everywhere,
+and no gradient would reach the weights. The \emph{straight-through estimator}
+resolves it by treating rounding as the identity in the backward
+pass~\cite{bengio2013ste}: the forward pass sees the quantized value, the
+gradient flows as if it had not been quantized. This is the same device, in a
+different guise, as the surrogate gradient of Section~\ref{sec:surrogate}, which
+also keeps a step function in the forward pass and replaces its derivative in
+the backward one. QAT needs labelled data and additional training, usually as a
+fine-tuning of the full-precision model, and in exchange reaches lower
+bit-widths: it narrows the 8-bit gap to about 1\,\% and makes 4-bit weights
+usable, with losses between 2 and 10\,\% depending on the size of the
+network~\cite{krishnamoorthi2018whitepaper, nagel2021whitepaper}.
+
+The two families therefore answer different needs: PTQ when the model must be
+compressed cheaply and 8 bits suffice, QAT when the target precision is lower
+than PTQ can reach. In a spiking network both apply not only to the weights but
+also to the membrane potential, as the next section describes.
 
 \subsection{Quantization for spiking networks}
 
@@ -177,8 +339,22 @@ Spiking architectures add constraints of their own. The membrane decay $\beta$
 multiplies a stored state at every time step, so on integer hardware it is
 cheapest when realizable as a bit shift: $\beta = 2^{-k}$ is a right shift, and
 $\beta = 1 - 2^{-k}$ is a shift plus a subtraction. MINT~\cite{yin2024mint}
-additionally shares a single quantization scale between weights and membrane
-potentials, which eliminates multipliers from the inference loop entirely.
+quantizes both targets uniformly and shares a single
+scale factor between weights and membrane potentials. Since the weighted input
+and the stored state are then expressed in the same integer units, they can be
+added directly, and the multipliers that conventional uniform quantization needs
+to rescale one into the other disappear from the inference loop. With the
+membrane at 2 bits, MINT reports $90.6\,\%$ accuracy on CIFAR-10 with a VGG-16
+and a memory reduction of about $94\,\%$ with respect to full precision.
+HardF-SNN~\cite{liu2026hardfsnn} shows the cost of that sharing: weights have a
+narrow, centred distribution, whereas membrane potentials have a much broader
+one with a long tail, so a scale fitted to the weights compresses the dynamic
+range of the membrane and collapses many distinct potentials onto the same
+level. It therefore scales the membrane in proportion to the weights rather
+than identically, replaces batch normalization with an integer, shift-based
+version, and verifies the result on an FPGA accelerator, noting that most
+quantized spiking networks are still evaluated with simulated quantization, in
+which part of the computation remains in floating point.
 
 Smith et al.~\cite{smith2026} argue independently that accuracy is an
 insufficient criterion for quantized spiking networks, and propose an Earth
@@ -190,62 +366,129 @@ quantization remains viable at two. They ground the asymmetry mechanistically: a
 weight quantization error is fixed for an entire forward pass, whereas a membrane
 error propagates through the recurrent update at every time step.
 
-\subsection{Energy accounting}
+\subsection{Energy and memory accounting}
 \label{sec:energy-background}
 
-Energy is estimated analytically rather than measured, as is standard in the
-spiking literature. The count of synaptic operations is multiplied by the
-per-operation cost at a reference process node, conventionally the 45\,nm
-figures of Horowitz~\cite{horowitz2014}: a 32-bit floating-point
-multiply-accumulate costs $4.6$\,pJ against $0.9$\,pJ for a plain accumulate.
-That factor of five is the physical reason a spiking network can be cheaper,
-since a binary activation removes the multiplication, and the accumulation is
-performed only where a spike occurred.
+Since no model is deployed on hardware in this work, energy is estimated
+analytically, as is standard in the spiking literature: the operations an
+inference requires are counted and multiplied by a per-operation cost at a
+reference process node, conventionally the 45\,nm figures of
+Horowitz~\cite{horowitz2014}. The result is a
+like-for-like comparison between configurations of the same network.
 
-The same table supplies the integer figures used for quantized operating points:
-an 8-bit integer multiplication costs $0.2$\,pJ and an 8-bit addition $0.03$\,pJ.
-Narrower integer operations are not tabulated, so any figure below eight bits is
-an extrapolation and must be declared as such. Memory is accounted separately as
-the bits needed to store the weights plus the bits needed to store the membrane
-state of every neuron, which for a spiking network is a cost that a
-convolutional network of the same shape does not pay.
+\paragraph{Counting operations.} In a conventional layer every connection
+performs one multiply-accumulate (MAC) per inference. In a spiking layer the
+input is binary, so a connection only \emph{adds} its weight, and only when the
+presynaptic neuron fires. The number of these synaptic operations (SOP) is
+therefore the dense MAC count scaled by the firing rate $f$ of the input layer
+and by the number of time steps,
+\begin{equation}
+\mathrm{SOP} = f \cdot T \cdot \mathrm{MAC}.
+\end{equation}
+In 32-bit floating point a MAC costs $4.6$\,pJ (a $3.7$\,pJ multiplication plus a
+$0.9$\,pJ addition) and an accumulate $0.9$\,pJ. That factor of five is the
+physical reason a spiking network can be cheaper, and it also sets the limit:
+a spiking layer saves energy only while $f \cdot T < 4.6 / 0.9 \approx 5$, so
+sparsity and a short time window are both necessary. The first layer is an
+exception, since under direct encoding it receives analog values and performs
+full MACs (Section~\ref{sec:encoding}).
+
+\paragraph{Quantized operations.} The same table supplies the integer figures
+used for quantized operating points: an 8-bit multiplication costs $0.2$\,pJ and
+an 8-bit addition $0.03$\,pJ, thirty times less than its floating-point
+counterpart. Narrower integer operations are not tabulated, so any figure below
+eight bits is an extrapolation, whose rule is stated in
+Chapter~\ref{ch:quantization}.
+
+\paragraph{What the count leaves out.} The estimate covers arithmetic only. It
+ignores the update of each neuron (leak, threshold comparison, reset), control
+logic, and above all data movement, which on real hardware is often the larger
+cost: in the same 45\,nm table, reading 64 bits from on-chip SRAM costs between
+$10$ and $100$\,pJ depending on its size, and from off-chip DRAM between $1.3$
+and $2.6$\,nJ~\cite{horowitz2014}, one to three orders of magnitude more than an
+arithmetic operation.
+
+\paragraph{Why memory is accounted separately.} For this reason the memory
+footprint is reported alongside the energy estimate:
+the energy of an access depends on where the data lives, which is a property of
+the hardware, whereas the number of bits to be stored is a property of the
+model. The footprint is computed as the bits needed for the weights plus the
+bits needed for the membrane state of every neuron. The second term is specific
+to spiking networks. A conventional network can discard the activations of a
+layer once the next one has been computed; a spiking network must keep the
+potential of every neuron from one time step to the next for the whole
+inference. That state scales with the number of neurons rather than the number
+of parameters, can be quantized independently of the weights
+(Section~\ref{sec:quantization-background}).
 
 \section{Explainability for spiking networks}
 \label{sec:sam-background}
 
-Attribution methods developed for convolutional networks transfer badly to
-spiking ones. Gradient-based methods such as Grad-CAM~\cite{selvaraju2017gradcam}
-require gradients that, as noted above, exist only as surrogates. Perturbation
-methods such as LIME are architecture-agnostic but expensive, requiring hundreds
-of forward passes per explanation.
+Attribution methods developed for conventional networks transfer badly to
+spiking ones, for two different reasons. Gradient-based methods such as
+Grad-CAM~\cite{selvaraju2017gradcam} weight feature maps by the gradient of the
+class score, and in a spiking network that gradient exists only as a surrogate
+(Section~\ref{sec:surrogate}). The approximation is applied again at every layer
+the gradient crosses, so the error accumulates with depth: Kim and
+Panda~\cite{kim2021sam} observe that Grad-CAM transplanted to spiking networks
+produces smoothed, poorly discriminative maps, worst at the shallow layers.
+Perturbation methods such as LIME~\cite{ribeiro2016lime} avoid gradients
+altogether and are architecture-agnostic, but they need hundreds to thousands of
+forward passes per explanation. Both families, moreover, return a single map per input,
+and so discard the temporal axis along which a spiking network computes.
 
-The Spike Activation Map (SAM) of Kim and Panda~\cite{kim2021sam} was designed
-natively for spiking networks and requires neither gradients nor labels. It is
-built on the observation that a neuron firing repeatedly at short intervals is
-contributing more to the current decision than one firing sporadically. A
-\emph{temporal spike contribution score} weights a past spike at $t'$ by its
-recency,
+\paragraph{The Spike Activation Map.} The Spike Activation Map (SAM) of Kim and
+Panda~\cite{kim2021sam} was designed for spiking networks from the start. It
+rests on a biological observation: spikes that follow each other at short
+inter-spike intervals are more likely to drive the membrane of the downstream
+neuron above threshold, and therefore carry more information than isolated
+ones. SAM turns this into a score computed in three steps. A \emph{temporal
+spike contribution score} weights a past spike at $t'$ by its recency with
+respect to the current step $t$,
 \begin{equation}
 T(t, t') = \exp\left(-\gamma\,|t - t'|\right),
 \end{equation}
-a \emph{neuronal contribution score} sums those weights over a neuron's
-preceding spikes, and the map at time $t$ masks that score with the spikes
-actually emitted at $t$. The result is one spatial map per time step: an
-explanation with a temporal axis, which is what makes the question of this thesis
-answerable at all.
+where $\gamma$ sets how fast the contribution of a spike fades. A
+\emph{neuronal contribution score} sums these weights over the spikes the neuron
+emitted before $t$,
+\begin{equation}
+N^{k}_{ij,t} = \sum_{t' \in P^{k}_{ij},\; t' < t} T(t, t'),
+\end{equation}
+where $P^{k}_{ij}$ is the set of firing times of the neuron in channel $k$ at
+position $(i,j)$; it is high for a neuron that has fired often and recently, and
+low for one that fired rarely or long ago. Finally, the map at time $t$ keeps
+the score only of the neurons that are firing at $t$ and sums over the channels
+of the layer,
+\begin{equation}
+M_{ij,t} = \sum_{k} N^{k}_{ij,t}\, S^{k}_{ij,t},
+\end{equation}
+yielding one spatial heat map per time step and per layer.
+
+\paragraph{Properties.} Three properties of SAM matter for this thesis. It uses
+solely the spike trains of the forward pass, so the explanation describes the function the
+network actually computes, and its cost is marginal --- a store of recent spike
+times and a lookup table for the kernel, which Kim and Panda note could be
+implemented in an inference accelerator. It needs no class label: SAM shows
+where the network concentrates its activity for a given input, not the evidence
+for a particular class, so its faithfulness must be tested against the class
+the model predicts. And it has a temporal axis: an explanation is a sequence of
+$T$ maps, which is what makes it possible to ask whether quantization changes
+\emph{when} a network decides as well as \emph{where} it looks. Kim and Panda
+validate the method on Tiny-ImageNet, finding SAM more discriminative than
+Grad-CAM adapted to spiking networks.
 
 Feature-attribution methods for spiking networks have also been surveyed more
 broadly~\cite{nguyen2023attribution}, but SAM remains the method that reads the
-spike trains directly.
+spike trains directly, and it is the explainer used throughout this work. Its
+one free parameter, $\gamma$, is fixed in Section~\ref{sec:gamma}.
 
 \subsection{Evaluating an explanation}
 
-An explanation that is stable can still be wrong, so a separate faithfulness
-test is required. The \emph{deletion metric} of Petsiuk et
+Since a stable explanation can still be wrong, requiring a separate faithfulness. The \emph{deletion metric} of Petsiuk et
 al.~\cite{petsiuk2018rise} removes pixels in decreasing order of attributed
-importance and records how quickly the model's confidence falls, comparing
-against removal in random order. A faithful map degrades the prediction faster
-than chance.
+importance and records how quickly the model's confidence falls, compared
+against removal in random order. The underlying hypothesis is that a faithful map
+degrades the prediction faster than chance.
 
 The metrics used to compare two explanations with each other are borrowed from
 the saliency-model literature, where they were developed to compare a predicted
@@ -253,20 +496,21 @@ map against human eye fixations~\cite{bylinskii2019metrics}: Pearson
 correlation, structural similarity~\cite{wang2004ssim}, and the
 intersection-over-union of the highest-scoring regions. Bylinskii et al. observe
 that rankings produced by different metrics frequently disagree, which is the
-argument for reporting several rather than choosing one.
+main reasong for reporting several of them rather than relying on one.
 
 A separate line of work asks whether attribution methods are testing anything at
 all. Adebayo et al.~\cite{adebayo2018sanity} randomize model weights
-progressively and verify that explanations change in response; a map that
-survives the destruction of the model it purports to explain is not explaining
+progressively and verify that explanations change in response, as a map that
+survives the destruction of the model it sets to explain is not explaining
 it. The perturbation experiment of Section~\ref{sec:perturbation} is a graded
 form of that test, run in the opposite direction.
 
 \section{Gravitational-wave glitch classification}
 
-The LIGO interferometers are limited by non-Gaussian transient noise of
-instrumental and environmental origin. These glitches occur at rates of several
-per minute, can mimic astrophysical signals, and are grouped into morphological
+The accuracy and preciseness of LIGO interferometers' detections are limited by
+non-Gaussian transient noise of
+instrumental and environmental origin. As introduced before these glitches occur rapidly in time,
+can mimic astrophysical signals, and are grouped into morphological
 families that correlate with distinct physical causes.
 
 The Gravity Spy project~\cite{zevin2017, bahaadini2018} combines machine
@@ -276,32 +520,23 @@ each Omicron trigger, the trigger metadata, the per-class confidence of a
 convolutional classifier, the assigned label, and Omega-scan spectrograms.
 
 The classification task is therefore image classification over time--frequency
-representations. Its interest for this thesis is not that it is difficult ---
+representations. The main core and interest for this thesis is not that it is difficult ---
 with four well-separated classes it is not --- but that the explanations have a
-consumer. Glitch classification feeds detector characterization, in which the
+consumer. Glitch classification is directly connected with detector characterization, in which the
 morphology of a glitch family is traced back to an instrumental cause and the
 instrument is modified. An explanation that points at the wrong part of the
-spectrogram sends a commissioner to the wrong subsystem.
+spectrogram sends a commissioner to the wrong causes.
 
 \section{The gap this thesis occupies}
+\label{sec:gap}
 
-The two closest works can now be placed precisely. Rabbi et
+There are two close works useful to frame this thesis. Rabbi et
 al.~\cite{rabbi2026} measure explanation fidelity under quantization, but for
-conventional networks, post-training weight-only quantization, and purely
-spatial explanations. Smith et al.~\cite{smith2026} address spiking networks and
+conventional networks, implementing post-training weight-only quantization, and relying purely
+on spatial explanations. Smith et al.~\cite{smith2026} address spiking networks and
 separate the two quantization targets, but measure divergence in \emph{population
-firing statistics} aggregated over a dataset, not in explanations.
+firing statistics} aggregated over a dataset, and do not take into account explanations.
 
-The unoccupied ground is per-sample, spatially and temporally resolved
+The unoccupied ground is therefore a per-sample, spatially and temporally resolved
 explanation fidelity for a spiking classifier with the two quantization targets
-separated. That is the study this thesis performs.
-
-Neither work, however, establishes what its metrics report when nothing has
-changed. Rabbi et al. present similarity values around $0.85$ as evidence of
-preserved explanations; Smith et al. present EMD values between $0.001$ and
-$0.15$ as evidence of behavioural divergence. Chapter~\ref{ch:results} shows
-that for the architecture studied here the corresponding floors are $0.975$ for
-numerical noise and $0.153$ for models differing only in initialization, so a
-value of $0.85$ falls between the two and cannot be interpreted without knowing
-which comparison produced it. Establishing those floors is the contribution with
-the widest applicability.
+separated.

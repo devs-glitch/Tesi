@@ -23,44 +23,46 @@ Reallocating 'name_of_file' (item size: 1) to 6 items.
 The style file: plain.bst
 Reallocating 'name_of_file' (item size: 1) to 11 items.
 Database file #1: references.bib
-You've used 26 entries,
+Warning--can't use both volume and number fields in liu2026hardfsnn
+You've used 31 entries,
             2118 wiz_defined-function locations,
-            653 strings with 9367 characters,
-and the built_in function-call counts, 10162 in all, are:
-= -- 973
-> -- 576
-< -- 8
-+ -- 226
-- -- 200
-* -- 739
-:= -- 1673
-add.period$ -- 79
-call.type$ -- 26
-change.case$ -- 174
+            677 strings with 10607 characters,
+and the built_in function-call counts, 12525 in all, are:
+= -- 1201
+> -- 705
+< -- 12
++ -- 278
+- -- 246
+* -- 903
+:= -- 2034
+add.period$ -- 94
+call.type$ -- 31
+change.case$ -- 212
 chr.to.int$ -- 0
-cite$ -- 26
-duplicate$ -- 362
-empty$ -- 731
-format.name$ -- 200
-if$ -- 2113
+cite$ -- 32
+duplicate$ -- 457
+empty$ -- 897
+format.name$ -- 246
+if$ -- 2622
 int.to.chr$ -- 0
-int.to.str$ -- 26
-missing$ -- 24
-newline$ -- 134
-num.names$ -- 52
-pop$ -- 187
+int.to.str$ -- 31
+missing$ -- 29
+newline$ -- 159
+num.names$ -- 62
+pop$ -- 232
 preamble$ -- 1
-purify$ -- 148
+purify$ -- 181
 quote$ -- 0
-skip$ -- 280
+skip$ -- 364
 stack$ -- 0
-substring$ -- 592
-swap$ -- 100
-text.length$ -- 8
+substring$ -- 738
+swap$ -- 143
+text.length$ -- 12
 text.prefix$ -- 0
 top$ -- 0
-type$ -- 104
-warning$ -- 0
-while$ -- 90
-width$ -- 28
-write$ -- 282
+type$ -- 124
+warning$ -- 1
+while$ -- 109
+width$ -- 33
+write$ -- 336
+(There was 1 warning)
