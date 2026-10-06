@@ -24,45 +24,45 @@ The style file: plain.bst
 Reallocating 'name_of_file' (item size: 1) to 11 items.
 Database file #1: references.bib
 Warning--can't use both volume and number fields in liu2026hardfsnn
-You've used 31 entries,
+You've used 37 entries,
             2118 wiz_defined-function locations,
-            677 strings with 10607 characters,
-and the built_in function-call counts, 12525 in all, are:
-= -- 1201
-> -- 705
+            711 strings with 11856 characters,
+and the built_in function-call counts, 15020 in all, are:
+= -- 1424
+> -- 892
 < -- 12
-+ -- 278
-- -- 246
-* -- 903
-:= -- 2034
-add.period$ -- 94
-call.type$ -- 31
-change.case$ -- 212
++ -- 352
+- -- 314
+* -- 1124
+:= -- 2477
+add.period$ -- 112
+call.type$ -- 37
+change.case$ -- 260
 chr.to.int$ -- 0
-cite$ -- 32
-duplicate$ -- 457
-empty$ -- 897
-format.name$ -- 246
-if$ -- 2622
+cite$ -- 38
+duplicate$ -- 524
+empty$ -- 1048
+format.name$ -- 314
+if$ -- 3106
 int.to.chr$ -- 0
-int.to.str$ -- 31
-missing$ -- 29
-newline$ -- 159
-num.names$ -- 62
-pop$ -- 232
+int.to.str$ -- 37
+missing$ -- 36
+newline$ -- 189
+num.names$ -- 74
+pop$ -- 274
 preamble$ -- 1
-purify$ -- 181
+purify$ -- 224
 quote$ -- 0
-skip$ -- 364
+skip$ -- 411
 stack$ -- 0
-substring$ -- 738
-swap$ -- 143
+substring$ -- 863
+swap$ -- 149
 text.length$ -- 12
 text.prefix$ -- 0
 top$ -- 0
-type$ -- 124
+type$ -- 146
 warning$ -- 1
-while$ -- 109
-width$ -- 33
-write$ -- 336
+while$ -- 128
+width$ -- 39
+write$ -- 402
 (There was 1 warning)

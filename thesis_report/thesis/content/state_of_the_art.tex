@@ -3,9 +3,8 @@
 
 \section{Spiking neural networks}
 
-Spiking neural networks (SNNs) are often described as the third generation of neural networks.
-% TODO: cite Maass 1997
-They take their inspiration from biological neurons, which communicate through
+Spiking neural networks (SNNs) are often described as the third generation of
+neural networks~\cite{maass1997networks}. They take their inspiration from biological neurons, which communicate through
 brief, all-or-nothing electrical impulses called \emph{spikes}. In a conventional
 ANN, each neuron outputs a continuous value computed once per input. In an SNN,
 information is carried by sequences of binary events distributed over time: at
@@ -18,13 +17,12 @@ This representation is what makes SNNs attractive for low-power computing. Becau
 activations are binary, the multiply--accumulate operations that dominate the cost
 of an ANN reduce to simple accumulations, performed only when a spike actually
 arrives. Computation is therefore sparse and event-driven: a silent neuron costs
-almost nothing. Neuromorphic processors such as Intel's Loihi are built to exploit
-this sparsity directly, % TODO: cite Davies et al. 2018
-and the energy advantage of an SNN grows as its firing activity decreases.
+almost nothing. Neuromorphic processors such as Intel's
+Loihi~\cite{davies2018loihi} are built to exploit this sparsity directly, and the
+energy advantage of an SNN grows as its firing activity decreases.
 
 The most widely used neuron model in deep SNNs is the leaky integrate-and-fire
-(LIF) neuron. % TODO: cite Gerstner et al., Neuronal Dynamics
-Each neuron maintains an internal state, its membrane potential $U$, which
+(LIF) neuron~\cite{gerstner2014neuronal}. Each neuron maintains an internal state, its membrane potential $U$, which
 integrates incoming input, decays (``leaks'') towards rest over time, and triggers
 a spike when it crosses a threshold $\theta$.
 
@@ -54,9 +52,8 @@ conventional deep learning.
   \label{fig:neuron_models}
 \end{figure}
 
-In the discrete-time formulation used
-by snnTorch~\cite{eshraghian2023}, % TODO: check citation key
-the dynamics of a neuron at time step $t$ are
+In the discrete-time formulation used by snnTorch~\cite{eshraghian2023}, the
+dynamics of a neuron at time step $t$ are
 \begin{equation}
   U[t] = \beta\, U[t-1] + W X[t] - S[t-1]\,\theta ,
   \label{eq:lif}
@@ -82,9 +79,8 @@ entire history of inputs up to $t$. The same mechanism also creates the main
 difficulty in training. The spike function in Eq.~\eqref{eq:spike} is a step
 function, whose derivative is zero almost everywhere and undefined at the
 threshold, so standard backpropagation cannot pass through it. The usual solution
-is the \emph{surrogate gradient} approach:
-% TODO: cite Neftci et al. 2019
-the step function is kept in the forward pass, but in the backward pass its
+is the \emph{surrogate gradient} approach~\cite{neftci2019surrogate}: the step
+function is kept in the forward pass, but in the backward pass its
 derivative is replaced with that of a smooth approximation, such as an arctangent.
 Combined with backpropagation through time over the $T$ steps, this lets deep SNNs
 be trained with the same gradient-based tools as conventional networks.
@@ -97,9 +93,8 @@ small numerical changes: a perturbation that moves $U$ slightly above or below
 $\theta$ turns a spike into silence, or the reverse. Because the membrane carries
 its state forward, such an error does not stay local; it can propagate through
 later time steps and layers. Third, explanations of an SNN can be temporal as well
-as spatial. Methods such as Spike Activation Map (SAM)~\cite{kim2021sam}
-% TODO: check citation key
-build attribution maps directly from the timing of spikes, without computing
+as spatial. Methods such as Spike Activation Map (SAM)~\cite{kim2021sam} build
+attribution maps directly from the timing of spikes, without computing
 gradients, and therefore show not only \emph{where} the network finds evidence in
 the input but also \emph{when} during the $T$ time steps it does so. Whether
 quantization preserves this temporal reasoning, and not only accuracy, is the
@@ -123,10 +118,12 @@ neuron with potential $U[t]$ and output $S[t]$,
   \frac{\partial S[t]}{\partial U[t]}\,
   \frac{\partial U[t]}{\partial W},
 \qquad
-\frac{\partial S[t]}{\partial U[t]} = \Theta'\!\left(U[t] - U_{\text{thr}}\right),
+\frac{\partial S[t]}{\partial U[t]} = \Theta'\!\left(U[t] - \theta\right),
 \label{eq:bptt}
 \end{equation}
-where $\Theta$ is the Heaviside step of Equation~\ref{eq:lif}. The price is
+where $\Theta$ is the Heaviside step of Equation~\ref{eq:spike} and
+$\partial U[t]/\partial W$ is the total derivative through all earlier states.
+The price is
 memory: every state of every time step must be kept until the backward pass,
 a cost that grows as $O(NT)$ for a layer of $N$ neurons.
 
@@ -144,7 +141,7 @@ the backward pass every occurrence of $\Theta'$ is replaced by the derivative
 $\sigma'$ of a smooth function peaked at the threshold,
 \begin{equation}
 \frac{\partial S[t]}{\partial U[t]} \;\longrightarrow\;
-\sigma'\!\left(U[t] - U_{\text{thr}}\right).
+\sigma'\!\left(U[t] - \theta\right).
 \end{equation}
 Neurons close to threshold, those for which a small change could flip a spike,
 receive the largest gradient, and gradient flows through silent neurons as well.
@@ -168,9 +165,9 @@ snnTorch~\cite{eshraghian2023},
 \end{equation}
 which equals $1$ at the threshold and falls off as the inverse square of the
 distance from it, so that neurons far from threshold still receive a small,
-non-zero gradient. The reset
-term $-S[t]\,U_{\text{thr}}$ is treated as a constant in the backward pass: the
-recurrence then contributes $\partial U[t+1]/\partial U[t] = \beta$ alone, without
+non-zero gradient. The reset term $-S[t-1]\,\theta$ of
+Equation~\ref{eq:lif} is treated as a constant in the backward pass: the
+recurrence then contributes $\partial U[t]/\partial U[t-1] = \beta$ alone, without
 a second surrogate factor through the reset, a simplification that has been
 found empirically to improve training~\cite{neftci2019surrogate}. Trained this
 way, spiking networks reach accuracies comparable to conventional architectures
@@ -256,7 +253,7 @@ quantization is the standard step between a trained model and its deployment on
 constrained hardware~\cite{jacob2018quantization, nagel2021whitepaper}.
 
 \paragraph{The uniform quantizer.} A uniform quantizer maps a real value $x$ to
-one of $2^b$ equally spaced levels: it divides by a step $\Delta$, rounds to the
+one of at most $2^b$ equally spaced levels: it divides by a step $\Delta$, rounds to the
 nearest integer, clips to the representable range, and multiplies back,
 \begin{equation}
 \hat{x} = \Delta \cdot \mathrm{clip}\!\left(\mathrm{round}\!\left(\frac{x}{\Delta}\right),
@@ -266,24 +263,43 @@ nearest integer, clips to the representable range, and multiplies back,
 
 where $q_{\min}$ and $q_{\max}$ are the smallest and largest integer levels
 representable with $b$ bits: $-(2^{b-1}-1)$ and $2^{b-1}-1$ for a symmetric
-signed grid, which keeps zero exactly representable, and $0$ and $2^b - 1$ for an
-unsigned one. The largest representable value is therefore $\Delta\, q_{\max}$.
+signed grid, which keeps zero exactly representable at the price of one unused
+code, $2^b - 1$ levels in all; $0$ and $2^b - 1$ for an unsigned one, which uses
+all $2^b$. The largest representable value is therefore $\Delta\, q_{\max}$.
 
-For a symmetric grid over $[-w_{\max}, +w_{\max}]$ the step is
+For a symmetric grid over $[-w_{\max}, +w_{\max}]$ the largest level must reach
+$w_{\max}$, so the step is
 \begin{equation}
-\Delta = \frac{2 w_{\max}}{2^b - 1},
+\Delta = \frac{w_{\max}}{2^{b-1} - 1} = \frac{2 w_{\max}}{2^b - 2},
 \label{eq:step}
 \end{equation}
-and Equation~\ref{eq:step} is used in Section~\ref{sec:perturbation} to express
-a perturbation in units the quantization itself defines. Two errors follow from
-Equation~\ref{eq:quantizer}, and the choice of range trades one against the
-other: values inside the range are moved by at most $\Delta/2$
-(\emph{rounding} error), values outside it are cut to the nearest bound
-(\emph{clipping} error). A wide range avoids clipping but makes $\Delta$ coarse;
-a narrow one refines $\Delta$ at the cost of saturating the tails. When the
-quantity is known to be non-negative, an \emph{unsigned} grid over
-$[0, x_{\max}]$, with step $x_{\max}/(2^b - 1)$, spends no levels on values that
-never occur.
+the step the weight quantizer of Chapter~\ref{ch:quantization} computes for each
+output channel. Section~\ref{sec:perturbation} expresses a perturbation in a unit
+derived from it: the 8-bit step of a single per-tensor grid set by the largest
+weight of the whole network, computed there as $2 w_{\max}/(2^8 - 1)$, which is
+$0.4\,\%$ smaller than Equation~\ref{eq:step} at 8 bits. Since the quantizer
+works per channel, and most channels have a smaller maximum than the network as
+a whole, that unit is coarser than the steps the quantizer actually applies, and
+the floor it defines is conservative.
+
+Two errors follow from Equation~\ref{eq:quantizer}, and the choice of range
+trades one against the other: values inside the range are moved by at most
+$\Delta/2$ (\emph{rounding} error), values outside it are cut to the nearest
+bound (\emph{clipping} error). For values spread over many steps the rounding
+error is close to uniform on $[-\Delta/2, \Delta/2]$, with a root-mean-square of
+$\Delta/\sqrt{12}$; a Gaussian perturbation whose standard deviation is one step,
+the unit of Section~\ref{sec:perturbation}, is therefore about $3.5$ times
+larger than the rounding it stands for. A wide range avoids clipping but makes
+$\Delta$ coarse; a narrow one refines $\Delta$ at the cost of saturating the
+tails.
+
+When the quantity is non-negative, or its negative values carry no information
+for the task, an \emph{unsigned} grid over $[0, x_{\max}]$, with step
+$x_{\max}/(2^b - 1)$, spends no levels on values the network does not use. The
+membrane potential of this network is of the second kind. Negative potentials
+are frequent --- in the first layer the median is $-0.08$ and the first
+percentile $-6.6$ --- yet clipping them to zero moves the validation accuracy by
+one image in $1\,435$ (Section~\ref{sec:membrane-prep}).
 
 The step can be shared by a whole tensor (\emph{per-tensor}) or computed
 separately for each output channel (\emph{per-channel}). A per-tensor step is
@@ -306,7 +322,7 @@ weights, and per-channel PTQ keeps classification accuracy within about 2\,\% of
 floating point on standard convolutional networks; at 4 bits the step is sixteen
 times coarser, and accuracy typically degrades unless more elaborate correction
 methods are used~\cite{krishnamoorthi2018whitepaper, nagel2021whitepaper}. Rabbi et
-al.~\cite{rabbi2026} use weight-only PTQ at INT8 and INT4, the setting in which
+al.~\cite{rabbi2026} use static weight-only PTQ at INT8 and INT4, the setting in which
 they observe explanations degrading before accuracy.
 
 \paragraph{Quantization-aware training (QAT).} QAT includes the quantizer in
@@ -343,9 +359,9 @@ quantizes both targets uniformly and shares a single
 scale factor between weights and membrane potentials. Since the weighted input
 and the stored state are then expressed in the same integer units, they can be
 added directly, and the multipliers that conventional uniform quantization needs
-to rescale one into the other disappear from the inference loop. With the
-membrane at 2 bits, MINT reports $90.6\,\%$ accuracy on CIFAR-10 with a VGG-16
-and a memory reduction of about $94\,\%$ with respect to full precision.
+to rescale one into the other disappear from the inference loop. At 2 bits,
+MINT reports $90.6\,\%$ accuracy on CIFAR-10 with a VGG-16 and a memory
+reduction of $93.8\,\%$ with respect to full precision.
 HardF-SNN~\cite{liu2026hardfsnn} shows the cost of that sharing: weights have a
 narrow, centred distribution, whereas membrane potentials have a much broader
 one with a long tail, so a scale fitted to the weights compresses the dynamic
@@ -365,6 +381,14 @@ four bits to preserve both accuracy and dynamics while learned weight
 quantization remains viable at two. They ground the asymmetry mechanistically: a
 weight quantization error is fixed for an entire forward pass, whereas a membrane
 error propagates through the recurrent update at every time step.
+
+This thesis reaches the opposite result at 2 bits: the membrane arm keeps
+accuracy at parity (Section~\ref{sec:grid-results}). A plausible reason is where
+the quantizer acts. Here it rounds the state carried into the next step, after
+the spike decision (Section~\ref{sec:membrane-quantizer}). At every step the
+threshold is compared with $\beta$ times the quantized previous state plus a
+full-precision input current, so the comparison itself is never made on a 2-bit
+value.
 
 \subsection{Energy and memory accounting}
 \label{sec:energy-background}
@@ -396,7 +420,8 @@ full MACs (Section~\ref{sec:encoding}).
 \paragraph{Quantized operations.} The same table supplies the integer figures
 used for quantized operating points: an 8-bit multiplication costs $0.2$\,pJ and
 an 8-bit addition $0.03$\,pJ, thirty times less than its floating-point
-counterpart. Narrower integer operations are not tabulated, so any figure below
+counterpart, so that an 8-bit MAC costs $0.23$\,pJ under the same convention
+that gives $4.6$\,pJ in floating point. Narrower integer operations are not tabulated, so any figure below
 eight bits is an extrapolation, whose rule is stated in
 Chapter~\ref{ch:quantization}.
 
@@ -418,7 +443,7 @@ to spiking networks. A conventional network can discard the activations of a
 layer once the next one has been computed; a spiking network must keep the
 potential of every neuron from one time step to the next for the whole
 inference. That state scales with the number of neurons rather than the number
-of parameters, can be quantized independently of the weights
+of parameters, and it can be quantized independently of the weights
 (Section~\ref{sec:quantization-background}).
 
 \section{Explainability for spiking networks}
@@ -484,11 +509,16 @@ one free parameter, $\gamma$, is fixed in Section~\ref{sec:gamma}.
 
 \subsection{Evaluating an explanation}
 
-Since a stable explanation can still be wrong, requiring a separate faithfulness. The \emph{deletion metric} of Petsiuk et
+A stable explanation can still be wrong, so stability requires a separate test
+of faithfulness. The \emph{deletion metric} of Petsiuk et
 al.~\cite{petsiuk2018rise} removes pixels in decreasing order of attributed
-importance and records how quickly the model's confidence falls, compared
-against removal in random order. The underlying hypothesis is that a faithful map
-degrades the prediction faster than chance.
+importance and records how quickly the model's confidence falls, summarized as
+the area under that curve: the faster the fall, the smaller the area. The
+underlying hypothesis is that a faithful map degrades the prediction faster than
+a map that carries no information. Petsiuk et al. read the area on its own; this
+thesis compares it with the removal of pixels in random order on the same image
+(Section~\ref{sec:faithfulness}), so that a map counts as faithful only by the
+margin it gains over chance.
 
 The metrics used to compare two explanations with each other are borrowed from
 the saliency-model literature, where they were developed to compare a predicted
@@ -496,7 +526,9 @@ map against human eye fixations~\cite{bylinskii2019metrics}: Pearson
 correlation, structural similarity~\cite{wang2004ssim}, and the
 intersection-over-union of the highest-scoring regions. Bylinskii et al. observe
 that rankings produced by different metrics frequently disagree, which is the
-main reasong for reporting several of them rather than relying on one.
+main reason for reporting more than one. This thesis reports the correlation and
+the overlap. Structural similarity, which Rabbi et al.~\cite{rabbi2026} use
+alongside them, is left out as redundant with the two.
 
 A separate line of work asks whether attribution methods are testing anything at
 all. Adebayo et al.~\cite{adebayo2018sanity} randomize model weights
@@ -506,23 +538,39 @@ it. The perturbation experiment of Section~\ref{sec:perturbation} is a graded
 form of that test, run in the opposite direction.
 
 \section{Gravitational-wave glitch classification}
+\label{sec:gravityspy}
 
-The accuracy and preciseness of LIGO interferometers' detections are limited by
-non-Gaussian transient noise of
-instrumental and environmental origin. As introduced before these glitches occur rapidly in time,
-can mimic astrophysical signals, and are grouped into morphological
-families that correlate with distinct physical causes.
+The sensitivity of the LIGO interferometers is limited by non-Gaussian transient
+noise of instrumental and environmental origin. As introduced in
+Chapter~\ref{ch:introduction}, these glitches are short, can mimic astrophysical
+signals, and are grouped into morphological families that correlate with
+distinct physical causes.
 
 The Gravity Spy project~\cite{zevin2017, bahaadini2018} combines machine
 classification with citizen science to label them. The release used
 here~\cite{glanzer2021} covers observing runs O1 through O3b and provides, for
-each Omicron trigger, the trigger metadata, the per-class confidence of a
-convolutional classifier, the assigned label, and Omega-scan spectrograms.
+each Omicron trigger, the trigger metadata, the per-class scores of a
+convolutional classifier, the label that classifier assigns, and the addresses
+of the Omega-scan spectrograms, which are downloaded separately from the
+Zooniverse archive. The labels used in this work are therefore machine labels,
+not volunteer consensus, and no threshold on the classifier's confidence was
+applied when the data were selected.
+
+The scores released with the labels do not always support them. Of the
+$9\,568$ triggers selected for the four classes, the score of the assigned class
+is below $0.5$ for $24\,\%$ and below $0.01$ for $615$, and for $4.4\,\%$ the
+label is not the class with the highest of the four scores. The disagreement is
+concentrated in two classes: the score falls below $0.5$ for $53\,\%$ of the
+Violin\_Mode triggers and $37\,\%$ of the Extremely\_Loud ones, against $4\,\%$
+of Blip and $3\,\%$ of Scattered\_Light. An accuracy measured against these
+labels is an agreement with the Gravity Spy classifier, not with a verified
+truth.
 
 The classification task is therefore image classification over time--frequency
-representations. The main core and interest for this thesis is not that it is difficult ---
-with four well-separated classes it is not --- but that the explanations have a
-consumer. Glitch classification is directly connected with detector characterization, in which the
+representations. Its interest for this thesis is not its difficulty --- at
+$98\,\%$ agreement with the reference classifier it is not difficult --- but
+that the explanations have a consumer. Glitch classification is directly
+connected with detector characterization, in which the
 morphology of a glitch family is traced back to an instrumental cause and the
 instrument is modified. An explanation that points at the wrong part of the
 spectrogram sends a commissioner to the wrong causes.

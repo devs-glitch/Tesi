@@ -5,56 +5,60 @@
 
 In September 2015 the two Advanced LIGO (Laser Interferometer Gravitational-Wave
 Observatory) detectors made the first direct detection of a gravitational wave,
-GW150914, produced by the merger of two black holes. % TODO: cite discovery paper
+GW150914, which was produced by the merger of two black holes~\cite{abbott2016gw150914}.
 Two years later, LIGO and Virgo jointly observed GW170817, the first signal from a
-binary neutron star merger. Its electromagnetic counterpart, from a short
-gamma-ray burst to a kilonova, was then followed by telescopes around the world,
-marking the beginning of multi-messenger astronomy. % TODO: cite GW170817 papers
+binary neutron star merger~\cite{abbott2017gw170817}. Its electromagnetic
+counterpart, from a short gamma-ray burst to a kilonova, was then followed by
+telescopes around the world, an event that marked the beginning of multi-messenger
+astronomy~\cite{abbott2017multimessenger}.
 
-Since then, detections have gone from exceptional events to routine ones, and
-gravitational-wave astronomy now produces a continuous stream of data that must be
-analyzed, often in real time. In this setting, the main obstacle is not the
+Since then, detections have gone from exceptional events to routine ones, leading
+to a continuous stream of data in the field of gravitational-wave astronomy,
+data that must be analyzed, often in real time. In this setting, the main obstacle is not the
 faintness of the astrophysical signals but the noise. The detectors are sensitive
 enough to record a constant stream of short, non-Gaussian transients of
-instrumental and environmental origin, known as \emph{glitches}. Glitches can mimic
+instrumental and environmental origin, known as \emph{glitches}. What makes
+glitches both intresting and detrimental to astronomical analysis is that they can mimic
 genuine signals or overlap with them, which raises the false-alarm rate and reduces
 the effective sensitivity of searches.
 
-Gravity Spy, the source of the data used in this work, was created to address this
-problem. By combining citizen-science classification with machine learning, it
-sorts glitches into morphological families based on their time--frequency
-spectrograms. % TODO: cite Zevin et al. 2017
+Gravity Spy, the source of the data used in this work, is an Open Source project
+specifically created created to address this problem.
+It combines citizen-science classification with machine learning, aiming to
+sort glitches into morphological families based on their time--frequency
+spectrograms~\cite{zevin2017}.
 Knowing which family a glitch belongs to is the first step towards tracing it back
-to its physical cause and, where possible, removing that cause at the instrument.
+to its physical cause and, where possible, addressing the source of the problem
+and ultimately removing that cause at the instrument.
 
-More broadly, machine learning has become indispensable to data-quality work, but
-it comes at a cost. The demand for computing power is growing faster than the
+More broadly, machine learning has become indispensable to perform data-quality work, but
+it comes at a cost. The demand for computing power is indeed growing faster than the
 resources available, public alerts must be issued within minutes of a detection,
-and data volumes will grow further with future observing runs and next-generation
+and data volumes are expected to grow further with future observing runs and next-generation
 detectors. Making models lighter and cheaper to run is therefore a natural goal.
 Two approaches are particularly relevant: quantization, which compresses an
-existing network, and spiking neural networks, which are designed from the outset
-for energy-efficient, event-driven computation.
+existing network, and spiking neural networks (SNNs), which are designed from the outset
+for energy-efficient, and event-driven computation.
 
 Running a neural network outside a data center generally means making it smaller,
-and the standard tool for this is indeed quantization. Quantization represents weights
-and activations with fewer bits, trading numerical precision for savings in memory
-and energy. A quantized model is routinely validated by checking that its accuracy
+and the standard tool for this is indeed quantization. Quantization is a practice implemented
+to represent a network's weights and activations with fewer bits, trading numerical precision
+for savings in memory and energy. A quantized model is routinely validated by checking that its accuracy
 has not dropped, and for many applications this is a sufficient test.
 
 It is not sufficient, however, when the model is also expected to explain its
 decisions. Rabbi et al.~\cite{rabbi2026} evaluated five convolutional architectures
 at INT8 and INT4, comparing the attribution maps of the quantized models with those
-of their full-precision counterparts. They found that explanation similarity
-degrades measurably between INT8 and INT4 even where accuracy differences are
-negligible. They also found that when quantization does cause a misclassification,
+of their full-precision counterparts. Their core founding was that explanation similarity
+degrades measurably between INT8 and INT4, even where accuracy differences are
+negligible. They also discovered that when quantization does cause a misclassification,
 the quantized model is generally attending to \emph{different} regions of the input,
 rather than weighing the same evidence differently.
 
 In other words, accuracy and interpretability do not degrade together.
 
-This finding, however, is limited to conventional artificial neural networks (ANNs).
-Spiking neural networks (SNNs), the architecture most closely associated with
+This finding, however, is limited to conventional artificial neural networks (ANNs), and
+spiking neural networks (SNNs), the architecture most closely associated with
 low-power deployment~\cite{roy2019towards}, differ from ANNs in ways that make the
 question both harder and more interesting.
 
@@ -68,23 +72,26 @@ base its decisions on the same evidence as its full-precision counterpart, and
 at what energy cost?}
 \end{quote}
 
-Three properties of spiking networks have no counterpart in the convolutional
-setting, and each one bears on the question.
+Spiking networks possess three properties that are absent in convolutional networks,
+and each of them is crucial for framing the research question.
 
 \paragraph{A second quantization target.} A spiking neuron carries a membrane
-potential: a state variable read and written at every time step, and a dominant
-memory cost at deployment. It is quantized independently of the
-weights~\cite{yin2024mint, smith2026}, whereas a conventional network offers only
-weights and activations. The two targets can therefore be separated, which turns
-a single observation into a causal ablation.
+potential which is a state variable read and written at every time step, and whose storage
+scales with the number of neurons, rather than the number of parameters. In the
+network studied here it occupies $367.5$\,KiB against $1\,152.7$\,KiB of weights
+at full precision, and it becomes the larger share of the footprint as soon as
+the weights are compressed. It is a quantization target of its
+own~\cite{yin2024mint}, and it can and will be quantized independently of the
+weights~\cite{smith2026}, whereas a conventional network offers only weights and
+activations.
 
 \paragraph{A temporal axis in the explanation.} A spiking explanation is a
-\emph{sequence} of maps, one per time step. Quantization may preserve where a
-network looks while displacing when it decides, a change to which spatial
-metrics are blind by construction.
+\emph{sequence} of maps, one per time step, which effectively builds a temporal axis in the explanations.
+Quantization may preserve where a network looks while displacing when it decides,
+a change to which spatial metrics are blind by construction.
 
-\paragraph{A native explainer.} The Spike Activation Map~\cite{kim2021sam}
-reads spike activity directly. It requires neither gradients, side-stepping the
+\paragraph{A native explainer.} The Spike Activation Map (SAM)~\cite{kim2021sam}
+reads spike activity directly. It requires neither gradients, nor side-stepping the
 approximation error a surrogate gradient injects into any transplanted
 Grad-CAM-style method~\cite{selvaraju2017gradcam}, nor ground-truth labels.
 
@@ -95,13 +102,13 @@ The working hypothesis follows from the first two properties:
 explanation before quantizing the weights degrades its spatial structure},
 \end{quote}
 
-since the membrane potential is the variable that integrates evidence over time,
+an hypothesis that originates from the principle that the membrane potential
+is the variable that integrates evidence over time,
 while a weight error is fixed for a whole forward pass. The hypothesis is
-falsifiable, and testing it requires quantizing the two targets separately: the
+falsifiable, and testing it precisely requires quantizing the two targets separately: the
 membrane arm should displace the temporal centre of mass of the explanation at a
 \emph{higher} bit-width than the one at which the weight arm lowers its spatial
-correlation. If the order is reversed, the hypothesis is refuted, which is itself
-a reportable result.
+correlation.
 
 \section{Contributions}
 
@@ -134,7 +141,9 @@ quantization grid.
 
   \item \textbf{A bit-width characterization of explanation fidelity for a
         spiking classifier}, with weight and membrane quantization separated and
-        then combined over thirty fine-tuning runs, measured with spatial and
+        then combined over thirty fine-tuning runs (in five of which fine-tuning
+        never improved on the starting model, so that the checkpoint evaluated is
+        the starting model itself), measured with spatial and
         temporal divergence metrics read against the calibrated thresholds,
         tested for faithfulness, reported per class and per seed, and stratified
         by event strength.
@@ -149,17 +158,32 @@ apart from its neighbours. Quantizing the membrane potential to 2 bits leaves
 accuracy at parity, $0.982$, yet the region its explanations highlight overlaps
 the full-precision one by $0.44$, well below the numerical floor of $0.70$; a
 4-bit weight model of the same accuracy keeps an overlap of $0.74$. The change
-is real but bounded: the new explanations still point at evidence the model
-uses, as the deletion metric confirms, just not at the evidence the original
-model pointed at. The hypothesis stated above is not supported in the form
-it was written --- both arms first move the explanation at the same bit-width,
-and the 2-bit membrane changes \emph{where} the explanation points more than
-\emph{when} --- but its mechanism is: the same quantization makes the spike
-trains of the first layer perfectly periodic, a temporal change that the
-temporal metric of the explanation does not register. The configuration with the
-changed explanation is also dominated on energy and memory, so in this network
-there is no trade-off to make: a joint 4-bit model keeps both accuracy and
-explanation at about $1/60$ of the estimated energy and one eighth of the memory.
+is real but bounded. For the classes on which SAM is faithful at all, the
+deletion metric shows that the new explanations still point at evidence the
+model uses, just not at the evidence the original model pointed at.
+
+The hypothesis stated above is not supported in the form it was written. Read
+against the floor of each class, the two effects it orders appear at the same
+bit-width: at 4 bits the membrane arm moves the temporal centre of mass above
+its floor, and the weight arm lowers the spatial correlation below its floor in
+all four classes, while moving the centre of mass by a similar amount in the
+opposite direction. Against the single floor of the worst class, $0.975$, the
+weight arm would seem to hold until 2 bits and the predicted order to appear;
+the per-class reading is the one that matches how the floor is measured. At
+2 bits the membrane changes \emph{where} the explanation points more than
+\emph{when}. The mechanism behind the hypothesis is supported. The same
+quantization makes the inter-spike intervals of the first layer exactly
+regular, with a coefficient of variation of zero in all six models with a 2-bit
+membrane, over the $3$ to $28\,\%$ of neurons that fire often enough within
+eight steps for an interval to be measured. The temporal metric of the
+explanation does not register this change.
+
+The configuration with the changed explanation is also dominated on energy and
+memory, so in this network there is no trade-off to make. A joint 4-bit model
+keeps accuracy at parity and its explanation at the numerical floor, with one
+eighth of the memory and about $1/60$ of the estimated energy if the input image
+is quantized to the same width as the weights; if the first layer stays in
+floating point, the factor is $1/2.8$.
 
 \section{Application domain}
 
@@ -174,7 +198,10 @@ compressed model reaching the same label from different evidence would preserve
 the label while corrupting the diagnostic cue. The classes have physically
 interpretable morphology, so a domain expert can judge whether an attention map
 falls where the glitch actually is, which is not true of a generic image
-benchmark. And the data is public, large and labelled.
+benchmark. And the data is public and large, with every trigger labelled by the
+Gravity Spy classifier. Those labels are machine labels rather than a verified
+ground truth, and Section~\ref{sec:gravityspy} reports how far the scores
+released with them support them.
 
 \section{Structure}
 

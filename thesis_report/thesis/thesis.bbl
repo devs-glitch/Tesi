@@ -1,5 +1,21 @@
 \begin{thebibliography}{10}
 
+\bibitem{abbott2016gw150914}
+B.~P. Abbott et~al.
+\newblock Observation of gravitational waves from a binary black hole merger.
+\newblock {\em Physical Review Letters}, 116(6):061102, 2016.
+
+\bibitem{abbott2017gw170817}
+B.~P. Abbott et~al.
+\newblock {GW170817}: Observation of gravitational waves from a binary neutron
+  star inspiral.
+\newblock {\em Physical Review Letters}, 119(16):161101, 2017.
+
+\bibitem{abbott2017multimessenger}
+B.~P. Abbott et~al.
+\newblock Multi-messenger observations of a binary neutron star merger.
+\newblock {\em The Astrophysical Journal Letters}, 848(2):L12, 2017.
+
 \bibitem{adebayo2018sanity}
 Julius Adebayo, Justin Gilmer, Michael Muelly, Ian Goodfellow, Moritz Hardt,
   and Been Kim.
@@ -29,6 +45,15 @@ Zoya Bylinskii, Tilke Judd, Aude Oliva, Antonio Torralba, and Fr{\'e}do Durand.
 \newblock {\em IEEE Transactions on Pattern Analysis and Machine Intelligence},
   41(3):740--757, 2019.
 
+\bibitem{davies2018loihi}
+Mike Davies, Narayan Srinivasa, Tsung-Han Lin, Gautham Chinya, Yongqiang Cao,
+  Sri~Harsha Choday, Georgios Dimou, Prasad Joshi, Nabil Imam, Shweta Jain,
+  Yuyun Liao, Chit-Kwan Lin, Andrew Lines, Ruokun Liu, Deepak Mathaikutty,
+  Steven McCoy, Arnab Paul, Jonathan Tse, Guruguhanathan Venkataramanan,
+  Yi-Hsin Weng, Andreas Wild, Yoonseok Yang, and Hong Wang.
+\newblock Loihi: A neuromorphic manycore processor with on-chip learning.
+\newblock {\em IEEE Micro}, 38(1):82--99, 2018.
+
 \bibitem{snntorch_tutorial2}
 Jason~K. Eshraghian.
 \newblock {snnTorch} tutorial 2: The leaky integrate-and-fire neuron.
@@ -49,6 +74,12 @@ Wei Fang, Zhaofei Yu, Yanqi Chen, Timoth{\'e}e Masquelier, Tiejun Huang, and
   of spiking neural networks.
 \newblock In {\em IEEE/CVF International Conference on Computer Vision (ICCV)},
   pages 2661--2671, 2021.
+
+\bibitem{gerstner2014neuronal}
+Wulfram Gerstner, Werner~M. Kistler, Richard Naud, and Liam Paninski.
+\newblock {\em Neuronal Dynamics: From Single Neurons to Networks and Models of
+  Cognition}.
+\newblock Cambridge University Press, Cambridge, 2014.
 
 \bibitem{glanzer2021}
 J.~Glanzer, S.~Banagiri, S.~Coughlin, et~al.
@@ -108,6 +139,12 @@ Hanwen Liu, Kexin Shi, Jieyuan Zhang, Yimeng Shan, Jibin Wu, Wenyu Chen, and
   networks with efficient integer-arithmetic-only inference.
 \newblock In {\em Proceedings of the AAAI Conference on Artificial
   Intelligence}, volume~40, pages 1937--1945, 2026.
+
+\bibitem{maass1997networks}
+Wolfgang Maass.
+\newblock Networks of spiking neurons: The third generation of neural network
+  models.
+\newblock {\em Neural Networks}, 10(9):1659--1671, 1997.
 
 \bibitem{mcinnes2018umap}
 Leland McInnes, John Healy, and James Melville.
