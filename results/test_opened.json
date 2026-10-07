@@ -1,0 +1,43 @@
+{
+  "openings": [
+    {
+      "when": "2026-10-07T19:09:03+0200",
+      "n_models": 33,
+      "models": [
+        "fp32_112px_seed1234",
+        "fp32_112px_seed2345",
+        "fp32_112px_seed3456",
+        "qat_w2u2_112px_seed1234",
+        "qat_w2u2_112px_seed2345",
+        "qat_w2u2_112px_seed3456",
+        "qat_w2ux_112px_seed1234",
+        "qat_w2ux_112px_seed2345",
+        "qat_w2ux_112px_seed3456",
+        "qat_w4u4_112px_seed1234",
+        "qat_w4u4_112px_seed2345",
+        "qat_w4u4_112px_seed3456",
+        "qat_w4ux_112px_seed1234",
+        "qat_w4ux_112px_seed2345",
+        "qat_w4ux_112px_seed3456",
+        "qat_w8u8_112px_seed1234",
+        "qat_w8u8_112px_seed2345",
+        "qat_w8u8_112px_seed3456",
+        "qat_w8ux_112px_seed1234",
+        "qat_w8ux_112px_seed2345",
+        "qat_w8ux_112px_seed3456",
+        "qat_wxu2_112px_seed1234",
+        "qat_wxu2_112px_seed2345",
+        "qat_wxu2_112px_seed3456",
+        "qat_wxu4_112px_seed1234",
+        "qat_wxu4_112px_seed2345",
+        "qat_wxu4_112px_seed3456",
+        "qat_wxu8_112px_seed1234",
+        "qat_wxu8_112px_seed2345",
+        "qat_wxu8_112px_seed3456",
+        "qat_wxux_112px_seed1234",
+        "qat_wxux_112px_seed2345",
+        "qat_wxux_112px_seed3456"
+      ]
+    }
+  ]
+}
