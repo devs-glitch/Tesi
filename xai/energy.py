@@ -5,6 +5,7 @@ Energy accounting: synaptic operations, memory and fine-tuning costs
 
 import argparse
 import json
+import re
 from pathlib import Path
 
 import torch
@@ -152,10 +153,13 @@ def account(rates, macs, params, neurons, time_steps, weight_bits, membrane_bits
     }
 
 
-def read_runs(rate_field):
-    # every run directory with a run.json FP32 references included
+def read_runs(rate_field, input_size):
+    # every run directory with a run.json, FP32 references included, restricted to the manifest resolution
+    keep = re.compile(rf'^(fp32|qat_\w+)_{input_size}px_seed\d+$')
     runs = {}
     for path in sorted(RUNS_DIR.glob('*/run.json')):
+        if not keep.match(path.parent.name):
+            continue
         with open(path, encoding='utf-8') as f:
             summary = json.load(f)
         rates, source = summary.get(rate_field), rate_field
@@ -219,13 +223,15 @@ def main():
         description='SOP, energy and memory accounting from the grid run.json')
     parser.add_argument('--rates', choices=['evaluated', 'checkpoint', 'final'],
                         default='evaluated',
-                        help='evaluated: measured by evaluate_model.py, the '
-                             'uniform source. checkpoint: the deployed model. '
-                             'final: the model as fine-tuning left it.')
+                        help='evaluated: measured by evaluate_model.py. checkpoint: deployed model.'
+                             'final: the model as fine-tuning left it')
     parser.add_argument('--baseline', type=str, default=None,
                         help='force one run as denominator; default: the FP32 '
                              'run of each run\'s own seed')
+    parser.add_argument('--out', type=str, default=str(OUT_JSON),
+                        help='where to write the result')
     args = parser.parse_args()
+    out_json = Path(args.out)
 
     macs, params, input_size, time_steps = layer_macs()
     neurons = neuron_counts()
@@ -235,7 +241,7 @@ def main():
     else:
         rate_field = ('final_firing_rates' if args.rates == 'final'
                       else 'checkpoint_firing_rates')
-        runs = read_runs(rate_field)
+        runs = read_runs(rate_field, input_size)
     if not runs:
         raise SystemExit(f'no rates found for --rates {args.rates}')
 
@@ -258,9 +264,7 @@ def main():
     orphans = [t for t, b in bases.items() if b is None or b not in results]
     if orphans:
         raise SystemExit(
-            'no FP32 run of the same seed for: ' + ', '.join(sorted(orphans))
-            + '\nRatios are only meaningful within a seed. Evaluate the FP32 '
-              'reference of those seeds, or pass --baseline to force one.')
+            'no FP32 run of the same seed for: ' + ', '.join(sorted(orphans)))
 
     # report
     print('\nbaseline: the FP32 run of each seed' if not args.baseline
@@ -281,18 +285,17 @@ def main():
               f'{r["rate_source"]:>11}')
 
     if any(r['extrapolated'] for r in results.values()):
-        print('\n* energy extrapolated from the INT8 anchor: AC linear in bits,')
-        print('  MAC quadratic. The SOP and memory columns are exact.')
+        print('\n* energy extrapolated from the INT8 anchor')
 
-    OUT_JSON.parent.mkdir(parents=True, exist_ok=True)
-    with open(OUT_JSON, 'w', encoding='utf-8') as f:
+    out_json.parent.mkdir(parents=True, exist_ok=True)
+    with open(out_json, 'w', encoding='utf-8') as f:
         json.dump({'input_size': input_size, 'time_steps': time_steps,
                    'rate_field': rate_field, 'baselines': bases,
                    'macs': macs, 'params': params, 'neurons': neurons,
                    'horowitz_pj': {'fp32_mac': FP32_MAC_PJ, 'fp32_ac': FP32_AC_PJ,
                                    'int8_mac': INT8_MAC_PJ, 'int8_ac': INT8_AC_PJ},
                    'results': results}, f, indent=2)
-    print(f'\nwritten to {OUT_JSON}')
+    print(f'\nwritten to {out_json}')
 
 
 if __name__ == '__main__':

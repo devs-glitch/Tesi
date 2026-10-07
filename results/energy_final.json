@@ -1,41 +1,41 @@
 {
   "input_size": 112,
   "time_steps": 8,
-  "rate_field": "evaluated",
+  "rate_field": "final_firing_rates",
   "baselines": {
-    "fp32_112px_seed1234": "fp32_112px_seed1234",
-    "fp32_112px_seed2345": "fp32_112px_seed2345",
-    "fp32_112px_seed3456": "fp32_112px_seed3456",
-    "qat_w2u2_112px_seed1234": "fp32_112px_seed1234",
-    "qat_w2u2_112px_seed2345": "fp32_112px_seed2345",
-    "qat_w2u2_112px_seed3456": "fp32_112px_seed3456",
-    "qat_w2ux_112px_seed1234": "fp32_112px_seed1234",
-    "qat_w2ux_112px_seed2345": "fp32_112px_seed2345",
-    "qat_w2ux_112px_seed3456": "fp32_112px_seed3456",
-    "qat_w4u4_112px_seed1234": "fp32_112px_seed1234",
-    "qat_w4u4_112px_seed2345": "fp32_112px_seed2345",
-    "qat_w4u4_112px_seed3456": "fp32_112px_seed3456",
-    "qat_w4ux_112px_seed1234": "fp32_112px_seed1234",
-    "qat_w4ux_112px_seed2345": "fp32_112px_seed2345",
-    "qat_w4ux_112px_seed3456": "fp32_112px_seed3456",
-    "qat_w8u8_112px_seed1234": "fp32_112px_seed1234",
-    "qat_w8u8_112px_seed2345": "fp32_112px_seed2345",
-    "qat_w8u8_112px_seed3456": "fp32_112px_seed3456",
-    "qat_w8ux_112px_seed1234": "fp32_112px_seed1234",
-    "qat_w8ux_112px_seed2345": "fp32_112px_seed2345",
-    "qat_w8ux_112px_seed3456": "fp32_112px_seed3456",
-    "qat_wxu2_112px_seed1234": "fp32_112px_seed1234",
-    "qat_wxu2_112px_seed2345": "fp32_112px_seed2345",
-    "qat_wxu2_112px_seed3456": "fp32_112px_seed3456",
-    "qat_wxu4_112px_seed1234": "fp32_112px_seed1234",
-    "qat_wxu4_112px_seed2345": "fp32_112px_seed2345",
-    "qat_wxu4_112px_seed3456": "fp32_112px_seed3456",
-    "qat_wxu8_112px_seed1234": "fp32_112px_seed1234",
-    "qat_wxu8_112px_seed2345": "fp32_112px_seed2345",
-    "qat_wxu8_112px_seed3456": "fp32_112px_seed3456",
-    "qat_wxux_112px_seed1234": "fp32_112px_seed1234",
-    "qat_wxux_112px_seed2345": "fp32_112px_seed2345",
-    "qat_wxux_112px_seed3456": "fp32_112px_seed3456"
+    "fp32_112px_seed1234": "qat_wxux_112px_seed1234",
+    "fp32_112px_seed2345": "qat_wxux_112px_seed2345",
+    "fp32_112px_seed3456": "qat_wxux_112px_seed3456",
+    "qat_w2u2_112px_seed1234": "qat_wxux_112px_seed1234",
+    "qat_w2u2_112px_seed2345": "qat_wxux_112px_seed2345",
+    "qat_w2u2_112px_seed3456": "qat_wxux_112px_seed3456",
+    "qat_w2ux_112px_seed1234": "qat_wxux_112px_seed1234",
+    "qat_w2ux_112px_seed2345": "qat_wxux_112px_seed2345",
+    "qat_w2ux_112px_seed3456": "qat_wxux_112px_seed3456",
+    "qat_w4u4_112px_seed1234": "qat_wxux_112px_seed1234",
+    "qat_w4u4_112px_seed2345": "qat_wxux_112px_seed2345",
+    "qat_w4u4_112px_seed3456": "qat_wxux_112px_seed3456",
+    "qat_w4ux_112px_seed1234": "qat_wxux_112px_seed1234",
+    "qat_w4ux_112px_seed2345": "qat_wxux_112px_seed2345",
+    "qat_w4ux_112px_seed3456": "qat_wxux_112px_seed3456",
+    "qat_w8u8_112px_seed1234": "qat_wxux_112px_seed1234",
+    "qat_w8u8_112px_seed2345": "qat_wxux_112px_seed2345",
+    "qat_w8u8_112px_seed3456": "qat_wxux_112px_seed3456",
+    "qat_w8ux_112px_seed1234": "qat_wxux_112px_seed1234",
+    "qat_w8ux_112px_seed2345": "qat_wxux_112px_seed2345",
+    "qat_w8ux_112px_seed3456": "qat_wxux_112px_seed3456",
+    "qat_wxu2_112px_seed1234": "qat_wxux_112px_seed1234",
+    "qat_wxu2_112px_seed2345": "qat_wxux_112px_seed2345",
+    "qat_wxu2_112px_seed3456": "qat_wxux_112px_seed3456",
+    "qat_wxu4_112px_seed1234": "qat_wxux_112px_seed1234",
+    "qat_wxu4_112px_seed2345": "qat_wxux_112px_seed2345",
+    "qat_wxu4_112px_seed3456": "qat_wxux_112px_seed3456",
+    "qat_wxu8_112px_seed1234": "qat_wxux_112px_seed1234",
+    "qat_wxu8_112px_seed2345": "qat_wxux_112px_seed2345",
+    "qat_wxu8_112px_seed3456": "qat_wxux_112px_seed3456",
+    "qat_wxux_112px_seed1234": "qat_wxux_112px_seed1234",
+    "qat_wxux_112px_seed2345": "qat_wxux_112px_seed2345",
+    "qat_wxux_112px_seed3456": "qat_wxux_112px_seed3456"
   },
   "macs": {
     "conv1": 3763200,
@@ -65,19 +65,19 @@
   },
   "results": {
     "fp32_112px_seed1234": {
-      "arm": "fp32",
+      "arm": "fp32-reference",
       "weight_bits": null,
       "membrane_bits": null,
       "seed": 1234,
       "accuracy": 0.9832752613240419,
-      "epochs_run": null,
+      "epochs_run": 22,
       "rates": {
-        "layer1": 0.14887731075117328,
-        "layer2": 0.15092224498684492,
-        "layer3": 0.15267158556584653,
-        "layer4": 0.11483981958419255
+        "layer1": 0.14887730856701886,
+        "layer2": 0.15092224076338345,
+        "layer3": 0.15267158290858052,
+        "layer4": 0.11483981680475461
       },
-      "rate_source": "evaluated",
+      "rate_source": "checkpoint",
       "per_layer": {
         "conv1": {
           "operations": 3763200,
@@ -86,37 +86,37 @@
           "energy_pj": 17310720.0
         },
         "conv2": {
-          "operations": 11952108.710801393,
+          "operations": 11952108.53545398,
           "kind": "AC",
           "gated_by": "layer1",
-          "firing_rate": 0.14887731075117328,
-          "energy_pj": 10756897.839721253
+          "firing_rate": 0.14887730856701886,
+          "energy_pj": 10756897.681908583
         },
         "conv3": {
-          "operations": 12116279.303135889,
+          "operations": 12116278.964069646,
           "kind": "AC",
           "gated_by": "layer2",
-          "firing_rate": 0.15092224498684492,
-          "energy_pj": 10904651.3728223
+          "firing_rate": 0.15092224076338345,
+          "energy_pj": 10904651.067662682
         },
         "conv4": {
-          "operations": 12256719.163763065,
+          "operations": 12256718.950433498,
           "kind": "AC",
           "gated_by": "layer3",
-          "firing_rate": 0.15267158556584653,
-          "energy_pj": 11031047.24738676
+          "firing_rate": 0.15267158290858052,
+          "energy_pj": 11031047.05539015
         },
         "linear": {
-          "operations": 23048.811149825782,
+          "operations": 23048.81059198147,
           "kind": "AC",
           "gated_by": "layer4",
-          "firing_rate": 0.11483981958419255,
-          "energy_pj": 20743.930034843204
+          "firing_rate": 0.11483981680475461,
+          "energy_pj": 20743.929532783324
         }
       },
-      "total_sops": 36348155.98885017,
+      "total_sops": 36348155.260549106,
       "total_macs": 3763200,
-      "total_energy_pj": 50024060.389965154,
+      "total_energy_pj": 50024059.7344942,
       "weight_bytes": 1180352.0,
       "membrane_bytes": 376320.0,
       "ac_pj": 0.9,
@@ -124,19 +124,19 @@
       "extrapolated": false
     },
     "fp32_112px_seed2345": {
-      "arm": "fp32",
+      "arm": "fp32-reference",
       "weight_bits": null,
       "membrane_bits": null,
       "seed": 2345,
       "accuracy": 0.9818815331010453,
-      "epochs_run": null,
+      "epochs_run": 22,
       "rates": {
-        "layer1": 0.38839967981693985,
-        "layer2": 0.24709778374546684,
-        "layer3": 0.20597716247866743,
-        "layer4": 0.1387432752391026
+        "layer1": 0.38839967387893887,
+        "layer2": 0.2470977796598594,
+        "layer3": 0.20597715853398685,
+        "layer4": 0.13874327268334632
       },
-      "rate_source": "evaluated",
+      "rate_source": "checkpoint",
       "per_layer": {
         "conv1": {
           "operations": 3763200,
@@ -145,37 +145,37 @@
           "energy_pj": 17310720.0
         },
         "conv2": {
-          "operations": 31181347.73519164,
+          "operations": 31181347.25847942,
           "kind": "AC",
           "gated_by": "layer1",
-          "firing_rate": 0.38839967981693985,
-          "energy_pj": 28063212.961672477
+          "firing_rate": 0.38839967387893887,
+          "energy_pj": 28063212.53263148
         },
         "conv3": {
-          "operations": 19837405.435540073,
+          "operations": 19837405.10754097,
           "kind": "AC",
           "gated_by": "layer2",
-          "firing_rate": 0.24709778374546684,
-          "energy_pj": 17853664.891986065
+          "firing_rate": 0.2470977796598594,
+          "energy_pj": 17853664.59678687
         },
         "conv4": {
-          "operations": 16536176.167247387,
+          "operations": 16536175.850562118,
           "kind": "AC",
           "gated_by": "layer3",
-          "firing_rate": 0.20597716247866743,
-          "energy_pj": 14882558.550522648
+          "firing_rate": 0.20597715853398685,
+          "energy_pj": 14882558.265505906
         },
         "linear": {
-          "operations": 27846.33031358885,
+          "operations": 27846.32980063834,
           "kind": "AC",
           "gated_by": "layer4",
-          "firing_rate": 0.1387432752391026,
-          "energy_pj": 25061.697282229965
+          "firing_rate": 0.13874327268334632,
+          "energy_pj": 25061.696820574507
         }
       },
-      "total_sops": 67582775.66829269,
+      "total_sops": 67582774.54638314,
       "total_macs": 3763200,
-      "total_energy_pj": 78135218.10146342,
+      "total_energy_pj": 78135217.09174483,
       "weight_bytes": 1180352.0,
       "membrane_bytes": 376320.0,
       "ac_pj": 0.9,
@@ -183,19 +183,19 @@
       "extrapolated": false
     },
     "fp32_112px_seed3456": {
-      "arm": "fp32",
+      "arm": "fp32-reference",
       "weight_bits": null,
       "membrane_bits": null,
       "seed": 3456,
       "accuracy": 0.9846689895470383,
-      "epochs_run": null,
+      "epochs_run": 19,
       "rates": {
-        "layer1": 0.23691946161358704,
-        "layer2": 0.15989192259275223,
-        "layer3": 0.19534343640003912,
-        "layer4": 0.1254507617506933
+        "layer1": 0.23691945745762216,
+        "layer2": 0.159891919734586,
+        "layer3": 0.19534343245345126,
+        "layer4": 0.12545075933173144
       },
-      "rate_source": "evaluated",
+      "rate_source": "checkpoint",
       "per_layer": {
         "conv1": {
           "operations": 3763200,
@@ -204,37 +204,37 @@
           "energy_pj": 17310720.0
         },
         "conv2": {
-          "operations": 19020273.44947735,
+          "operations": 19020273.11582984,
           "kind": "AC",
           "gated_by": "layer1",
-          "firing_rate": 0.23691946161358704,
-          "energy_pj": 17118246.104529615
+          "firing_rate": 0.23691945745762216,
+          "energy_pj": 17118245.804246858
         },
         "conv3": {
-          "operations": 12836379.372822298,
+          "operations": 12836379.143364139,
           "kind": "AC",
           "gated_by": "layer2",
-          "firing_rate": 0.15989192259275223,
-          "energy_pj": 11552741.435540069
+          "firing_rate": 0.159891919734586,
+          "energy_pj": 11552741.229027726
         },
         "conv4": {
-          "operations": 15682483.62369338,
+          "operations": 15682483.306854993,
           "kind": "AC",
           "gated_by": "layer3",
-          "firing_rate": 0.19534343640003912,
-          "energy_pj": 14114235.261324042
+          "firing_rate": 0.19534343245345126,
+          "energy_pj": 14114234.976169495
         },
         "linear": {
-          "operations": 25178.46968641115,
+          "operations": 25178.469200915828,
           "kind": "AC",
           "gated_by": "layer4",
-          "firing_rate": 0.1254507617506933,
-          "energy_pj": 22660.622717770035
+          "firing_rate": 0.12545075933173144,
+          "energy_pj": 22660.622280824246
         }
       },
-      "total_sops": 47564314.91567944,
+      "total_sops": 47564314.03524989,
       "total_macs": 3763200,
-      "total_energy_pj": 60118603.4241115,
+      "total_energy_pj": 60118602.6317249,
       "weight_bytes": 1180352.0,
       "membrane_bytes": 376320.0,
       "ac_pj": 0.9,
@@ -247,14 +247,14 @@
       "membrane_bits": 2,
       "seed": 1234,
       "accuracy": 0.6655052264808362,
-      "epochs_run": null,
+      "epochs_run": 20,
       "rates": {
-        "layer1": 0.17569482251742158,
-        "layer2": 0.2587717193666447,
-        "layer3": 0.3680505943122022,
-        "layer4": 0.11086533589916804
+        "layer1": 0.17559997716639517,
+        "layer2": 0.25988190998599087,
+        "layer3": 0.3739180727495134,
+        "layer4": 0.11207008288608611
       },
-      "rate_source": "evaluated",
+      "rate_source": "final_firing_rates",
       "per_layer": {
         "conv1": {
           "operations": 3763200,
@@ -263,37 +263,37 @@
           "energy_pj": 47040.0
         },
         "conv2": {
-          "operations": 14105061.463414632,
+          "operations": 14097447.12688167,
           "kind": "AC",
           "gated_by": "layer1",
-          "firing_rate": 0.17569482251742158,
-          "energy_pj": 105787.96097560973
+          "firing_rate": 0.17559997716639517,
+          "energy_pj": 105730.85345161252
         },
         "conv3": {
-          "operations": 20774607.665505227,
+          "operations": 20863735.544731323,
           "kind": "AC",
           "gated_by": "layer2",
-          "firing_rate": 0.2587717193666447,
-          "energy_pj": 155809.5574912892
+          "firing_rate": 0.25988190998599087,
+          "energy_pj": 156478.0165854849
         },
         "conv4": {
-          "operations": 29547690.592334494,
+          "operations": 30018741.149247333,
           "kind": "AC",
           "gated_by": "layer3",
-          "firing_rate": 0.3680505943122022,
-          "energy_pj": 221607.6794425087
+          "firing_rate": 0.3739180727495134,
+          "energy_pj": 225140.558619355
         },
         "linear": {
-          "operations": 22251.11637630662,
+          "operations": 22492.913915569028,
           "kind": "AC",
           "gated_by": "layer4",
-          "firing_rate": 0.11086533589916804,
-          "energy_pj": 166.88337282229966
+          "firing_rate": 0.11207008288608611,
+          "energy_pj": 168.6968543667677
         }
       },
-      "total_sops": 64449610.83763066,
+      "total_sops": 65002416.73477589,
       "total_macs": 3763200,
-      "total_energy_pj": 530412.08128223,
+      "total_energy_pj": 534558.1255108191,
       "weight_bytes": 73772.0,
       "membrane_bytes": 23520.0,
       "ac_pj": 0.0075,
@@ -306,14 +306,14 @@
       "membrane_bits": 2,
       "seed": 2345,
       "accuracy": 0.443205574912892,
-      "epochs_run": null,
+      "epochs_run": 17,
       "rates": {
-        "layer1": 0.436937579024968,
-        "layer2": 0.3913482312295563,
-        "layer3": 0.2555778641759405,
-        "layer4": 0.10768753222107659
+        "layer1": 0.43502196052763936,
+        "layer2": 0.4139343053414016,
+        "layer3": 0.3101638270795138,
+        "layer4": 0.13294024245768057
       },
-      "rate_source": "evaluated",
+      "rate_source": "final_firing_rates",
       "per_layer": {
         "conv1": {
           "operations": 3763200,
@@ -322,37 +322,37 @@
           "energy_pj": 47040.0
         },
         "conv2": {
-          "operations": 35078047.94425087,
+          "operations": 34924259.02629573,
           "kind": "AC",
           "gated_by": "layer1",
-          "firing_rate": 0.436937579024968,
-          "energy_pj": 263085.3595818815
+          "firing_rate": 0.43502196052763936,
+          "energy_pj": 261931.94269721795
         },
         "conv3": {
-          "operations": 31418062.16027875,
+          "operations": 33231308.327696264,
           "kind": "AC",
           "gated_by": "layer2",
-          "firing_rate": 0.3913482312295563,
-          "energy_pj": 235635.4662020906
+          "firing_rate": 0.4139343053414016,
+          "energy_pj": 249234.81245772197
         },
         "conv4": {
-          "operations": 20518199.86062718,
+          "operations": 24900448.300066695,
           "kind": "AC",
           "gated_by": "layer3",
-          "firing_rate": 0.2555778641759405,
-          "energy_pj": 153886.49895470386
+          "firing_rate": 0.3101638270795138,
+          "energy_pj": 186753.3622505002
         },
         "linear": {
-          "operations": 21613.318466898956,
+          "operations": 26681.638422226322,
           "kind": "AC",
           "gated_by": "layer4",
-          "firing_rate": 0.10768753222107659,
-          "energy_pj": 162.09988850174216
+          "firing_rate": 0.13294024245768057,
+          "energy_pj": 200.1122881666974
         }
       },
-      "total_sops": 87035923.2836237,
+      "total_sops": 93082697.29248092,
       "total_macs": 3763200,
-      "total_energy_pj": 699809.4246271777,
+      "total_energy_pj": 745160.2296936068,
       "weight_bytes": 73772.0,
       "membrane_bytes": 23520.0,
       "ac_pj": 0.0075,
@@ -365,14 +365,14 @@
       "membrane_bits": 2,
       "seed": 3456,
       "accuracy": 0.445993031358885,
-      "epochs_run": null,
+      "epochs_run": 20,
       "rates": {
-        "layer1": 0.27726749403076784,
-        "layer2": 0.29815476352507464,
-        "layer3": 0.37948942370937927,
-        "layer4": 0.12158894072655196
+        "layer1": 0.2772674866669685,
+        "layer2": 0.29815475564800487,
+        "layer3": 0.37948941796083485,
+        "layer4": 0.12158893808359053
       },
-      "rate_source": "evaluated",
+      "rate_source": "final_firing_rates",
       "per_layer": {
         "conv1": {
           "operations": 3763200,
@@ -381,37 +381,37 @@
           "energy_pj": 47040.0
         },
         "conv2": {
-          "operations": 22259478.04878049,
+          "operations": 22259477.457602896,
           "kind": "AC",
           "gated_by": "layer1",
-          "firing_rate": 0.27726749403076784,
-          "energy_pj": 166946.08536585368
+          "firing_rate": 0.2772674866669685,
+          "energy_pj": 166946.08093202172
         },
         "conv3": {
-          "operations": 23936341.46341463,
+          "operations": 23936340.831030868,
           "kind": "AC",
           "gated_by": "layer2",
-          "firing_rate": 0.29815476352507464,
-          "energy_pj": 179522.56097560973
+          "firing_rate": 0.29815475564800487,
+          "energy_pj": 179522.5562327315
         },
         "conv4": {
-          "operations": 30466018.118466903,
+          "operations": 30466017.65696456,
           "kind": "AC",
           "gated_by": "layer3",
-          "firing_rate": 0.37948942370937927,
-          "energy_pj": 228495.13588850177
+          "firing_rate": 0.37948941796083485,
+          "energy_pj": 228495.13242723417
         },
         "linear": {
-          "operations": 24403.386759581885,
+          "operations": 24403.386229128955,
           "kind": "AC",
           "gated_by": "layer4",
-          "firing_rate": 0.12158894072655196,
-          "energy_pj": 183.02540069686412
+          "firing_rate": 0.12158893808359053,
+          "energy_pj": 183.02539671846716
         }
       },
-      "total_sops": 76686241.0174216,
+      "total_sops": 76686239.33182745,
       "total_macs": 3763200,
-      "total_energy_pj": 622186.807630662,
+      "total_energy_pj": 622186.7949887059,
       "weight_bytes": 73772.0,
       "membrane_bytes": 23520.0,
       "ac_pj": 0.0075,
@@ -424,14 +424,14 @@
       "membrane_bits": null,
       "seed": 1234,
       "accuracy": 0.6682926829268293,
-      "epochs_run": null,
+      "epochs_run": 20,
       "rates": {
-        "layer1": 0.19208471893221574,
-        "layer2": 0.2680642743813553,
-        "layer3": 0.3680580801571499,
-        "layer4": 0.11373084512550663
+        "layer1": 0.19208471537259397,
+        "layer2": 0.26806426864467847,
+        "layer3": 0.3680580725237883,
+        "layer4": 0.11373084254484975
       },
-      "rate_source": "evaluated",
+      "rate_source": "final_firing_rates",
       "per_layer": {
         "conv1": {
           "operations": 3763200,
@@ -440,37 +440,37 @@
           "energy_pj": 47040.0
         },
         "conv2": {
-          "operations": 15420868.57142857,
+          "operations": 15420868.285656441,
           "kind": "AC",
           "gated_by": "layer1",
-          "firing_rate": 0.19208471893221574,
-          "energy_pj": 115656.51428571428
+          "firing_rate": 0.19208471537259397,
+          "energy_pj": 115656.51214242331
         },
         "conv3": {
-          "operations": 21520628.850174215,
+          "operations": 21520628.389624618,
           "kind": "AC",
           "gated_by": "layer2",
-          "firing_rate": 0.2680642743813553,
-          "energy_pj": 161404.7163763066
+          "firing_rate": 0.26806426864467847,
+          "energy_pj": 161404.71292218464
         },
         "conv4": {
-          "operations": 29548291.567944247,
+          "operations": 29548290.955125764,
           "kind": "AC",
           "gated_by": "layer3",
-          "firing_rate": 0.3680580801571499,
-          "energy_pj": 221612.18675958185
+          "firing_rate": 0.3680580725237883,
+          "energy_pj": 221612.1821634432
         },
         "linear": {
-          "operations": 22826.235540069683,
+          "operations": 22826.235022121524,
           "kind": "AC",
           "gated_by": "layer4",
-          "firing_rate": 0.11373084512550663,
-          "energy_pj": 171.19676655052263
+          "firing_rate": 0.11373084254484975,
+          "energy_pj": 171.19676266591142
         }
       },
-      "total_sops": 66512615.225087106,
+      "total_sops": 66512613.86542895,
       "total_macs": 3763200,
-      "total_energy_pj": 545884.6141881533,
+      "total_energy_pj": 545884.6039907171,
       "weight_bytes": 73772.0,
       "membrane_bytes": 376320.0,
       "ac_pj": 0.0075,
@@ -483,14 +483,14 @@
       "membrane_bits": null,
       "seed": 2345,
       "accuracy": 0.4445993031358885,
-      "epochs_run": null,
+      "epochs_run": 20,
       "rates": {
-        "layer1": 0.43956709143397127,
-        "layer2": 0.3754495048509386,
-        "layer3": 0.2753578344992178,
-        "layer4": 0.12335246135692954
+        "layer1": 0.44124206744835354,
+        "layer2": 0.37750098319003805,
+        "layer3": 0.2823356500070685,
+        "layer4": 0.12547780029761252
       },
-      "rate_source": "evaluated",
+      "rate_source": "final_firing_rates",
       "per_layer": {
         "conv1": {
           "operations": 3763200,
@@ -499,37 +499,37 @@
           "energy_pj": 47040.0
         },
         "conv2": {
-          "operations": 35289149.407665506,
+          "operations": 35423619.162061736,
           "kind": "AC",
           "gated_by": "layer1",
-          "firing_rate": 0.43956709143397127,
-          "energy_pj": 264668.62055749126
+          "firing_rate": 0.44124206744835354,
+          "energy_pj": 265677.143715463
         },
         "conv3": {
-          "operations": 30141686.96864111,
+          "operations": 30306382.932069357,
           "kind": "AC",
           "gated_by": "layer2",
-          "firing_rate": 0.3754495048509386,
-          "energy_pj": 226062.6522648083
+          "firing_rate": 0.37750098319003805,
+          "energy_pj": 227297.8719905202
         },
         "conv4": {
-          "operations": 22106167.526132405,
+          "operations": 22666357.719607472,
           "kind": "AC",
           "gated_by": "layer3",
-          "firing_rate": 0.2753578344992178,
-          "energy_pj": 165796.25644599303
+          "firing_rate": 0.2823356500070685,
+          "energy_pj": 169997.68289705605
         },
         "linear": {
-          "operations": 24757.332404181187,
+          "operations": 25183.89643093202,
           "kind": "AC",
           "gated_by": "layer4",
-          "firing_rate": 0.12335246135692954,
-          "energy_pj": 185.6799930313589
+          "firing_rate": 0.12547780029761252,
+          "energy_pj": 188.87922323199015
         }
       },
-      "total_sops": 87561761.2348432,
+      "total_sops": 88421543.7101695,
       "total_macs": 3763200,
-      "total_energy_pj": 703753.2092613239,
+      "total_energy_pj": 710201.5778262712,
       "weight_bytes": 73772.0,
       "membrane_bytes": 376320.0,
       "ac_pj": 0.0075,
@@ -542,14 +542,14 @@
       "membrane_bits": null,
       "seed": 3456,
       "accuracy": 0.4418118466898955,
-      "epochs_run": null,
+      "epochs_run": 15,
       "rates": {
-        "layer1": 0.272136148700824,
-        "layer2": 0.2616101635830726,
-        "layer3": 0.3345242655261146,
-        "layer4": 0.11545896423682714
+        "layer1": 0.28764204964405155,
+        "layer2": 0.27361961707005517,
+        "layer3": 0.3498489140425825,
+        "layer4": 0.11821650265608931
       },
-      "rate_source": "evaluated",
+      "rate_source": "final_firing_rates",
       "per_layer": {
         "conv1": {
           "operations": 3763200,
@@ -558,37 +558,37 @@
           "energy_pj": 47040.0
         },
         "conv2": {
-          "operations": 21847525.43554007,
+          "operations": 23092363.97270389,
           "kind": "AC",
           "gated_by": "layer1",
-          "firing_rate": 0.272136148700824,
-          "energy_pj": 163856.4407665505
+          "firing_rate": 0.28764204964405155,
+          "energy_pj": 173192.72979527916
         },
         "conv3": {
-          "operations": 21002482.5087108,
+          "operations": 21966620.64977134,
           "kind": "AC",
           "gated_by": "layer2",
-          "firing_rate": 0.2616101635830726,
-          "energy_pj": 157518.618815331
+          "firing_rate": 0.27361961707005517,
+          "energy_pj": 164749.65487328504
         },
         "conv4": {
-          "operations": 26856143.27526132,
+          "operations": 28086430.577600993,
           "kind": "AC",
           "gated_by": "layer3",
-          "firing_rate": 0.3345242655261146,
-          "energy_pj": 201421.0745644599
+          "firing_rate": 0.3498489140425825,
+          "energy_pj": 210648.22933200744
         },
         "linear": {
-          "operations": 23173.075958188154,
+          "operations": 23726.52494908775,
           "kind": "AC",
           "gated_by": "layer4",
-          "firing_rate": 0.11545896423682714,
-          "energy_pj": 173.79806968641114
+          "firing_rate": 0.11821650265608931,
+          "energy_pj": 177.9489371181581
         }
       },
-      "total_sops": 69729324.29547037,
+      "total_sops": 73169141.72502531,
       "total_macs": 3763200,
-      "total_energy_pj": 570009.9322160279,
+      "total_energy_pj": 595808.5629376898,
       "weight_bytes": 73772.0,
       "membrane_bytes": 376320.0,
       "ac_pj": 0.0075,
@@ -601,14 +601,14 @@
       "membrane_bits": 4,
       "seed": 1234,
       "accuracy": 0.9846689895470383,
-      "epochs_run": null,
+      "epochs_run": 12,
       "rates": {
-        "layer1": 0.15394531631930863,
-        "layer2": 0.15512707464845693,
-        "layer3": 0.17424866560300079,
-        "layer4": 0.12786387039571928
+        "layer1": 0.15798118113433027,
+        "layer2": 0.16447289460938982,
+        "layer3": 0.19374705863538935,
+        "layer4": 0.1444544718655975
       },
-      "rate_source": "evaluated",
+      "rate_source": "final_firing_rates",
       "per_layer": {
         "conv1": {
           "operations": 3763200,
@@ -617,37 +617,37 @@
           "energy_pj": 188160.0
         },
         "conv2": {
-          "operations": 12358976.306620209,
+          "operations": 12682981.991353849,
           "kind": "AC",
           "gated_by": "layer1",
-          "firing_rate": 0.15394531631930863,
-          "energy_pj": 185384.6445993031
+          "firing_rate": 0.15798118113433027,
+          "energy_pj": 190244.72987030772
         },
         "conv3": {
-          "operations": 12453849.75609756,
+          "operations": 13204147.135873191,
           "kind": "AC",
           "gated_by": "layer2",
-          "firing_rate": 0.15512707464845693,
-          "energy_pj": 186807.7463414634
+          "firing_rate": 0.16447289460938982,
+          "energy_pj": 198062.20703809787
         },
         "conv4": {
-          "operations": 13988961.672473868,
+          "operations": 15554323.862542873,
           "kind": "AC",
           "gated_by": "layer3",
-          "firing_rate": 0.17424866560300079,
-          "energy_pj": 209834.42508710801
+          "firing_rate": 0.19374705863538935,
+          "energy_pj": 233314.8579381431
         },
         "linear": {
-          "operations": 25662.790243902444,
+          "operations": 28992.590321312884,
           "kind": "AC",
           "gated_by": "layer4",
-          "firing_rate": 0.12786387039571928,
-          "energy_pj": 384.9418536585366
+          "firing_rate": 0.1444544718655975,
+          "energy_pj": 434.8888548196932
         }
       },
-      "total_sops": 38827450.52543554,
+      "total_sops": 41470445.58009122,
       "total_macs": 3763200,
-      "total_energy_pj": 770571.7578815331,
+      "total_energy_pj": 810216.6837013684,
       "weight_bytes": 147544.0,
       "membrane_bytes": 47040.0,
       "ac_pj": 0.015,
@@ -660,14 +660,14 @@
       "membrane_bits": 4,
       "seed": 2345,
       "accuracy": 0.9818815331010453,
-      "epochs_run": null,
+      "epochs_run": 10,
       "rates": {
-        "layer1": 0.40325598666214096,
-        "layer2": 0.2731524094421087,
-        "layer3": 0.2429106617875809,
-        "layer4": 0.17364765919433975
+        "layer1": 0.4051530317770064,
+        "layer2": 0.27932126436914717,
+        "layer3": 0.24765753654652772,
+        "layer4": 0.18903044130951685
       },
-      "rate_source": "evaluated",
+      "rate_source": "final_firing_rates",
       "per_layer": {
         "conv1": {
           "operations": 3763200,
@@ -676,37 +676,37 @@
           "energy_pj": 188160.0
         },
         "conv2": {
-          "operations": 32374035.818815336,
+          "operations": 32526333.635908917,
           "kind": "AC",
           "gated_by": "layer1",
-          "firing_rate": 0.40325598666214096,
-          "energy_pj": 485610.53728223004
+          "firing_rate": 0.4051530317770064,
+          "energy_pj": 487895.00453863374
         },
         "conv3": {
-          "operations": 21929112.473867595,
+          "operations": 22424358.017578125,
           "kind": "AC",
           "gated_by": "layer2",
-          "firing_rate": 0.2731524094421087,
-          "energy_pj": 328936.6871080139
+          "firing_rate": 0.27932126436914717,
+          "energy_pj": 336365.37026367185
         },
         "conv4": {
-          "operations": 19501256.585365854,
+          "operations": 19882343.28601372,
           "kind": "AC",
           "gated_by": "layer3",
-          "firing_rate": 0.2429106617875809,
-          "energy_pj": 292518.8487804878
+          "firing_rate": 0.24765753654652772,
+          "energy_pj": 298235.1492902058
         },
         "linear": {
-          "operations": 34851.77979094077,
+          "operations": 37939.16569258527,
           "kind": "AC",
           "gated_by": "layer4",
-          "firing_rate": 0.17364765919433975,
-          "energy_pj": 522.7766968641115
+          "firing_rate": 0.18903044130951685,
+          "energy_pj": 569.0874853887791
         }
       },
-      "total_sops": 73839256.65783973,
+      "total_sops": 74870974.10519335,
       "total_macs": 3763200,
-      "total_energy_pj": 1295748.8498675958,
+      "total_energy_pj": 1311224.6115779001,
       "weight_bytes": 147544.0,
       "membrane_bytes": 47040.0,
       "ac_pj": 0.015,
@@ -719,14 +719,14 @@
       "membrane_bits": 4,
       "seed": 3456,
       "accuracy": 0.98397212543554,
-      "epochs_run": null,
+      "epochs_run": 20,
       "rates": {
-        "layer1": 0.24549641533578806,
-        "layer2": 0.17318389096165474,
-        "layer3": 0.22667642650483538,
-        "layer4": 0.14598257339739032
+        "layer1": 0.2475958107863569,
+        "layer2": 0.1798121777924511,
+        "layer3": 0.2381352086723474,
+        "layer4": 0.15430030184132712
       },
-      "rate_source": "evaluated",
+      "rate_source": "final_firing_rates",
       "per_layer": {
         "conv1": {
           "operations": 3763200,
@@ -735,37 +735,37 @@
           "energy_pj": 188160.0
         },
         "conv2": {
-          "operations": 19708845.017421603,
+          "operations": 19877387.84322599,
           "kind": "AC",
           "gated_by": "layer1",
-          "firing_rate": 0.24549641533578806,
-          "energy_pj": 295632.67526132404
+          "firing_rate": 0.2475958107863569,
+          "energy_pj": 298160.81764838984
         },
         "conv3": {
-          "operations": 13903479.86062718,
+          "operations": 14435609.332662443,
           "kind": "AC",
           "gated_by": "layer2",
-          "firing_rate": 0.17318389096165474,
-          "energy_pj": 208552.1979094077
+          "firing_rate": 0.1798121777924511,
+          "energy_pj": 216534.13998993664
         },
         "conv4": {
-          "operations": 18197946.20209059,
+          "operations": 19117875.568549924,
           "kind": "AC",
           "gated_by": "layer3",
-          "firing_rate": 0.22667642650483538,
-          "energy_pj": 272969.1930313589
+          "firing_rate": 0.2381352086723474,
+          "energy_pj": 286768.1335282488
         },
         "linear": {
-          "operations": 29299.286411149827,
+          "operations": 30968.687780761717,
           "kind": "AC",
           "gated_by": "layer4",
-          "firing_rate": 0.14598257339739032,
-          "energy_pj": 439.4892961672474
+          "firing_rate": 0.15430030184132712,
+          "energy_pj": 464.5303167114257
         }
       },
-      "total_sops": 51839570.36655053,
+      "total_sops": 53461841.43221912,
       "total_macs": 3763200,
-      "total_energy_pj": 965753.5554982579,
+      "total_energy_pj": 990087.6214832867,
       "weight_bytes": 147544.0,
       "membrane_bytes": 47040.0,
       "ac_pj": 0.015,
@@ -778,14 +778,14 @@
       "membrane_bits": null,
       "seed": 1234,
       "accuracy": 0.9853658536585366,
-      "epochs_run": null,
+      "epochs_run": 12,
       "rates": {
-        "layer1": 0.15530582176522612,
-        "layer2": 0.1589226133070824,
-        "layer3": 0.1787144790407452,
-        "layer4": 0.13653340936766692
+        "layer1": 0.15454945356069127,
+        "layer2": 0.16046105166345523,
+        "layer3": 0.1821169862867648,
+        "layer4": 0.1389003773028427
       },
-      "rate_source": "evaluated",
+      "rate_source": "final_firing_rates",
       "per_layer": {
         "conv1": {
           "operations": 3763200,
@@ -794,37 +794,37 @@
           "energy_pj": 188160.0
         },
         "conv2": {
-          "operations": 12468199.860627176,
+          "operations": 12407477.410977993,
           "kind": "AC",
           "gated_by": "layer1",
-          "firing_rate": 0.15530582176522612,
-          "energy_pj": 187022.99790940763
+          "firing_rate": 0.15454945356069127,
+          "energy_pj": 186112.1611646699
         },
         "conv3": {
-          "operations": 12758561.672473866,
+          "operations": 12882069.965224847,
           "kind": "AC",
           "gated_by": "layer2",
-          "firing_rate": 0.1589226133070824,
-          "energy_pj": 191378.425087108
+          "firing_rate": 0.16046105166345523,
+          "energy_pj": 193231.0494783727
         },
         "conv4": {
-          "operations": 14347484.32055749,
+          "operations": 14620643.046279537,
           "kind": "AC",
           "gated_by": "layer3",
-          "firing_rate": 0.1787144790407452,
-          "energy_pj": 215212.26480836235
+          "firing_rate": 0.1821169862867648,
+          "energy_pj": 219309.64569419305
         },
         "linear": {
-          "operations": 27402.801393728223,
+          "operations": 27877.861326189737,
           "kind": "AC",
           "gated_by": "layer4",
-          "firing_rate": 0.13653340936766692,
-          "energy_pj": 411.0420209059233
+          "firing_rate": 0.1389003773028427,
+          "energy_pj": 418.16791989284604
         }
       },
-      "total_sops": 39601648.65505226,
+      "total_sops": 39938068.28380857,
       "total_macs": 3763200,
-      "total_energy_pj": 782184.7298257839,
+      "total_energy_pj": 787231.0242571285,
       "weight_bytes": 147544.0,
       "membrane_bytes": 376320.0,
       "ac_pj": 0.015,
@@ -837,14 +837,14 @@
       "membrane_bits": null,
       "seed": 2345,
       "accuracy": 0.9825783972125436,
-      "epochs_run": null,
+      "epochs_run": 14,
       "rates": {
-        "layer1": 0.4034233018937104,
-        "layer2": 0.2743001984929425,
-        "layer3": 0.23888340914545264,
-        "layer4": 0.1817914807473512
+        "layer1": 0.40211826477731977,
+        "layer2": 0.2775176572467392,
+        "layer3": 0.24173725449872766,
+        "layer4": 0.1917010136701504
       },
-      "rate_source": "evaluated",
+      "rate_source": "final_firing_rates",
       "per_layer": {
         "conv1": {
           "operations": 3763200,
@@ -853,37 +853,37 @@
           "energy_pj": 188160.0
         },
         "conv2": {
-          "operations": 32387468.1533101,
+          "operations": 32282697.685546875,
           "kind": "AC",
           "gated_by": "layer1",
-          "firing_rate": 0.4034233018937104,
-          "energy_pj": 485812.0222996515
+          "firing_rate": 0.40211826477731977,
+          "energy_pj": 484240.4652832031
         },
         "conv3": {
-          "operations": 22021258.815331012,
+          "operations": 22279561.55201982,
           "kind": "AC",
           "gated_by": "layer2",
-          "firing_rate": 0.2743001984929425,
-          "energy_pj": 330318.8822299652
+          "firing_rate": 0.2775176572467392,
+          "energy_pj": 334193.42328029725
         },
         "conv4": {
-          "operations": 19177942.29965157,
+          "operations": 19407053.570765056,
           "kind": "AC",
           "gated_by": "layer3",
-          "firing_rate": 0.23888340914545264,
-          "energy_pj": 287669.1344947735
+          "firing_rate": 0.24173725449872766,
+          "energy_pj": 291105.8035614758
         },
         "linear": {
-          "operations": 36486.277351916375,
+          "operations": 38475.16024765387,
           "kind": "AC",
           "gated_by": "layer4",
-          "firing_rate": 0.1817914807473512,
-          "energy_pj": 547.2941602787456
+          "firing_rate": 0.1917010136701504,
+          "energy_pj": 577.127403714808
         }
       },
-      "total_sops": 73623155.5456446,
+      "total_sops": 74007787.96857941,
       "total_macs": 3763200,
-      "total_energy_pj": 1292507.333184669,
+      "total_energy_pj": 1298276.819528691,
       "weight_bytes": 147544.0,
       "membrane_bytes": 376320.0,
       "ac_pj": 0.015,
@@ -896,14 +896,14 @@
       "membrane_bits": null,
       "seed": 3456,
       "accuracy": 0.9825783972125436,
-      "epochs_run": null,
+      "epochs_run": 9,
       "rates": {
-        "layer1": 0.24330759559104567,
-        "layer2": 0.16537864764808363,
-        "layer3": 0.20655592662260897,
-        "layer4": 0.1303339909025457
+        "layer1": 0.24375051141615944,
+        "layer2": 0.16805060189671633,
+        "layer3": 0.21942288973190227,
+        "layer4": 0.1447083810895993
       },
-      "rate_source": "evaluated",
+      "rate_source": "final_firing_rates",
       "per_layer": {
         "conv1": {
           "operations": 3763200,
@@ -912,37 +912,37 @@
           "energy_pj": 188160.0
         },
         "conv2": {
-          "operations": 19533123.066202093,
+          "operations": 19568681.057307545,
           "kind": "AC",
           "gated_by": "layer1",
-          "firing_rate": 0.24330759559104567,
-          "energy_pj": 292996.8459930314
+          "firing_rate": 0.24375051141615944,
+          "energy_pj": 293530.21585961315
         },
         "conv3": {
-          "operations": 13276862.43902439,
+          "operations": 13491371.201231422,
           "kind": "AC",
           "gated_by": "layer2",
-          "firing_rate": 0.16537864764808363,
-          "energy_pj": 199152.93658536585
+          "firing_rate": 0.16805060189671633,
+          "energy_pj": 202370.56801847133
         },
         "conv4": {
-          "operations": 16582640.278745644,
+          "operations": 17615620.664300684,
           "kind": "AC",
           "gated_by": "layer3",
-          "firing_rate": 0.20655592662260897,
-          "energy_pj": 248739.60418118464
+          "firing_rate": 0.21942288973190227,
+          "energy_pj": 264234.30996451026
         },
         "linear": {
-          "operations": 26158.55331010453,
+          "operations": 29043.550918206936,
           "kind": "AC",
           "gated_by": "layer4",
-          "firing_rate": 0.1303339909025457,
-          "energy_pj": 392.37829965156794
+          "firing_rate": 0.1447083810895993,
+          "energy_pj": 435.653263773104
         }
       },
-      "total_sops": 49418784.33728223,
+      "total_sops": 50704716.473757856,
       "total_macs": 3763200,
-      "total_energy_pj": 929441.7650592334,
+      "total_energy_pj": 948730.7471063678,
       "weight_bytes": 147544.0,
       "membrane_bytes": 376320.0,
       "ac_pj": 0.015,
@@ -955,14 +955,14 @@
       "membrane_bits": 8,
       "seed": 1234,
       "accuracy": 0.98397212543554,
-      "epochs_run": null,
+      "epochs_run": 6,
       "rates": {
-        "layer1": 0.1511562505555358,
-        "layer2": 0.15445000149994664,
-        "layer3": 0.16301589832361515,
-        "layer4": 0.12433831519323758
+        "layer1": 0.1531331190612258,
+        "layer2": 0.1573014837731883,
+        "layer3": 0.17062674326763752,
+        "layer4": 0.13036891733935485
       },
-      "rate_source": "evaluated",
+      "rate_source": "final_firing_rates",
       "per_layer": {
         "conv1": {
           "operations": 3763200,
@@ -971,37 +971,37 @@
           "energy_pj": 752640.0
         },
         "conv2": {
-          "operations": 12135065.644599304,
+          "operations": 12293771.811225705,
           "kind": "AC",
           "gated_by": "layer1",
-          "firing_rate": 0.1511562505555358,
-          "energy_pj": 364051.9693379791
+          "firing_rate": 0.1531331190612258,
+          "energy_pj": 368813.1543367711
         },
         "conv3": {
-          "operations": 12399493.240418116,
+          "operations": 12628414.799685596,
           "kind": "AC",
           "gated_by": "layer2",
-          "firing_rate": 0.15445000149994664,
-          "energy_pj": 371984.79721254343
+          "firing_rate": 0.1573014837731883,
+          "energy_pj": 378852.4439905679
         },
         "conv4": {
-          "operations": 13087177.142857142,
+          "operations": 13698187.952315168,
           "kind": "AC",
           "gated_by": "layer3",
-          "firing_rate": 0.16301589832361515,
-          "energy_pj": 392615.31428571424
+          "firing_rate": 0.17062674326763752,
+          "energy_pj": 410945.638569455
         },
         "linear": {
-          "operations": 24955.197212543557,
+          "operations": 26165.563185677875,
           "kind": "AC",
           "gated_by": "layer4",
-          "firing_rate": 0.12433831519323758,
-          "energy_pj": 748.6559163763067
+          "firing_rate": 0.13036891733935485,
+          "energy_pj": 784.9668955703362
         }
       },
-      "total_sops": 37646691.225087106,
+      "total_sops": 38646540.126412146,
       "total_macs": 3763200,
-      "total_energy_pj": 1882040.736752613,
+      "total_energy_pj": 1912036.2037923643,
       "weight_bytes": 295088.0,
       "membrane_bytes": 94080.0,
       "ac_pj": 0.03,
@@ -1014,14 +1014,14 @@
       "membrane_bits": 8,
       "seed": 2345,
       "accuracy": 0.9825783972125436,
-      "epochs_run": null,
+      "epochs_run": 12,
       "rates": {
-        "layer1": 0.39031978168554005,
-        "layer2": 0.2549362342116725,
-        "layer3": 0.2126226692495378,
-        "layer4": 0.15458957292629594
+        "layer1": 0.3934290676997514,
+        "layer2": 0.2663896647687573,
+        "layer3": 0.22732096200205307,
+        "layer4": 0.16591744544406387
       },
-      "rate_source": "evaluated",
+      "rate_source": "final_firing_rates",
       "per_layer": {
         "conv1": {
           "operations": 3763200,
@@ -1030,37 +1030,37 @@
           "energy_pj": 752640.0
         },
         "conv2": {
-          "operations": 31335496.58536585,
+          "operations": 31585115.04144436,
           "kind": "AC",
           "gated_by": "layer1",
-          "firing_rate": 0.39031978168554005,
-          "energy_pj": 940064.8975609755
+          "firing_rate": 0.3934290676997514,
+          "energy_pj": 947553.4512433308
         },
         "conv3": {
-          "operations": 20466688.780487806,
+          "operations": 21386188.511099465,
           "kind": "AC",
           "gated_by": "layer2",
-          "firing_rate": 0.2549362342116725,
-          "energy_pj": 614000.6634146342
+          "firing_rate": 0.2663896647687573,
+          "energy_pj": 641585.6553329839
         },
         "conv4": {
-          "operations": 17069688.083623692,
+          "operations": 18249690.543064024,
           "kind": "AC",
           "gated_by": "layer3",
-          "firing_rate": 0.2126226692495378,
-          "energy_pj": 512090.64250871073
+          "firing_rate": 0.22732096200205307,
+          "energy_pj": 547490.7162919207
         },
         "linear": {
-          "operations": 31026.7456445993,
+          "operations": 33300.2949704054,
           "kind": "AC",
           "gated_by": "layer4",
-          "firing_rate": 0.15458957292629594,
-          "energy_pj": 930.802369337979
+          "firing_rate": 0.16591744544406387,
+          "energy_pj": 999.0088491121619
         }
       },
-      "total_sops": 68902900.19512194,
+      "total_sops": 71254294.39057826,
       "total_macs": 3763200,
-      "total_energy_pj": 2819727.0058536585,
+      "total_energy_pj": 2890268.8317173477,
       "weight_bytes": 295088.0,
       "membrane_bytes": 94080.0,
       "ac_pj": 0.03,
@@ -1073,14 +1073,14 @@
       "membrane_bits": 8,
       "seed": 3456,
       "accuracy": 0.9832752613240419,
-      "epochs_run": null,
+      "epochs_run": 6,
       "rates": {
-        "layer1": 0.24000770250391099,
-        "layer2": 0.16686340735662736,
-        "layer3": 0.2196961538589739,
-        "layer4": 0.14237654883381923
+        "layer1": 0.24000769818286033,
+        "layer2": 0.16686340329019866,
+        "layer3": 0.21969615022687547,
+        "layer4": 0.14237654616193074
       },
-      "rate_source": "evaluated",
+      "rate_source": "final_firing_rates",
       "per_layer": {
         "conv1": {
           "operations": 3763200,
@@ -1089,37 +1089,37 @@
           "energy_pj": 752640.0
         },
         "conv2": {
-          "operations": 19268202.36933798,
+          "operations": 19268202.022437118,
           "kind": "AC",
           "gated_by": "layer1",
-          "firing_rate": 0.24000770250391099,
-          "energy_pj": 578046.0710801394
+          "firing_rate": 0.24000769818286033,
+          "energy_pj": 578046.0606731136
         },
         "conv3": {
-          "operations": 13396061.324041815,
+          "operations": 13396060.997582413,
           "kind": "AC",
           "gated_by": "layer2",
-          "firing_rate": 0.16686340735662736,
-          "energy_pj": 401881.8397212544
+          "firing_rate": 0.16686340329019866,
+          "energy_pj": 401881.8299274724
         },
         "conv4": {
-          "operations": 17637558.7456446,
+          "operations": 17637558.454053927,
           "kind": "AC",
           "gated_by": "layer3",
-          "firing_rate": 0.2196961538589739,
-          "energy_pj": 529126.762369338
+          "firing_rate": 0.21969615022687547,
+          "energy_pj": 529126.7536216178
         },
         "linear": {
-          "operations": 28575.542857142853,
+          "operations": 28575.542320884146,
           "kind": "AC",
           "gated_by": "layer4",
-          "firing_rate": 0.14237654883381923,
-          "energy_pj": 857.2662857142856
+          "firing_rate": 0.14237654616193074,
+          "energy_pj": 857.2662696265244
         }
       },
-      "total_sops": 50330397.98188154,
+      "total_sops": 50330397.01639434,
       "total_macs": 3763200,
-      "total_energy_pj": 2262551.939456446,
+      "total_energy_pj": 2262551.91049183,
       "weight_bytes": 295088.0,
       "membrane_bytes": 94080.0,
       "ac_pj": 0.03,
@@ -1132,14 +1132,14 @@
       "membrane_bits": null,
       "seed": 1234,
       "accuracy": 0.9818815331010453,
-      "epochs_run": null,
+      "epochs_run": 6,
       "rates": {
-        "layer1": 0.1502262749407799,
-        "layer2": 0.15284429123075624,
-        "layer3": 0.15810753117666926,
-        "layer4": 0.11885778783421035
+        "layer1": 0.15271888659806201,
+        "layer2": 0.15704025029616905,
+        "layer3": 0.16782834111398107,
+        "layer4": 0.1279024493507392
       },
-      "rate_source": "evaluated",
+      "rate_source": "final_firing_rates",
       "per_layer": {
         "conv1": {
           "operations": 3763200,
@@ -1148,37 +1148,37 @@
           "energy_pj": 752640.0
         },
         "conv2": {
-          "operations": 12060405.714285715,
+          "operations": 12260516.566310976,
           "kind": "AC",
           "gated_by": "layer1",
-          "firing_rate": 0.1502262749407799,
-          "energy_pj": 361812.1714285714
+          "firing_rate": 0.15271888659806201,
+          "energy_pj": 367815.49698932923
         },
         "conv3": {
-          "operations": 12270584.25087108,
+          "operations": 12607442.558176925,
           "kind": "AC",
           "gated_by": "layer2",
-          "firing_rate": 0.15284429123075624,
-          "energy_pj": 368117.5275261324
+          "firing_rate": 0.15704025029616905,
+          "energy_pj": 378223.2767453077
         },
         "conv4": {
-          "operations": 12693125.57491289,
+          "operations": 13473527.749976182,
           "kind": "AC",
           "gated_by": "layer3",
-          "firing_rate": 0.15810753117666926,
-          "energy_pj": 380793.7672473867
+          "firing_rate": 0.16782834111398107,
+          "energy_pj": 404205.83249928546
         },
         "linear": {
-          "operations": 23855.233449477353,
+          "operations": 25670.53319449076,
           "kind": "AC",
           "gated_by": "layer4",
-          "firing_rate": 0.11885778783421035,
-          "energy_pj": 715.6570034843205
+          "firing_rate": 0.1279024493507392,
+          "energy_pj": 770.1159958347228
         }
       },
-      "total_sops": 37047970.773519166,
+      "total_sops": 38367157.40765858,
       "total_macs": 3763200,
-      "total_energy_pj": 1864079.123205575,
+      "total_energy_pj": 1903654.722229757,
       "weight_bytes": 295088.0,
       "membrane_bytes": 376320.0,
       "ac_pj": 0.03,
@@ -1191,14 +1191,14 @@
       "membrane_bits": null,
       "seed": 2345,
       "accuracy": 0.9818815331010453,
-      "epochs_run": null,
+      "epochs_run": 15,
       "rates": {
-        "layer1": 0.3892449917752924,
-        "layer2": 0.25165286484258337,
-        "layer3": 0.21085266968285574,
-        "layer4": 0.15161730360698286
+        "layer1": 0.3936745627208869,
+        "layer2": 0.2691373097771967,
+        "layer3": 0.22915407638308893,
+        "layer4": 0.16635685997142194
       },
-      "rate_source": "evaluated",
+      "rate_source": "final_firing_rates",
       "per_layer": {
         "conv1": {
           "operations": 3763200,
@@ -1207,37 +1207,37 @@
           "energy_pj": 752640.0
         },
         "conv2": {
-          "operations": 31249210.731707316,
+          "operations": 31604823.774533156,
           "kind": "AC",
           "gated_by": "layer1",
-          "firing_rate": 0.3892449917752924,
-          "energy_pj": 937476.3219512195
+          "firing_rate": 0.3936745627208869,
+          "energy_pj": 948144.7132359947
         },
         "conv3": {
-          "operations": 20203094.63414634,
+          "operations": 21606773.848608993,
           "kind": "AC",
           "gated_by": "layer2",
-          "firing_rate": 0.25165286484258337,
-          "energy_pj": 606092.8390243902
+          "firing_rate": 0.2691373097771967,
+          "energy_pj": 648203.2154582698
         },
         "conv4": {
-          "operations": 16927589.68641115,
+          "operations": 18396855.898556594,
           "kind": "AC",
           "gated_by": "layer3",
-          "firing_rate": 0.21085266968285574,
-          "energy_pj": 507827.6905923345
+          "firing_rate": 0.22915407638308893,
+          "energy_pj": 551905.6769566978
         },
         "linear": {
-          "operations": 30430.199303135887,
+          "operations": 33388.487223704265,
           "kind": "AC",
           "gated_by": "layer4",
-          "firing_rate": 0.15161730360698286,
-          "energy_pj": 912.9059790940765
+          "firing_rate": 0.16635685997142194,
+          "energy_pj": 1001.6546167111279
         }
       },
-      "total_sops": 68410325.25156794,
+      "total_sops": 71641842.00892244,
       "total_macs": 3763200,
-      "total_energy_pj": 2804949.757547038,
+      "total_energy_pj": 2901895.2602676735,
       "weight_bytes": 295088.0,
       "membrane_bytes": 376320.0,
       "ac_pj": 0.03,
@@ -1250,14 +1250,14 @@
       "membrane_bits": null,
       "seed": 3456,
       "accuracy": 0.9832752613240419,
-      "epochs_run": null,
+      "epochs_run": 8,
       "rates": {
-        "layer1": 0.23695274862449334,
-        "layer2": 0.1598802042594041,
-        "layer3": 0.1957382626395506,
-        "layer4": 0.12578473598716491
+        "layer1": 0.23886429300914658,
+        "layer2": 0.16739926106111513,
+        "layer3": 0.2102416098221669,
+        "layer4": 0.1369547664755728
       },
-      "rate_source": "evaluated",
+      "rate_source": "final_firing_rates",
       "per_layer": {
         "conv1": {
           "operations": 3763200,
@@ -1266,37 +1266,37 @@
           "energy_pj": 752640.0
         },
         "conv2": {
-          "operations": 19022945.783972126,
+          "operations": 19176407.6256431,
           "kind": "AC",
           "gated_by": "layer1",
-          "firing_rate": 0.23695274862449334,
-          "energy_pj": 570688.3735191637
+          "firing_rate": 0.23886429300914658,
+          "energy_pj": 575292.2287692929
         },
         "conv3": {
-          "operations": 12835438.606271777,
+          "operations": 13439080.51680402,
           "kind": "AC",
           "gated_by": "layer2",
-          "firing_rate": 0.1598802042594041,
-          "energy_pj": 385063.1581881533
+          "firing_rate": 0.16739926106111513,
+          "energy_pj": 403172.41550412064
         },
         "conv4": {
-          "operations": 15714180.905923346,
+          "operations": 16878532.823099274,
           "kind": "AC",
           "gated_by": "layer3",
-          "firing_rate": 0.1957382626395506,
-          "energy_pj": 471425.4271777004
+          "firing_rate": 0.2102416098221669,
+          "energy_pj": 506355.9846929782
         },
         "linear": {
-          "operations": 25245.49965156795,
+          "operations": 27487.369450713366,
           "kind": "AC",
           "gated_by": "layer4",
-          "firing_rate": 0.12578473598716491,
-          "energy_pj": 757.3649895470385
+          "firing_rate": 0.1369547664755728,
+          "energy_pj": 824.6210835214009
         }
       },
-      "total_sops": 47597810.79581881,
+      "total_sops": 49521508.33499711,
       "total_macs": 3763200,
-      "total_energy_pj": 2180574.3238745644,
+      "total_energy_pj": 2238285.2500499133,
       "weight_bytes": 295088.0,
       "membrane_bytes": 376320.0,
       "ac_pj": 0.03,
@@ -1309,14 +1309,14 @@
       "membrane_bits": 2,
       "seed": 1234,
       "accuracy": 0.9825783972125436,
-      "epochs_run": null,
+      "epochs_run": 20,
       "rates": {
-        "layer1": 0.16391138210919168,
-        "layer2": 0.18105879152074592,
-        "layer3": 0.19670202003928747,
-        "layer4": 0.14396411738693735
+        "layer1": 0.16504753888276397,
+        "layer2": 0.1867875753067927,
+        "layer3": 0.20350239900969463,
+        "layer4": 0.15130536754060706
       },
-      "rate_source": "evaluated",
+      "rate_source": "final_firing_rates",
       "per_layer": {
         "conv1": {
           "operations": 3763200,
@@ -1325,37 +1325,37 @@
           "energy_pj": 17310720.0
         },
         "conv2": {
-          "operations": 13159068.013937283,
+          "operations": 13250280.497570504,
           "kind": "AC",
           "gated_by": "layer1",
-          "firing_rate": 0.16391138210919168,
-          "energy_pj": 11843161.212543555
+          "firing_rate": 0.16504753888276397,
+          "energy_pj": 11925252.447813453
         },
         "conv3": {
-          "operations": 14535689.477351915,
+          "operations": 14995605.405749809,
           "kind": "AC",
           "gated_by": "layer2",
-          "firing_rate": 0.18105879152074592,
-          "energy_pj": 13082120.529616725
+          "firing_rate": 0.1867875753067927,
+          "energy_pj": 13496044.865174828
         },
         "conv4": {
-          "operations": 15791552.89198606,
+          "operations": 16337498.196336702,
           "kind": "AC",
           "gated_by": "layer3",
-          "firing_rate": 0.19670202003928747,
-          "energy_pj": 14212397.602787456
+          "firing_rate": 0.20350239900969463,
+          "energy_pj": 14703748.376703031
         },
         "linear": {
-          "operations": 28894.174216027874,
+          "operations": 30367.59248687,
           "kind": "AC",
           "gated_by": "layer4",
-          "firing_rate": 0.14396411738693735,
-          "energy_pj": 26004.756794425088
+          "firing_rate": 0.15130536754060706,
+          "energy_pj": 27330.833238183
         }
       },
-      "total_sops": 43515204.55749129,
+      "total_sops": 44613751.69214389,
       "total_macs": 3763200,
-      "total_energy_pj": 56474404.10174216,
+      "total_energy_pj": 57463096.5229295,
       "weight_bytes": 1180352.0,
       "membrane_bytes": 23520.0,
       "ac_pj": 0.9,
@@ -1368,14 +1368,14 @@
       "membrane_bits": 2,
       "seed": 2345,
       "accuracy": 0.9818815331010453,
-      "epochs_run": null,
+      "epochs_run": 12,
       "rates": {
-        "layer1": 0.4073419958957014,
-        "layer2": 0.28794699452352807,
-        "layer3": 0.24067867170278387,
-        "layer4": 0.16558016826068409
+        "layer1": 0.41152218031966314,
+        "layer2": 0.29836963209541,
+        "layer3": 0.24730371472519866,
+        "layer4": 0.16988180358650792
       },
-      "rate_source": "evaluated",
+      "rate_source": "final_firing_rates",
       "per_layer": {
         "conv1": {
           "operations": 3763200,
@@ -1384,37 +1384,37 @@
           "energy_pj": 17310720.0
         },
         "conv2": {
-          "operations": 32702067.177700344,
+          "operations": 33037659.07155107,
           "kind": "AC",
           "gated_by": "layer1",
-          "firing_rate": 0.4073419958957014,
-          "energy_pj": 29431860.459930312
+          "firing_rate": 0.41152218031966314,
+          "energy_pj": 29733893.164395962
         },
         "conv3": {
-          "operations": 23116845.435540073,
+          "operations": 23953591.456030868,
           "kind": "AC",
           "gated_by": "layer2",
-          "firing_rate": 0.28794699452352807,
-          "energy_pj": 20805160.891986065
+          "firing_rate": 0.29836963209541,
+          "energy_pj": 21558232.31042778
         },
         "conv4": {
-          "operations": 19322068.850174215,
+          "operations": 19853937.904082507,
           "kind": "AC",
           "gated_by": "layer3",
-          "firing_rate": 0.24067867170278387,
-          "energy_pj": 17389861.965156794
+          "firing_rate": 0.24730371472519866,
+          "energy_pj": 17868544.113674257
         },
         "linear": {
-          "operations": 33232.602090592336,
+          "operations": 34095.957507026484,
           "kind": "AC",
           "gated_by": "layer4",
-          "firing_rate": 0.16558016826068409,
-          "energy_pj": 29909.341881533102
+          "firing_rate": 0.16988180358650792,
+          "energy_pj": 30686.361756323837
         }
       },
-      "total_sops": 75174214.06550522,
+      "total_sops": 76879284.38917147,
       "total_macs": 3763200,
-      "total_energy_pj": 84967512.65895471,
+      "total_energy_pj": 86502075.95025432,
       "weight_bytes": 1180352.0,
       "membrane_bytes": 23520.0,
       "ac_pj": 0.9,
@@ -1427,14 +1427,14 @@
       "membrane_bits": 2,
       "seed": 3456,
       "accuracy": 0.9825783972125436,
-      "epochs_run": null,
+      "epochs_run": 7,
       "rates": {
-        "layer1": 0.247006663721401,
-        "layer2": 0.18383826908376594,
-        "layer3": 0.25057602813011093,
-        "layer4": 0.14386807913496408
+        "layer1": 0.24700666012871972,
+        "layer2": 0.18383826643020848,
+        "layer3": 0.2505760230876843,
+        "layer4": 0.1438680761419107
       },
-      "rate_source": "evaluated",
+      "rate_source": "final_firing_rates",
       "per_layer": {
         "conv1": {
           "operations": 3763200,
@@ -1443,37 +1443,37 @@
           "energy_pj": 17310720.0
         },
         "conv2": {
-          "operations": 19830090.17421603,
+          "operations": 19830089.885789827,
           "kind": "AC",
           "gated_by": "layer1",
-          "firing_rate": 0.247006663721401,
-          "energy_pj": 17847081.156794425
+          "firing_rate": 0.24700666012871972,
+          "energy_pj": 17847080.897210844
         },
         "conv3": {
-          "operations": 14758830.383275263,
+          "operations": 14758830.170243425,
           "kind": "AC",
           "gated_by": "layer2",
-          "firing_rate": 0.18383826908376594,
-          "energy_pj": 13282947.344947737
+          "firing_rate": 0.18383826643020848,
+          "energy_pj": 13282947.153219083
         },
         "conv4": {
-          "operations": 20116644.459930312,
+          "operations": 20116644.055116236,
           "kind": "AC",
           "gated_by": "layer3",
-          "firing_rate": 0.25057602813011093,
-          "energy_pj": 18104980.01393728
+          "firing_rate": 0.2505760230876843,
+          "energy_pj": 18104979.649604615
         },
         "linear": {
-          "operations": 28874.89895470383,
+          "operations": 28874.898353986042,
           "kind": "AC",
           "gated_by": "layer4",
-          "firing_rate": 0.14386807913496408,
-          "energy_pj": 25987.409059233447
+          "firing_rate": 0.1438680761419107,
+          "energy_pj": 25987.40851858744
         }
       },
-      "total_sops": 54734439.91637631,
+      "total_sops": 54734439.00950348,
       "total_macs": 3763200,
-      "total_energy_pj": 66571715.924738675,
+      "total_energy_pj": 66571715.10855313,
       "weight_bytes": 1180352.0,
       "membrane_bytes": 23520.0,
       "ac_pj": 0.9,
@@ -1486,14 +1486,14 @@
       "membrane_bits": 4,
       "seed": 1234,
       "accuracy": 0.9832752613240419,
-      "epochs_run": null,
+      "epochs_run": 6,
       "rates": {
-        "layer1": 0.15156220660765396,
-        "layer2": 0.1544448454332735,
-        "layer3": 0.16306334802540356,
-        "layer4": 0.12160153750088885
+        "layer1": 0.1548655340480472,
+        "layer2": 0.1598424981539673,
+        "layer3": 0.1739799707193408,
+        "layer4": 0.1318050337377741
       },
-      "rate_source": "evaluated",
+      "rate_source": "final_firing_rates",
       "per_layer": {
         "conv1": {
           "operations": 3763200,
@@ -1502,37 +1502,37 @@
           "energy_pj": 17310720.0
         },
         "conv2": {
-          "operations": 12167656.445993032,
+          "operations": 12432852.858231707,
           "kind": "AC",
           "gated_by": "layer1",
-          "firing_rate": 0.15156220660765396,
-          "energy_pj": 10950890.801393729
+          "firing_rate": 0.1548655340480472,
+          "energy_pj": 11189567.572408536
         },
         "conv3": {
-          "operations": 12399079.30313589,
+          "operations": 12832411.499797542,
           "kind": "AC",
           "gated_by": "layer2",
-          "firing_rate": 0.1544448454332735,
-          "energy_pj": 11159171.372822301
+          "firing_rate": 0.1598424981539673,
+          "energy_pj": 11549170.349817788
         },
         "conv4": {
-          "operations": 13090986.480836239,
+          "operations": 13967390.41730183,
           "kind": "AC",
           "gated_by": "layer3",
-          "firing_rate": 0.16306334802540356,
-          "energy_pj": 11781887.832752615
+          "firing_rate": 0.1739799707193408,
+          "energy_pj": 12570651.375571648
         },
         "linear": {
-          "operations": 24405.914982578397,
+          "operations": 26453.797491306213,
           "kind": "AC",
           "gated_by": "layer4",
-          "firing_rate": 0.12160153750088885,
-          "energy_pj": 21965.323484320557
+          "firing_rate": 0.1318050337377741,
+          "energy_pj": 23808.417742175592
         }
       },
-      "total_sops": 37682128.14494774,
+      "total_sops": 39259108.572822385,
       "total_macs": 3763200,
-      "total_energy_pj": 51224635.33045296,
+      "total_energy_pj": 52643917.71554015,
       "weight_bytes": 1180352.0,
       "membrane_bytes": 47040.0,
       "ac_pj": 0.9,
@@ -1545,14 +1545,14 @@
       "membrane_bits": 4,
       "seed": 2345,
       "accuracy": 0.9825783972125436,
-      "epochs_run": null,
+      "epochs_run": 16,
       "rates": {
-        "layer1": 0.3926596394628191,
-        "layer2": 0.25524583084268115,
-        "layer3": 0.2153136777359027,
-        "layer4": 0.15634288558629025
+        "layer1": 0.39724614859042684,
+        "layer2": 0.27309494348768576,
+        "layer3": 0.2337038856350171,
+        "layer4": 0.17346238517802767
       },
-      "rate_source": "evaluated",
+      "rate_source": "final_firing_rates",
       "per_layer": {
         "conv1": {
           "operations": 3763200,
@@ -1561,37 +1561,37 @@
           "energy_pj": 17310720.0
         },
         "conv2": {
-          "operations": 31523344.11149826,
+          "operations": 31891556.402677212,
           "kind": "AC",
           "gated_by": "layer1",
-          "firing_rate": 0.3926596394628191,
-          "energy_pj": 28371009.700348433
+          "firing_rate": 0.39724614859042684,
+          "energy_pj": 28702400.76240949
         },
         "conv3": {
-          "operations": 20491543.69337979,
+          "operations": 21924499.015100993,
           "kind": "AC",
           "gated_by": "layer2",
-          "firing_rate": 0.25524583084268115,
-          "energy_pj": 18442389.32404181
+          "firing_rate": 0.27309494348768576,
+          "energy_pj": 19732049.113590896
         },
         "conv4": {
-          "operations": 17285726.550522648,
+          "operations": 18762121.864996187,
           "kind": "AC",
           "gated_by": "layer3",
-          "firing_rate": 0.2153136777359027,
-          "energy_pj": 15557153.895470383
+          "firing_rate": 0.2337038856350171,
+          "energy_pj": 16885909.67849657
         },
         "linear": {
-          "operations": 31378.6425087108,
+          "operations": 34814.59455477087,
           "kind": "AC",
           "gated_by": "layer4",
-          "firing_rate": 0.15634288558629025,
-          "energy_pj": 28240.77825783972
+          "firing_rate": 0.17346238517802767,
+          "energy_pj": 31333.135099293784
         }
       },
-      "total_sops": 69331992.99790941,
+      "total_sops": 72612991.87732917,
       "total_macs": 3763200,
-      "total_energy_pj": 79709513.69811846,
+      "total_energy_pj": 82662412.68959625,
       "weight_bytes": 1180352.0,
       "membrane_bytes": 47040.0,
       "ac_pj": 0.9,
@@ -1604,14 +1604,14 @@
       "membrane_bits": 4,
       "seed": 3456,
       "accuracy": 0.9846689895470383,
-      "epochs_run": null,
+      "epochs_run": 9,
       "rates": {
-        "layer1": 0.24166601159736545,
-        "layer2": 0.17013566253755422,
-        "layer3": 0.22122938406634432,
-        "layer4": 0.14183995680153597
+        "layer1": 0.2425875142995489,
+        "layer2": 0.17235598631644497,
+        "layer3": 0.23114565920331337,
+        "layer4": 0.14880027602773926
       },
-      "rate_source": "evaluated",
+      "rate_source": "final_firing_rates",
       "per_layer": {
         "conv1": {
           "operations": 3763200,
@@ -1620,37 +1620,37 @@
           "energy_pj": 17310720.0
         },
         "conv2": {
-          "operations": 19401334.076655053,
+          "operations": 19475313.787990663,
           "kind": "AC",
           "gated_by": "layer1",
-          "firing_rate": 0.24166601159736545,
-          "energy_pj": 17461200.668989547
+          "firing_rate": 0.2425875142995489,
+          "energy_pj": 17527782.409191597
         },
         "conv3": {
-          "operations": 13658763.205574913,
+          "operations": 13837014.351062309,
           "kind": "AC",
           "gated_by": "layer2",
-          "firing_rate": 0.17013566253755422,
-          "energy_pj": 12292886.885017421
+          "firing_rate": 0.17235598631644497,
+          "energy_pj": 12453312.915956078
         },
         "conv4": {
-          "operations": 17760648.919860628,
+          "operations": 18556743.353896722,
           "kind": "AC",
           "gated_by": "layer3",
-          "firing_rate": 0.22122938406634432,
-          "energy_pj": 15984584.027874565
+          "firing_rate": 0.23114565920331337,
+          "energy_pj": 16701069.01850705
         },
         "linear": {
-          "operations": 28467.846689895476,
+          "operations": 29864.81059987138,
           "kind": "AC",
           "gated_by": "layer4",
-          "firing_rate": 0.14183995680153597,
-          "energy_pj": 25621.062020905927
+          "firing_rate": 0.14880027602773926,
+          "energy_pj": 26878.329539884242
         }
       },
-      "total_sops": 50849214.048780486,
+      "total_sops": 51898936.303549565,
       "total_macs": 3763200,
-      "total_energy_pj": 63075012.643902436,
+      "total_energy_pj": 64019762.67319461,
       "weight_bytes": 1180352.0,
       "membrane_bytes": 47040.0,
       "ac_pj": 0.9,
@@ -1663,14 +1663,14 @@
       "membrane_bits": 8,
       "seed": 1234,
       "accuracy": 0.9832752613240419,
-      "epochs_run": null,
+      "epochs_run": 6,
       "rates": {
-        "layer1": 0.14890224042034061,
-        "layer2": 0.1510305466916732,
-        "layer3": 0.1529306666318531,
-        "layer4": 0.1150583673691602
+        "layer1": 0.15296060072212683,
+        "layer2": 0.15706635592602686,
+        "layer3": 0.16989633912408808,
+        "layer4": 0.13028376807526845
       },
-      "rate_source": "evaluated",
+      "rate_source": "final_firing_rates",
       "per_layer": {
         "conv1": {
           "operations": 3763200,
@@ -1679,37 +1679,37 @@
           "energy_pj": 17310720.0
         },
         "conv2": {
-          "operations": 11954110.104529617,
+          "operations": 12279921.762933498,
           "kind": "AC",
           "gated_by": "layer1",
-          "firing_rate": 0.14890224042034061,
-          "energy_pj": 10758699.094076656
+          "firing_rate": 0.15296060072212683,
+          "energy_pj": 11051929.58664015
         },
         "conv3": {
-          "operations": 12124973.937282233,
+          "operations": 12609538.359910918,
           "kind": "AC",
           "gated_by": "layer2",
-          "firing_rate": 0.1510305466916732,
-          "energy_pj": 10912476.54355401
+          "firing_rate": 0.15706635592602686,
+          "energy_pj": 11348584.523919826
         },
         "conv4": {
-          "operations": 12277518.606271777,
+          "operations": 13639549.939024389,
           "kind": "AC",
           "gated_by": "layer3",
-          "firing_rate": 0.1529306666318531,
-          "energy_pj": 11049766.7456446
+          "firing_rate": 0.16989633912408808,
+          "energy_pj": 12275594.94512195
         },
         "linear": {
-          "operations": 23092.67456445993,
+          "operations": 26148.47338777868,
           "kind": "AC",
           "gated_by": "layer4",
-          "firing_rate": 0.1150583673691602,
-          "energy_pj": 20783.407108013937
+          "firing_rate": 0.13028376807526845,
+          "energy_pj": 23533.62604900081
         }
       },
-      "total_sops": 36379695.322648086,
+      "total_sops": 38555158.53525659,
       "total_macs": 3763200,
-      "total_energy_pj": 50052445.79038328,
+      "total_energy_pj": 52010362.681730926,
       "weight_bytes": 1180352.0,
       "membrane_bytes": 94080.0,
       "ac_pj": 0.9,
@@ -1722,14 +1722,14 @@
       "membrane_bits": 8,
       "seed": 2345,
       "accuracy": 0.9832752613240419,
-      "epochs_run": null,
+      "epochs_run": 13,
       "rates": {
-        "layer1": 0.39052626739938134,
-        "layer2": 0.2556950023721378,
-        "layer3": 0.21448315171016138,
-        "layer4": 0.15473642881586433
+        "layer1": 0.3935140626148064,
+        "layer2": 0.267887561724161,
+        "layer3": 0.22812608651790886,
+        "layer4": 0.16380667181795897
       },
-      "rate_source": "evaluated",
+      "rate_source": "final_firing_rates",
       "per_layer": {
         "conv1": {
           "operations": 3763200,
@@ -1738,37 +1738,37 @@
           "energy_pj": 17310720.0
         },
         "conv2": {
-          "operations": 31352073.588850174,
+          "operations": 31591938.569216844,
           "kind": "AC",
           "gated_by": "layer1",
-          "firing_rate": 0.39052626739938134,
-          "energy_pj": 28216866.229965158
+          "firing_rate": 0.3935140626148064,
+          "energy_pj": 28432744.71229516
         },
         "conv3": {
-          "operations": 20527603.90243902,
+          "operations": 21506442.075314403,
           "kind": "AC",
           "gated_by": "layer2",
-          "firing_rate": 0.2556950023721378,
-          "energy_pj": 18474843.512195118
+          "firing_rate": 0.267887561724161,
+          "energy_pj": 19355797.86778296
         },
         "conv4": {
-          "operations": 17219050.592334494,
+          "operations": 18314327.227396153,
           "kind": "AC",
           "gated_by": "layer3",
-          "firing_rate": 0.21448315171016138,
-          "energy_pj": 15497145.533101045
+          "firing_rate": 0.22812608651790886,
+          "energy_pj": 16482894.504656538
         },
         "linear": {
-          "operations": 31056.220209059233,
+          "operations": 32876.65426055164,
           "kind": "AC",
           "gated_by": "layer4",
-          "firing_rate": 0.15473642881586433,
-          "energy_pj": 27950.59818815331
+          "firing_rate": 0.16380667181795897,
+          "energy_pj": 29588.988834496475
         }
       },
-      "total_sops": 69129784.30383275,
+      "total_sops": 71445584.52618796,
       "total_macs": 3763200,
-      "total_energy_pj": 79527525.87344947,
+      "total_energy_pj": 81611746.07356915,
       "weight_bytes": 1180352.0,
       "membrane_bytes": 94080.0,
       "ac_pj": 0.9,
@@ -1781,14 +1781,14 @@
       "membrane_bits": 8,
       "seed": 3456,
       "accuracy": 0.9832752613240419,
-      "epochs_run": null,
+      "epochs_run": 6,
       "rates": {
-        "layer1": 0.23812406288054205,
-        "layer2": 0.1619826190902101,
-        "layer3": 0.20376984512772878,
-        "layer4": 0.13097037105347364
+        "layer1": 0.24030795298802313,
+        "layer2": 0.167310054994834,
+        "layer3": 0.2213489729456785,
+        "layer4": 0.1442491329193946
       },
-      "rate_source": "evaluated",
+      "rate_source": "final_firing_rates",
       "per_layer": {
         "conv1": {
           "operations": 3763200,
@@ -1797,37 +1797,37 @@
           "energy_pj": 17310720.0
         },
         "conv2": {
-          "operations": 19116980.766550526,
+          "operations": 19292306.958603278,
           "kind": "AC",
           "gated_by": "layer1",
-          "firing_rate": 0.23812406288054205,
-          "energy_pj": 17205282.689895473
+          "firing_rate": 0.24030795298802313,
+          "energy_pj": 17363076.26274295
         },
         "conv3": {
-          "operations": 13004223.832752611,
+          "operations": 13431918.911073266,
           "kind": "AC",
           "gated_by": "layer2",
-          "firing_rate": 0.1619826190902101,
-          "energy_pj": 11703801.44947735
+          "firing_rate": 0.167310054994834,
+          "energy_pj": 12088727.01996594
         },
         "conv4": {
-          "operations": 16358969.198606271,
+          "operations": 17770249.706435785,
           "kind": "AC",
           "gated_by": "layer3",
-          "firing_rate": 0.20376984512772878,
-          "energy_pj": 14723072.278745644
+          "firing_rate": 0.2213489729456785,
+          "energy_pj": 15993224.735792207
         },
         "linear": {
-          "operations": 26286.277351916375,
+          "operations": 28951.37797345417,
           "kind": "AC",
           "gated_by": "layer4",
-          "firing_rate": 0.13097037105347364,
-          "energy_pj": 23657.64961672474
+          "firing_rate": 0.1442491329193946,
+          "energy_pj": 26056.240176108753
         }
       },
-      "total_sops": 48506460.075261325,
+      "total_sops": 50523426.95408578,
       "total_macs": 3763200,
-      "total_energy_pj": 60966534.067735195,
+      "total_energy_pj": 62781804.25867721,
       "weight_bytes": 1180352.0,
       "membrane_bytes": 94080.0,
       "ac_pj": 0.9,
@@ -1840,14 +1840,14 @@
       "membrane_bits": null,
       "seed": 1234,
       "accuracy": 0.9832752613240419,
-      "epochs_run": null,
+      "epochs_run": 6,
       "rates": {
-        "layer1": 0.14887731075117328,
-        "layer2": 0.15092224498684492,
-        "layer3": 0.15267158556584653,
-        "layer4": 0.11483981958419255
+        "layer1": 0.15276926066921148,
+        "layer2": 0.15719913314340006,
+        "layer3": 0.16663179542440987,
+        "layer4": 0.12671375616813785
       },
-      "rate_source": "evaluated",
+      "rate_source": "final_firing_rates",
       "per_layer": {
         "conv1": {
           "operations": 3763200,
@@ -1856,37 +1856,37 @@
           "energy_pj": 17310720.0
         },
         "conv2": {
-          "operations": 11952108.710801393,
+          "operations": 12264560.677341368,
           "kind": "AC",
           "gated_by": "layer1",
-          "firing_rate": 0.14887731075117328,
-          "energy_pj": 10756897.839721253
+          "firing_rate": 0.15276926066921148,
+          "energy_pj": 11038104.60960723
         },
         "conv3": {
-          "operations": 12116279.303135889,
+          "operations": 12620197.927365186,
           "kind": "AC",
           "gated_by": "layer2",
-          "firing_rate": 0.15092224498684492,
-          "energy_pj": 10904651.3728223
+          "firing_rate": 0.15719913314340006,
+          "energy_pj": 11358178.134628667
         },
         "conv4": {
-          "operations": 12256719.163763065,
+          "operations": 13377467.147544304,
           "kind": "AC",
           "gated_by": "layer3",
-          "firing_rate": 0.15267158556584653,
-          "energy_pj": 11031047.24738676
+          "firing_rate": 0.16663179542440987,
+          "energy_pj": 12039720.432789873
         },
         "linear": {
-          "operations": 23048.811149825782,
+          "operations": 25431.957717969937,
           "kind": "AC",
           "gated_by": "layer4",
-          "firing_rate": 0.11483981958419255,
-          "energy_pj": 20743.930034843204
+          "firing_rate": 0.12671375616813785,
+          "energy_pj": 22888.761946172945
         }
       },
-      "total_sops": 36348155.98885017,
+      "total_sops": 38287657.70996883,
       "total_macs": 3763200,
-      "total_energy_pj": 50024060.389965154,
+      "total_energy_pj": 51769611.938971944,
       "weight_bytes": 1180352.0,
       "membrane_bytes": 376320.0,
       "ac_pj": 0.9,
@@ -1899,14 +1899,14 @@
       "membrane_bits": null,
       "seed": 2345,
       "accuracy": 0.9818815331010453,
-      "epochs_run": null,
+      "epochs_run": 14,
       "rates": {
-        "layer1": 0.38839967981693985,
-        "layer2": 0.24709778374546684,
-        "layer3": 0.20597716247866743,
-        "layer4": 0.1387432752391026
+        "layer1": 0.3939994468921568,
+        "layer2": 0.26845731365556086,
+        "layer3": 0.23096950412419615,
+        "layer4": 0.1691031921096795
       },
-      "rate_source": "evaluated",
+      "rate_source": "final_firing_rates",
       "per_layer": {
         "conv1": {
           "operations": 3763200,
@@ -1915,37 +1915,37 @@
           "energy_pj": 17310720.0
         },
         "conv2": {
-          "operations": 31181347.73519164,
+          "operations": 31630905.99561738,
           "kind": "AC",
           "gated_by": "layer1",
-          "firing_rate": 0.38839967981693985,
-          "energy_pj": 28063212.961672477
+          "firing_rate": 0.3939994468921568,
+          "energy_pj": 28467815.396055643
         },
         "conv3": {
-          "operations": 19837405.435540073,
+          "operations": 21552182.671970274,
           "kind": "AC",
           "gated_by": "layer2",
-          "firing_rate": 0.24709778374546684,
-          "energy_pj": 17853664.891986065
+          "firing_rate": 0.26845731365556086,
+          "energy_pj": 19396964.404773246
         },
         "conv4": {
-          "operations": 16536176.167247387,
+          "operations": 18542601.342297066,
           "kind": "AC",
           "gated_by": "layer3",
-          "firing_rate": 0.20597716247866743,
-          "energy_pj": 14882558.550522648
+          "firing_rate": 0.23096950412419615,
+          "energy_pj": 16688341.20806736
         },
         "linear": {
-          "operations": 27846.33031358885,
+          "operations": 33939.68706918111,
           "kind": "AC",
           "gated_by": "layer4",
-          "firing_rate": 0.1387432752391026,
-          "energy_pj": 25061.697282229965
+          "firing_rate": 0.1691031921096795,
+          "energy_pj": 30545.718362263004
         }
       },
-      "total_sops": 67582775.66829269,
+      "total_sops": 71759629.6969539,
       "total_macs": 3763200,
-      "total_energy_pj": 78135218.10146342,
+      "total_energy_pj": 81894386.72725852,
       "weight_bytes": 1180352.0,
       "membrane_bytes": 376320.0,
       "ac_pj": 0.9,
@@ -1958,14 +1958,14 @@
       "membrane_bits": null,
       "seed": 3456,
       "accuracy": 0.9846689895470383,
-      "epochs_run": null,
+      "epochs_run": 6,
       "rates": {
-        "layer1": 0.23691946161358704,
-        "layer2": 0.15989192259275223,
-        "layer3": 0.19534343640003912,
-        "layer4": 0.1254507617506933
+        "layer1": 0.23923944533909655,
+        "layer2": 0.1663652508152902,
+        "layer3": 0.21630199985637066,
+        "layer4": 0.14194758872433408
       },
-      "rate_source": "evaluated",
+      "rate_source": "final_firing_rates",
       "per_layer": {
         "conv1": {
           "operations": 3763200,
@@ -1974,37 +1974,37 @@
           "energy_pj": 17310720.0
         },
         "conv2": {
-          "operations": 19020273.44947735,
+          "operations": 19206525.454935215,
           "kind": "AC",
           "gated_by": "layer1",
-          "firing_rate": 0.23691946161358704,
-          "energy_pj": 17118246.104529615
+          "firing_rate": 0.23923944533909655,
+          "energy_pj": 17285872.909441695
         },
         "conv3": {
-          "operations": 12836379.372822298,
+          "operations": 13356068.5198528,
           "kind": "AC",
           "gated_by": "layer2",
-          "firing_rate": 0.15989192259275223,
-          "energy_pj": 11552741.435540069
+          "firing_rate": 0.1663652508152902,
+          "energy_pj": 12020461.66786752
         },
         "conv4": {
-          "operations": 15682483.62369338,
+          "operations": 17365070.63166921,
           "kind": "AC",
           "gated_by": "layer3",
-          "firing_rate": 0.19534343640003912,
-          "energy_pj": 14114235.261324042
+          "firing_rate": 0.21630199985637066,
+          "energy_pj": 15628563.568502288
         },
         "linear": {
-          "operations": 25178.46968641115,
+          "operations": 28489.448847328746,
           "kind": "AC",
           "gated_by": "layer4",
-          "firing_rate": 0.1254507617506933,
-          "energy_pj": 22660.622717770035
+          "firing_rate": 0.14194758872433408,
+          "energy_pj": 25640.50396259587
         }
       },
-      "total_sops": 47564314.91567944,
+      "total_sops": 49956154.05530455,
       "total_macs": 3763200,
-      "total_energy_pj": 60118603.4241115,
+      "total_energy_pj": 62271258.6497741,
       "weight_bytes": 1180352.0,
       "membrane_bytes": 376320.0,
       "ac_pj": 0.9,
