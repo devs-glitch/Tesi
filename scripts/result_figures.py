@@ -70,28 +70,33 @@ def write_csv(path, rows):
 
 #  layout
 
-def frame(fig, title, caption_text, legend=None, legend_cols=3, hspace=None,
-          xlabel=None):
-
+def frame(fig, title=None, legend=None, legend_cols=3, hspace=None,
+          xlabel=None, caption_text=None):
     height, width = fig.get_figheight(), fig.get_figwidth()
-    wrapped = textwrap.fill(caption_text,
-                            int(width * 72 / (CAPTION_SIZE * 0.58)))
-    lines = wrapped.count('\n') + 1
+    head = 0.30 if title else 0.14
 
-    top = 1 - (0.30 + (0.0 if legend is None else 0.26)) / height
-    bottom = (0.09 + 0.152 * lines + (0.22 if xlabel else 0.0)) / height
-    fig.suptitle(title, x=0.008, y=1 - 0.06 / height, ha='left',
-                 va='top', fontsize=11, weight='bold')
+    lines, wrapped = 0, None
+    if caption_text:
+        wrapped = textwrap.fill(caption_text,
+                                int(width * 72 / (CAPTION_SIZE * 0.58)))
+        lines = wrapped.count('\n') + 1
+
+    top = 1 - (head + (0.0 if legend is None else 0.26)) / height
+    bottom = (0.08 + 0.152 * lines + (0.22 if xlabel else 0.0)) / height
+    if title:
+        fig.suptitle(title, x=0.008, y=1 - 0.06 / height, ha='left',
+                     va='top', fontsize=11, weight='bold')
     if legend is not None:
         handles, labels = legend
         fig.legend(handles, labels, loc='upper left',
-                   bbox_to_anchor=(0.006, 1 - 0.30 / height),
+                   bbox_to_anchor=(0.006, 1 - head / height),
                    ncol=legend_cols, fontsize=8)
     fig.tight_layout(rect=[0, bottom, 1, top])
     if hspace is not None:
         fig.subplots_adjust(hspace=hspace)
-    fig.text(0.008, 0.055 / height, wrapped, va='bottom',
-             fontsize=CAPTION_SIZE, color=MUTED, linespacing=1.45)
+    if wrapped:
+        fig.text(0.008, 0.055 / height, wrapped, va='bottom',
+                 fontsize=CAPTION_SIZE, color=MUTED, linespacing=1.45)
     if xlabel:
         # One label for the whole row drawn after the layout so it lands between the tick labels
         fig.text(0.5, bottom + 0.02 / height, xlabel, ha='center', va='bottom',
@@ -131,8 +136,7 @@ def divergence_figure(div, classes):
                          'seed': r['seed'], 'class': cls,
                          'n_images': m['n'], 'pcc': m['pcc'],
                          'pcc_std': m['pcc_std'], 'iou': m['iou'],
-                         # ssim is omitted: it is NaN in every record, because
-                         # scikit-image was absent when divergence.py ran.
+                         # ssim is omitted: it is NaN in every record, because scikit-image was absent when divergence.py ran
                          'com_shift': m['com_shift'],
                          'com_shift_abs': m['com_shift_abs'],
                          'qat_accuracy': r['qat_accuracy']})
@@ -176,7 +180,8 @@ def divergence_figure(div, classes):
     axes[0, 0].set_ylim(0, 0.98)
     axes[1, 0].set_ylim(0.70, 1.012)
 
-    frame(fig, legend=axes[0, 0].get_legend_handles_labels())
+    frame(fig, 'Explanation divergence from the full-precision model',
+          legend=axes[0, 0].get_legend_handles_labels())
 
     fig.savefig(FIGURES / 'divergence_per_class.png')
     plt.close(fig)
@@ -235,7 +240,8 @@ def faithfulness_figure(cf, classes):
     axes[0].invert_yaxis()
     axes[0].set_ylabel('deletion Δ')
 
-    frame(fig, legend=axes[0].get_legend_handles_labels())
+    frame(fig, 'Deletion-metric faithfulness, 2-bit membrane',
+          legend=axes[0].get_legend_handles_labels())
 
     fig.savefig(FIGURES / 'faithfulness_per_class.png')
     plt.close(fig)
@@ -259,6 +265,7 @@ def stratification_figure(strat, classes):
 
     seeds = sorted({r['seed'] for r in rows})
     # Colour encodes the bit width, as it encodes the arm in the other figures
+    
     # the seed is a replicate and gets a thin line of the same colour
     depth = {2: ('#2a78d6', 'o', '-', '2-bit membrane'),
              4: (MUTED, 's', '--', '4-bit membrane')}
@@ -284,6 +291,10 @@ def stratification_figure(strat, classes):
         ax.set_title(cls.replace('_', ' '))
     axes[0].set_ylim(0, 1)
     axes[0].set_ylabel('top-20 % overlap')
+
+    frame(fig, 'Explanation overlap by event strength',
+          legend=axes[0].get_legend_handles_labels(), legend_cols=2,
+          xlabel='SNR tercile within the class')
     fig.savefig(FIGURES / 'stratification_per_class.png')
     plt.close(fig)
     print(f'  {FIGURES / "stratification_per_class.png"}')
@@ -368,7 +379,8 @@ def behaviour_figure(grid_analysis, div, classes):
 
     handles = arm_handles + axes[1].get_legend_handles_labels()[0]
     labels = arm_labels + axes[1].get_legend_handles_labels()[1]
-    frame(fig, legend=(handles, labels), legend_cols=4)
+    frame(fig, 'What moved: the decision or the explanation',
+          legend=(handles, labels), legend_cols=4)
     fig.savefig(FIGURES / 'behaviour_vs_explanation.png')
     plt.close(fig)
     print(f'  {FIGURES / "behaviour_vs_explanation.png"}')
@@ -423,7 +435,8 @@ def spike_figure():
         ax.set_xlim(-0.35, len(LAYERS) - 0.65)
     axes[1, 1].set_ylim(0.5, 1.03)
 
-    frame(fig, legend=axes[0, 0].get_legend_handles_labels(), legend_cols=4,
+    frame(fig, 'Spike statistics per layer, at 2 bit',
+          legend=axes[0, 0].get_legend_handles_labels(), legend_cols=4,
           hspace=0.22)
     fig.savefig(FIGURES / 'spike_statistics.png')
     plt.close(fig)
@@ -504,7 +517,8 @@ def summary_figure(div, energy, test, grid, classes):
     for ax in axes:
         ax.set_xlim(-0.60, len(BITS) - 0.70)
 
-    frame(fig, legend=axes[0].get_legend_handles_labels(), hspace=0.14)
+    frame(fig, 'Accuracy, explanation and energy against bit width',
+          legend=axes[0].get_legend_handles_labels(), hspace=0.14)
     fig.savefig(FIGURES / 'summary_bits.png')
     plt.close(fig)
     print(f'  {FIGURES / "summary_bits.png"}')
