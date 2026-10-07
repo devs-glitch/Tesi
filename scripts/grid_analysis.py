@@ -12,6 +12,8 @@ from pathlib import Path
 
 import numpy as np
 
+from xai.sam import MANIFEST
+
 GRID_DIR = Path('results/grid')
 OUT_JSON = Path('results/grid_analysis.json')
 
@@ -98,7 +100,7 @@ def compare_rates(reference, candidate):
 def main():
     parser = argparse.ArgumentParser(
         description='Disagreement subset and firing-rate EMD, from the grid files')
-    parser.add_argument('--manifest', type=str, default='baseline_manifest.json')
+    parser.add_argument('--manifest', type=str, default=MANIFEST)
     parser.add_argument('--input-size', type=int, default=None,
                         help='default: the manifest resolution')
     args = parser.parse_args()
