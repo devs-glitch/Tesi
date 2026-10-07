@@ -25,15 +25,13 @@ from xai.sam_metrics import samples_per_class
 OUT_JSON = Path('results/cross_faithfulness.json')
 RUNS_DIR = Path('runs')
 
-N_PER_CLASS = 10
-FRACTIONS = np.round(np.arange(0.0, 1.01, 0.1), 2)
+N_PER_CLASS = 15
+FRACTIONS = np.round(np.arange(0.0, 1.01, 0.05), 2)
 
-# A class is interpretable when the FP32 baseline beats random deletion by at
-# least this much in area under the curve
-MIN_BASELINE_GAP = 0.05
+# Sign convention: delta = AUC_SAM - AUC_random, so a faithful map gives a negative delta
+MAX_BASELINE_DELTA = -0.05
 
 
-# --------------------------------------------------------------------------- #
 def upsampled_sam_map(net, image, time_steps, device, layer_index, gamma, size):
     # SAM aggregated over time and resized to the input resolution
 
@@ -103,7 +101,7 @@ def evaluate_model(net, samples, maps, time_steps, device, targets, seed=0):
         per_class[label] = {
             'auc_sam': float(np.mean(sam_aucs)),
             'auc_random': float(np.mean(random_aucs)),
-            'gap': float(np.mean(random_aucs) - np.mean(sam_aucs)),
+            'delta': float(np.mean(sam_aucs) - np.mean(random_aucs)),
             'n': len(images),
         }
     return per_class
@@ -148,17 +146,17 @@ def main():
                               device, targets)
 
     interpretable = {}
-    print(f'{"class":<18}{"AUC-SAM":>10}{"AUC-random":>12}{"gap":>9}{"":>4}')
+    print(f'{"class":<18}{"AUC-SAM":>10}{"AUC-random":>12}{"delta":>9}{"":>4}')
     for label, r in baseline.items():
-        ok = r['gap'] >= MIN_BASELINE_GAP
+        ok = r['delta'] <= MAX_BASELINE_DELTA
         interpretable[label] = ok
         print(f'{class_names[label]:<18}{r["auc_sam"]:>10.4f}{r["auc_random"]:>12.4f}'
-              f'{r["gap"]:>9.4f}{"" if ok else "   no signal":>4}')
+              f'{r["delta"]:>9.4f}{"" if ok else "   no signal":>4}')
 
     usable = [class_names[l] for l, ok in interpretable.items() if ok]
     if not usable:
         raise SystemExit(
-            'No class has a baseline gap above the threshold')
+            'No class has a baseline delta below the threshold')
     print(f'\ninterpretable: {", ".join(usable)}')
 
     #  runs
@@ -167,7 +165,7 @@ def main():
 
     output = {'layer': layer_index, 'gamma': gamma, 'n_per_class': args.n_per_class,
               'fractions': FRACTIONS.tolist(),
-              'min_baseline_gap': MIN_BASELINE_GAP,
+              'max_baseline_delta': MAX_BASELINE_DELTA,
               'interpretable': {class_names[l]: ok for l, ok in interpretable.items()},
               'baseline': {class_names[l]: r for l, r in baseline.items()},
               'runs': {}}
@@ -204,11 +202,11 @@ def main():
         }
 
         print(f'\n{run_dir.name}  ({summary["arm"]})')
-        print(f'{"class":<18}{"baseline gap":>14}{"own map":>12}{"FP32 map":>12}')
+        print(f'{"class":<18}{"baseline delta":>16}{"own map":>12}{"FP32 map":>12}')
         for label in sorted(baseline):
             mark = '' if interpretable[label] else '  (no signal)'
-            print(f'{class_names[label]:<18}{seed_baseline[label]["gap"]:>14.4f}'
-                  f'{own[label]["gap"]:>12.4f}{borrowed[label]["gap"]:>12.4f}{mark}')
+            print(f'{class_names[label]:<18}{seed_baseline[label]["delta"]:>16.4f}'
+                  f'{own[label]["delta"]:>12.4f}{borrowed[label]["delta"]:>12.4f}{mark}')
 
     OUT_JSON.parent.mkdir(parents=True, exist_ok=True)
     with open(OUT_JSON, 'w', encoding='utf-8') as f:

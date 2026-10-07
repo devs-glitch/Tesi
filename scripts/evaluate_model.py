@@ -5,6 +5,7 @@ One validation pass per model collecting everything that pass can give
 import argparse
 import csv
 import json
+import random
 import re
 from pathlib import Path
 
@@ -20,26 +21,28 @@ from xai.sam import MANIFEST, load_reference_model
 OUT_DIR = Path('results/grid')
 RUNS_DIR = Path('runs')
 
-DEAD_THRESHOLD = 0.01       
-SATURATED_THRESHOLD = 0.90  
+DEAD_THRESHOLD = 0.01
+SATURATED_THRESHOLD = 0.80
+
+N_NEURONS_SAMPLE = 200   # positions per layer fixed once on the first batch
+MIN_INTERVALS = 5        
+CV_SEED = 42
 
 
-def cv_isi_from_train(spike_train):
-    # CV of inter-spike intervals for one neuron over one sample. spike_train: 1-D binary tensor of length T
-
-    times = np.flatnonzero(spike_train)
-    if times.size < 3:
+def cv_from_pool(intervals):
+    # CV of the inter-spike intervals one neuron position produced over the whole partition
+    if len(intervals) < MIN_INTERVALS:
         return float('nan')
-    intervals = np.diff(times)
-    mean = intervals.mean()
-    if mean == 0:
+    arr = np.asarray(intervals, dtype=float)
+    if arr.mean() == 0:
         return float('nan')
-    return float(intervals.std() / mean)
+    return float(arr.std() / arr.mean())
 
 
-def evaluate(net, dataloader, time_steps, device, cv_sample_cap=4096):
+def evaluate(net, dataloader, time_steps, device):
     # returns aggregates, per-neuron rate vectors, per-sample rows
 
+    random.seed(CV_SEED)
     net.eval()
     correct = total = 0
     row_index = 0
@@ -47,8 +50,8 @@ def evaluate(net, dataloader, time_steps, device, cv_sample_cap=4096):
     rate_sums = {}          # per-neuron spike-rate accumulator, per layer
     weighted_time = {}
     spike_total = {}
-    cv_values = {}
-    cv_attempted = {}
+    sampled_positions = {}
+    isi_pools = {}
     rows = []
 
     with torch.no_grad():
@@ -71,8 +74,10 @@ def evaluate(net, dataloader, time_steps, device, cv_sample_cap=4096):
                         spikes.shape[2:].numel(), dtype=torch.float64)
                     weighted_time[index] = 0.0
                     spike_total[index] = 0.0
-                    cv_values[index] = []
-                    cv_attempted[index] = 0
+                    n_positions = spikes.shape[2:].numel()
+                    sampled_positions[index] = random.sample(
+                        range(n_positions), min(N_NEURONS_SAMPLE, n_positions))
+                    isi_pools[index] = [[] for _ in sampled_positions[index]]
 
                 # per neuron, averaged over time, summed over the batch
                 rate_sums[index] += (spikes.mean(dim=0)
@@ -95,13 +100,13 @@ def evaluate(net, dataloader, time_steps, device, cv_sample_cap=4096):
                                   torch.full_like(totals, float('nan')))
                 per_sample_com[index] = com.cpu().numpy()
 
-                # CV-ISI on a fixed subset of neurons, first sample of the batch
-                subset = flat[:, 0, :cv_sample_cap].cpu().numpy()
-                for neuron in range(subset.shape[1]):
-                    cv_attempted[index] += 1
-                    value = cv_isi_from_train(subset[:, neuron])
-                    if not np.isnan(value):
-                        cv_values[index].append(value)
+                # CV-ISI: positions fixed once, intervals pooled over every image of the partition
+                trains = flat[:, :, sampled_positions[index]].cpu().numpy()
+                for b in range(batch):
+                    for n in range(trains.shape[2]):
+                        times = np.flatnonzero(trains[:, b, n])
+                        if times.size >= 2:
+                            isi_pools[index][n].extend(np.diff(times).tolist())
 
             for b in range(batch):
                 row = {
@@ -118,6 +123,9 @@ def evaluate(net, dataloader, time_steps, device, cv_sample_cap=4096):
 
     n_seen = total
     rates = {i: (v / n_seen).numpy() for i, v in rate_sums.items()}
+    cv_per_layer = {i: [c for c in (cv_from_pool(pool) for pool in pools)
+                        if not np.isnan(c)]
+                    for i, pools in isi_pools.items()}
 
     aggregates = {
         'accuracy': correct / total,
@@ -132,10 +140,10 @@ def evaluate(net, dataloader, time_steps, device, cv_sample_cap=4096):
                           if spike_total[i] > 0 else float('nan'))
                       for i in weighted_time},
         'cv_isi': {i: (float(np.mean(v)) if v else float('nan'))
-                   for i, v in cv_values.items()},
-        'cv_isi_defined_fraction': {i: (len(cv_values[i]) / cv_attempted[i]
-                                        if cv_attempted[i] else 0.0)
-                                    for i in cv_values},
+                   for i, v in cv_per_layer.items()},
+        'cv_isi_defined_fraction': {i: len(cv_per_layer[i]) / len(isi_pools[i])
+                                    for i in cv_per_layer},
+        'cv_isi_n_positions': {i: len(isi_pools[i]) for i in isi_pools},
     }
     return aggregates, rates, rows
 
@@ -155,8 +163,7 @@ def load_model(name, device):
     if not summary.get('quantisation'):
         with open(MANIFEST, encoding='utf-8') as f:
             manifest = json.load(f)
-        # This directory's own checkpoint. Rebuilding the path from the seed
-        # collapses every fp32_*_seed<N> directory onto one model, silently.
+        # directory's own checkpoint
         input_size = summary.get('input_size', manifest['input_size'])
         time_steps = manifest['hyperparameters']['time_steps']
         net = GWGlitchSNN(beta=manifest['hyperparameters']['beta'],
@@ -176,11 +183,6 @@ def load_model(name, device):
 
 
 def default_models(input_size):
-    # the runs this analysis is about: the manifest resolution only.
-    # energy.py computes the MAC counts once at that resolution, so a 64 px
-    # model scored with 112 px MAC counts would be wrong without ever failing.
-    # The hyperparameter variants are excluded for the same reason the grid
-    # was not run from them.
     fp32_pattern = re.compile(rf'^fp32_{input_size}px_seed\d+$')
     qat_pattern = re.compile(rf'^qat_\w+_{input_size}px_seed\d+$')
     names = [d.name for d in RUNS_DIR.iterdir()

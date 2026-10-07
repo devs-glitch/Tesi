@@ -2,14 +2,8 @@
 Gamma sensitivity of SAM
 We compute:
 - The spatial PCC between time-aggregated maps
-- temporal center of mass of the SAM energy, which is the axis gamma acts on
+- temporal center of mass of the SAM energy: the axis gamma acts on
 - Per-timestep PCC against a reference gamma
-
-If the centre of mass shifts appreciably with gamma
-while the spatial correlation stays high, gamma governs WHEN the
-explanation concentrates and not WHERE, and the choice of gamma must be taken
-considering the temporal axis, which is the axis on which quantization
-divergence is measured
 '''
 
 import json
@@ -31,8 +25,8 @@ N_PER_CLASS = 15
 OUT_JSON = 'gamma_sensitivity.json'
 
 
-def analyse_class(net, image_list, time_steps, device, layer_index, gammas):
-    # Run the three measurements for one class.
+def analyse_class(net, image_list, time_steps, device, layer_index, gammas, reference_gamma):
+    # Run the three measurements for one class
 
     stacks = {g: sam_stacks(net, image_list, time_steps, device, layer_index, g) for g in gammas}
     n= len(gammas)
@@ -46,7 +40,9 @@ def analyse_class(net, image_list, time_steps, device, layer_index, gammas):
 
     com = {g: nanmean_or_nan([temporal_centre_of_mass(s) for s in stacks[g]]) for g in gammas}
 
-    reference_gamma = gammas[len(gammas) // 2]
+    # The reference is the operating point recorded in the manifest
+    if reference_gamma not in stacks:
+        raise ValueError(f'reference gamma {reference_gamma} is not among {gammas}')
     n_steps = stacks[reference_gamma][0].shape[0]
     per_step = {}
     for g in gammas:
@@ -58,7 +54,7 @@ def analyse_class(net, image_list, time_steps, device, layer_index, gammas):
             curve.append(nanmean_or_nan(per_image))
         per_step[g] = curve
 
-    return spatial, com, per_step, reference_gamma, _
+    return spatial, com, per_step
 
 def plot_class(spatial, com, per_step, gammas, reference_gamma,
                class_name, layer_index):
@@ -88,14 +84,16 @@ def plot_class(spatial, com, per_step, gammas, reference_gamma,
     ax2.set_title('when the explanation concentrates')
     ax2.grid(alpha=0.3)
  
-    # Panel 3 - a flat, high curve means the temporal structure survives
-    # a curve decaying with t means late-stage reasoning diverges while early
-    # processing is preserved
+    '''
+    Panel 3 - a flat, high curve means the temporal structure survives
+    a curve decaying with t means late-stage reasoning diverges while early
+    processing is preserved
+    '''
     for g in gammas:
         ax3.plot(range(len(per_step[g])), per_step[g], 'o-',
                  label=f'gamma={g}', alpha=0.8)
     ax3.set_xlabel('time step')
-    ax3.set_ylabel(f'PCC vs gamma={reference_gamma}')
+    ax3.set_ylabel(f'PCC against the reference map (gamma = {reference_gamma})')
     ax3.set_title('per-timestep agreement')
     ax3.set_ylim(0, 1.02)
     ax3.legend(fontsize=7)
@@ -109,8 +107,10 @@ def plot_class(spatial, com, per_step, gammas, reference_gamma,
 def main():
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
-    net, time_steps, input_size, layer_index = load_reference_model(device, MANIFEST)
-    print(f"reference model: {input_size}px | T={time_steps} | SAM layer={layer_index}")
+    net, time_steps, input_size, layer_index, reference_gamma = load_reference_model(
+        device, MANIFEST)
+    print(f"reference model: {input_size}px | T={time_steps} | SAM layer={layer_index}"
+          f" | reference gamma={reference_gamma}")
 
     dataset, _, val_dataloader, _ = build_dataloaders(input_size=input_size, verbose=False)
 
@@ -121,7 +121,9 @@ def main():
     results = {}
     for class_index, class_name in enumerate(classes):
         print(f'analysing {class_name}...')
-        spatial, com, per_step, reference_gamma = analyse_class(net, samples[class_index], time_steps, device, layer_index, GAMMA_VALUES)
+        spatial, com, per_step = analyse_class(
+            net, samples[class_index], time_steps, device, layer_index,
+            GAMMA_VALUES, reference_gamma)
         plot_class(spatial, com, per_step, GAMMA_VALUES, reference_gamma, class_name, layer_index)
         results[class_name] = {
             'spatial_pcc': spatial.tolist(),
