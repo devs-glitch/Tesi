@@ -277,10 +277,14 @@ $w_{\max}$, so the step is
 \label{eq:step}
 \end{equation}
 the step the weight quantizer of Chapter~\ref{ch:quantization} computes for each
-output channel. Section~\ref{sec:perturbation} expresses a perturbation in a unit
-derived from it: the 8-bit step of a single per-tensor grid set by the largest
-weight of the whole network, computed there as $2 w_{\max}/(2^8 - 1)$, which is
-$0.4\,\%$ smaller than Equation~\ref{eq:step} at 8 bits.
+output channel. Section~\ref{sec:perturbation} expresses a perturbation in a
+different unit: the 8-bit step of a single global grid, set by the largest weight
+of the whole network and computed there as $2 w_{\max}/(2^8 - 1)$. At equal
+$w_{\max}$ the two differ by $0.4\,\%$, one unit in the denominator. The
+operative difference is the scope rather than that arithmetic, since a grid set
+by the largest weight of the network is an upper bound on the per-channel steps
+actually applied (Table~\ref{tab:weight-ranges}).
+
 Since the quantizer
 works per channel, and most channels have a smaller maximum than the network as
 a whole, that unit is coarser than the steps the quantizer actually applies, and

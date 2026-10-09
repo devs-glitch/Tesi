@@ -1,0 +1,211 @@
+{
+  "metadata": "data\\processed\\selected_dataset.csv",
+  "features": [
+    "duration",
+    "log1p(duration)",
+    "peak_frequency",
+    "snr",
+    "log1p(snr)",
+    "bandwidth"
+  ],
+  "n_train": 6695,
+  "n_val": 1435,
+  "classes": [
+    "Blip",
+    "Extremely_Loud",
+    "Scattered_Light",
+    "Violin_Mode"
+  ],
+  "seeds": [
+    1234,
+    2345,
+    3456
+  ],
+  "snn_val_accuracy": [
+    0.9832752613240419,
+    0.9818815331010453,
+    0.9846689895470383
+  ],
+  "models": {
+    "majority class": {
+      "accuracy_mean": 0.24111498257839722,
+      "accuracy_min": 0.24111498257839722,
+      "accuracy_max": 0.24111498257839722,
+      "wilson_95": [
+        0.21969284083360816,
+        0.2639194811181244
+      ],
+      "errors": 1089,
+      "best_params": {},
+      "recall": {
+        "Blip": 0.0,
+        "Extremely_Loud": 1.0,
+        "Scattered_Light": 0.0,
+        "Violin_Mode": 0.0
+      },
+      "confusion": [
+        [
+          0,
+          352,
+          0,
+          0
+        ],
+        [
+          0,
+          346,
+          0,
+          0
+        ],
+        [
+          0,
+          372,
+          0,
+          0
+        ],
+        [
+          0,
+          365,
+          0,
+          0
+        ]
+      ]
+    },
+    "logistic regression": {
+      "accuracy_mean": 0.9003484320557491,
+      "accuracy_min": 0.9003484320557491,
+      "accuracy_max": 0.9003484320557491,
+      "wilson_95": [
+        0.8837656275323063,
+        0.9147935138909227
+      ],
+      "errors": 143,
+      "best_params": {
+        "logisticregression__C": "100"
+      },
+      "recall": {
+        "Blip": 0.9460227272727272,
+        "Extremely_Loud": 0.9190751445086706,
+        "Scattered_Light": 0.956989247311828,
+        "Violin_Mode": 0.7808219178082192
+      },
+      "confusion": [
+        [
+          333,
+          0,
+          1,
+          18
+        ],
+        [
+          3,
+          318,
+          24,
+          1
+        ],
+        [
+          0,
+          15,
+          356,
+          1
+        ],
+        [
+          30,
+          5,
+          45,
+          285
+        ]
+      ]
+    },
+    "random forest": {
+      "accuracy_mean": 0.9477351916376305,
+      "accuracy_min": 0.9470383275261324,
+      "accuracy_max": 0.9484320557491289,
+      "wilson_95": [
+        0.9349780672723341,
+        0.9581015643454635
+      ],
+      "errors": 75,
+      "best_params": {
+        "max_depth": "None",
+        "min_samples_leaf": "1"
+      },
+      "recall": {
+        "Blip": 0.9668560606060606,
+        "Extremely_Loud": 0.9527938342967245,
+        "Scattered_Light": 0.9551971326164875,
+        "Violin_Mode": 0.9168949771689499
+      },
+      "confusion": [
+        [
+          340,
+          0,
+          0,
+          12
+        ],
+        [
+          0,
+          329,
+          11,
+          6
+        ],
+        [
+          0,
+          4,
+          356,
+          12
+        ],
+        [
+          11,
+          4,
+          16,
+          334
+        ]
+      ]
+    },
+    "gradient boosting": {
+      "accuracy_mean": 0.9477351916376305,
+      "accuracy_min": 0.9477351916376306,
+      "accuracy_max": 0.9477351916376306,
+      "wilson_95": [
+        0.9349780672723341,
+        0.9581015643454635
+      ],
+      "errors": 75,
+      "best_params": {
+        "learning_rate": "0.05",
+        "max_leaf_nodes": "31"
+      },
+      "recall": {
+        "Blip": 0.9602272727272728,
+        "Extremely_Loud": 0.953757225433526,
+        "Scattered_Light": 0.9650537634408604,
+        "Violin_Mode": 0.9123287671232877
+      },
+      "confusion": [
+        [
+          338,
+          1,
+          0,
+          13
+        ],
+        [
+          0,
+          330,
+          12,
+          4
+        ],
+        [
+          0,
+          5,
+          359,
+          8
+        ],
+        [
+          12,
+          6,
+          14,
+          333
+        ]
+      ]
+    }
+  }
+}

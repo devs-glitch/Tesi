@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.28 (MiKTeX 25.12) (preloaded format=pdflatex 2026.7.22)  6 OCT 2026 19:02
+This is pdfTeX, Version 3.141592653-2.6-1.40.28 (MiKTeX 25.12) (preloaded format=pdflatex 2026.7.22)  9 OCT 2026 15:48
 entering extended mode
  restricted \write18 enabled.
  file:line:error style messages enabled.
@@ -956,12 +956,12 @@ Package pdftex.def Info: figures/lif_neuron_models.png  used on input line 37.
 
  (content/methodology.tex
 Chapter 3.
-<figures/label_counts.png, id=758, 722.7pt x 433.62pt>
+<figures/label_counts.png, id=759, 722.7pt x 433.62pt>
 File: figures/label_counts.png Graphic file (type png)
 <use figures/label_counts.png>
 Package pdftex.def Info: figures/label_counts.png  used on input line 39.
 (pdftex.def)             Requested size: 298.75394pt x 179.25421pt.
-<figures/spectrogram_examples.png, id=763, 1124.40076pt x 454.69875pt>
+<figures/spectrogram_examples.png, id=764, 1124.40076pt x 454.69875pt>
 File: figures/spectrogram_examples.png Graphic file (type png)
 <use figures/spectrogram_examples.png>
 Package pdftex.def Info: figures/spectrogram_examples.png  used on input line 61.
@@ -972,17 +972,17 @@ Package pdftex.def Info: figures/spectrogram_examples.png  used on input line 61
 
 
 ] [20 <./figures/label_counts.png> <./figures/spectrogram_examples.png>]
-<figures/pairplot.png, id=779, 1144.275pt x 1031.052pt>
+<figures/pairplot.png, id=780, 1144.275pt x 1031.052pt>
 File: figures/pairplot.png Graphic file (type png)
 <use figures/pairplot.png>
 Package pdftex.def Info: figures/pairplot.png  used on input line 83.
 (pdftex.def)             Requested size: 338.59023pt x 305.08592pt.
-<figures/umap.png, id=780, 1110.0672pt x 543.4704pt>
+<figures/umap.png, id=781, 1110.0672pt x 543.4704pt>
 File: figures/umap.png Graphic file (type png)
 <use figures/umap.png>
 Package pdftex.def Info: figures/umap.png  used on input line 92.
 (pdftex.def)             Requested size: 338.59023pt x 165.76236pt.
-<figures/correlation_matrix.png, id=782, 1110.0672pt x 543.4704pt>
+<figures/correlation_matrix.png, id=783, 1110.0672pt x 543.4704pt>
 File: figures/correlation_matrix.png Graphic file (type png)
 <use figures/correlation_matrix.png>
 Package pdftex.def Info: figures/correlation_matrix.png  used on input line 116.
@@ -1129,22 +1129,22 @@ Underfull \hbox (badness 1127) in paragraph at lines 227--227
 
 ) [62]
 Appendix A.
-<figures/gamma_Blip.png, id=1320, 1003.5894pt x 328.5876pt>
+<figures/gamma_Blip.png, id=1321, 1003.5894pt x 328.5876pt>
 File: figures/gamma_Blip.png Graphic file (type png)
 <use figures/gamma_Blip.png>
 Package pdftex.def Info: figures/gamma_Blip.png  used on input line 20.
 (pdftex.def)             Requested size: 398.3386pt x 130.4199pt.
-<figures/gamma_Extremely_Loud.png, id=1321, 1003.5894pt x 328.5876pt>
+<figures/gamma_Extremely_Loud.png, id=1322, 1003.5894pt x 328.5876pt>
 File: figures/gamma_Extremely_Loud.png Graphic file (type png)
 <use figures/gamma_Extremely_Loud.png>
 Package pdftex.def Info: figures/gamma_Extremely_Loud.png  used on input line 21.
 (pdftex.def)             Requested size: 398.3386pt x 130.4199pt.
-<figures/gamma_Scattered_Light.png, id=1322, 1003.5894pt x 328.5876pt>
+<figures/gamma_Scattered_Light.png, id=1323, 1003.5894pt x 328.5876pt>
 File: figures/gamma_Scattered_Light.png Graphic file (type png)
 <use figures/gamma_Scattered_Light.png>
 Package pdftex.def Info: figures/gamma_Scattered_Light.png  used on input line 22.
 (pdftex.def)             Requested size: 398.3386pt x 130.4199pt.
-<figures/feature_boxplots.png, id=1325, 1399.629pt x 1110.0672pt>
+<figures/feature_boxplots.png, id=1326, 1399.629pt x 1110.0672pt>
 File: figures/feature_boxplots.png Graphic file (type png)
 <use figures/feature_boxplots.png>
 Package pdftex.def Info: figures/feature_boxplots.png  used on input line 30.
@@ -1167,7 +1167,7 @@ LaTeX Font Warning: Some font shapes were not available, defaults substituted.
 Package rerunfilecheck Info: File `thesis.out' has not changed.
 (rerunfilecheck)             Checksum: 57BFCDF1531973ACCE318B8A3023509F;18528.
 Package rerunfilecheck Info: File `thesis.brf' has not changed.
-(rerunfilecheck)             Checksum: 1168CA5D9A1031EE4BB1644FC9FA4586;4544.
+(rerunfilecheck)             Checksum: 56BA0A31117F46BCA375145D59431F83;4544.
  ) 
 Here is how much of TeX's memory you used:
  28085 strings out of 467871
@@ -1178,9 +1178,9 @@ Here is how much of TeX's memory you used:
  1141 hyphenation exceptions out of 8191
  105i,13n,134p,754b,651s stack positions out of 10000i,1000n,20000p,200000b,200000s
  <C:\Users\devam\AppData\Local\MiKTeX\fonts/pk/ljfour/jknappen/ec/dpi600\ectt0900.pk> <C:\Users\devam\AppData\Local\MiKTeX\fonts/pk/ljfour/jknappen/ec/dpi600\ectt1000.pk><C:/Users/devam/AppData/Local/Programs/MiKTeX/fonts/type1/public/fira/FiraSans-Regular.pfb><C:/Users/devam/AppData/Local/Programs/MiKTeX/fonts/type1/public/fira/FiraSans-SemiBold.pfb><C:/Users/devam/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmex10.pfb><C:/Users/devam/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmsy10.pfb><C:/Users/devam/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmsy7.pfb><C:/Users/devam/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/euler/euex10.pfb><C:/Users/devam/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/euler/eufm10.pfb><C:/Users/devam/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/euler/eufm7.pfb><C:/Users/devam/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/euler/eurm10.pfb><C:/Users/devam/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/euler/eurm7.pfb><C:/Users/devam/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/euler/eusm10.pfb><C:/Users/devam/AppData/Local/Programs/MiKTeX/fonts/type1/public/fpl/fplrc8a.pfb><C:/Users/devam/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/symbols/msam10.pfb><C:/Users/devam/AppData/Local/Programs/MiKTeX/fonts/type1/urw/palatino/uplb8a.pfb><C:/Users/devam/AppData/Local/Programs/MiKTeX/fonts/type1/urw/palatino/uplr8a.pfb><C:/Users/devam/AppData/Local/Programs/MiKTeX/fonts/type1/urw/palatino/uplri8a.pfb>
-Output written on thesis.pdf (67 pages, 4657855 bytes).
+Output written on thesis.pdf (67 pages, 4658276 bytes).
 PDF statistics:
- 1569 PDF objects out of 1728 (max. 8388607)
+ 1570 PDF objects out of 1728 (max. 8388607)
  338 named destinations out of 1000 (max. 500000)
  890 words of extra memory for PDF output out of 10000 (max. 10000000)
 
