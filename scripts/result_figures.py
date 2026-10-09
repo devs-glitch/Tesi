@@ -103,7 +103,8 @@ def frame(fig, title=None, legend=None, legend_cols=3, hspace=None,
                  fontsize=9, color=INK)
 
 
-def reference_line(ax, y, label=None, style=':', gutter=False, axis='y'):
+def reference_line(ax, y, label=None, style=':', gutter=False, axis='y',
+                   va=None):
     # reference levels are drawn under the data
     (ax.axhline if axis == 'y' else ax.axvline)(
         y, color=MUTED, linestyle=style, linewidth=1.1, zorder=1)
@@ -111,9 +112,31 @@ def reference_line(ax, y, label=None, style=':', gutter=False, axis='y'):
         return
     xy = (0.012 if gutter else 0.025, y) if axis == 'y' else (y, 0.26)
     coords = ('axes fraction', 'data') if axis == 'y' else ('data', 'axes fraction')
-    ax.annotate(label, xy=xy, xycoords=coords, va='center' if axis == 'y' else 'bottom',
+    ax.annotate(label, xy=xy, xycoords=coords, va=va or ('center' if axis == 'y' else 'bottom'),
                 ha='left' if axis == 'y' else 'center', fontsize=7, color=MUTED,
                 zorder=5, bbox=dict(facecolor='white', edgecolor='none', pad=1.2))
+
+
+def reference_band(ax, low, high, mid, label=None, gutter=False):
+    # An anchor measured over three seeds is a band
+    ax.axhspan(low, high, color=MUTED, alpha=0.11, linewidth=0, zorder=1)
+    ax.axhline(mid, color=MUTED, linestyle=(0, (6, 2, 1, 2)), linewidth=1.1,
+               zorder=1)
+    if label:
+        ax.annotate(label, xy=(0.012 if gutter else 0.025, high),
+                    xycoords=('axes fraction', 'data'), va='bottom', ha='left',
+                    fontsize=7, color=MUTED, zorder=5,
+                    bbox=dict(facecolor='white', edgecolor='none', pad=1.2))
+
+
+def anchor_bands(fa):
+    # (low, high, mid) for each metric, over the seeds of the control arm
+    finals = [r['checkpoints']['final'] for r in fa['runs'].values()]
+    out = {}
+    for key, field in (('iou', 'mean_iou'), ('pcc', 'mean_pcc')):
+        v = [f[field] for f in finals]
+        out[key] = (min(v), max(v), float(np.mean(v)))
+    return out
 
 
 def spread(ax, x, low, high, colour):
@@ -122,7 +145,7 @@ def spread(ax, x, low, high, colour):
 
 # 1. Divergence of the explanation, per class, against bit width
 
-def divergence_figure(div, classes):
+def divergence_figure(div, classes, anchor=None):
     runs = div['runs']
     floor, chance = div['floor'], div['top_k'] / (2 - div['top_k'])
 
@@ -159,13 +182,17 @@ def divergence_figure(div, classes):
                                           ('pcc', 'Pearson correlation'))):
             ax = axes[row, j]
             first = (j == 0)
+            key_metric = 'iou' if row == 0 else 'pcc'
+            if anchor:
+                low, high, mid = anchor[key_metric]
+                reference_band(ax, low, high, mid,
+                               'fine-tuning alone' if first else None)
+            # The floor label sits below its own line: the anchor band runs
+            # just above it and the two would otherwise overlap.
+            reference_line(ax, floor[key_metric],
+                           'numerical floor' if first else None, '--', va='top')
             if row == 0:
-                reference_line(ax, floor['iou'],
-                               'numerical floor' if first else None, '--')
                 reference_line(ax, chance, 'chance level' if first else None)
-            else:
-                reference_line(ax, floor['pcc'],
-                               'numerical floor' if first else None, '--')
             for arm, (c, mk, ls, name) in ARM_STYLE.items():
                 s, xd = series(arm, cls, key), x + DODGE[arm]
                 spread(ax, xd, s[:, 1], s[:, 2], c)
@@ -444,7 +471,7 @@ def spike_figure():
 
 # 6. final figure: accuracy, explanation, energy against bit width
 
-def summary_figure(div, energy, test, grid, classes):
+def summary_figure(div, energy, test, grid, classes, anchor=None):
     floor, chance = div['floor'], div['top_k'] / (2 - div['top_k'])
     res, bases = energy['results'], energy['baselines']
 
@@ -490,7 +517,11 @@ def summary_figure(div, energy, test, grid, classes):
     ax.set_ylabel('test accuracy')
 
     ax = axes[1]
-    reference_line(ax, floor['iou'], 'numerical floor', '--', gutter=True)
+    if anchor:
+        low, high, mid = anchor['iou']
+        reference_band(ax, low, high, mid, 'fine-tuning alone', gutter=True)
+    reference_line(ax, floor['iou'], 'numerical floor', '--', gutter=True,
+                   va='top')
     reference_line(ax, chance, 'chance level', gutter=True)
     for arm, (c, mk, ls, name) in ARM_STYLE.items():
         s, xd = [r for r in rows if r['arm'] == arm], x + DODGE[arm]
@@ -546,18 +577,24 @@ def main():
     strat = load('stratified.json')
     energy = load('energy.json')
     grid_analysis = load('grid_analysis.json')
+    anchor_path = RESULTS / 'finetuning_anchor.json'
+    anchor = (anchor_bands(json.loads(anchor_path.read_text(encoding='utf-8')))
+              if anchor_path.exists() else None)
+    if anchor is None:
+        print('  (no results/finetuning_anchor.json: the fine-tuning anchor '
+              'will not be drawn)')
     test = json.loads((RESULTS / 'test' / 'test_evaluation.json').read_text(encoding='utf-8'))
     grid = {p.stem: json.loads(p.read_text(encoding='utf-8'))
             for p in (RESULTS / 'grid').glob('*.json')}
     classes = test['classes']
 
     print('tables and figures:')
-    divergence_figure(div, classes)
+    divergence_figure(div, classes, anchor)
     faithfulness_figure(cf, classes)
     stratification_figure(strat, classes)
     behaviour_figure(grid_analysis, div, classes)
     spike_figure()
-    summary_figure(div, energy, test, grid, classes)
+    summary_figure(div, energy, test, grid, classes, anchor)
     test_table(test)
     print(f'\nfigures in {FIGURES}/, tables in {TABLES}/')
 
