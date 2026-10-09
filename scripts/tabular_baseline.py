@@ -208,7 +208,8 @@ def main():
             'best_params': {k: str(v) for k, v in (best_params or {}).items()},
             'recall': {c: float(np.mean([s['recall'][c] for s in per_seed]))
                        for c in classes},
-            'confusion': per_seed[0]['confusion'],
+            'confusion_seed1234': per_seed[0]['confusion'],
+            'confusion_per_seed': [s['confusion'] for s in per_seed],
         }
         print(f'{label:<22}{len(SEEDS):>6}{accuracy:>10.4f}'
               f'{results[label]["accuracy_min"]:>9.4f}'
