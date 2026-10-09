@@ -1,0 +1,1197 @@
+{
+  "input_size": 112,
+  "layer": 2,
+  "gamma": 0.5,
+  "n_per_class": 20,
+  "top_k": 0.2,
+  "partition": "validation",
+  "runs": {
+    "qat_wxux_112px_seed1234": {
+      "seed": 1234,
+      "epochs_run": 6,
+      "best_epoch": -1,
+      "recovered_over_ptq": 0.0,
+      "best_val_accuracy": 0.9832752613240419,
+      "weight_delta_l2": 0.3953349067503607,
+      "weight_delta_per_tensor": {
+        "conv1.bias": {
+          "n_params": 16,
+          "l2": 0.0009464599409102256,
+          "max_abs": 0.0006318949162960052,
+          "relative_l2": 0.002801421600148881
+        },
+        "conv1.weight": {
+          "n_params": 1200,
+          "l2": 0.015045581282444771,
+          "max_abs": 0.0015059709548950195,
+          "relative_l2": 0.006396232850991137
+        },
+        "conv2.bias": {
+          "n_params": 32,
+          "l2": 0.0010730427783750896,
+          "max_abs": 0.00044812262058258057,
+          "relative_l2": 0.005707446467295245
+        },
+        "conv2.weight": {
+          "n_params": 12800,
+          "l2": 0.05017545320976031,
+          "max_abs": 0.0023499205708503723,
+          "relative_l2": 0.012861471086050272
+        },
+        "conv3.bias": {
+          "n_params": 64,
+          "l2": 0.002461083118781485,
+          "max_abs": 0.000957634299993515,
+          "relative_l2": 0.013224671256588497
+        },
+        "conv3.weight": {
+          "n_params": 51200,
+          "l2": 0.0951285005627614,
+          "max_abs": 0.002480175346136093,
+          "relative_l2": 0.015985843568821084
+        },
+        "conv4.bias": {
+          "n_params": 128,
+          "l2": 0.003131590295251152,
+          "max_abs": 0.001026298210490495,
+          "relative_l2": 0.016321697385714755
+        },
+        "conv4.weight": {
+          "n_params": 204800,
+          "l2": 0.18387096471076214,
+          "max_abs": 0.003178431186825037,
+          "relative_l2": 0.022363908509481986
+        },
+        "lif1.beta": {
+          "n_params": 1,
+          "l2": 0.0,
+          "max_abs": 0.0,
+          "relative_l2": 0.0
+        },
+        "lif1.graded_spikes_factor": {
+          "n_params": 1,
+          "l2": 0.0,
+          "max_abs": 0.0,
+          "relative_l2": 0.0
+        },
+        "lif1.reset_mechanism_val": {
+          "n_params": 1,
+          "l2": 0.0,
+          "max_abs": 0.0,
+          "relative_l2": NaN
+        },
+        "lif1.threshold": {
+          "n_params": 1,
+          "l2": 0.0,
+          "max_abs": 0.0,
+          "relative_l2": 0.0
+        },
+        "lif2.beta": {
+          "n_params": 1,
+          "l2": 0.0,
+          "max_abs": 0.0,
+          "relative_l2": 0.0
+        },
+        "lif2.graded_spikes_factor": {
+          "n_params": 1,
+          "l2": 0.0,
+          "max_abs": 0.0,
+          "relative_l2": 0.0
+        },
+        "lif2.reset_mechanism_val": {
+          "n_params": 1,
+          "l2": 0.0,
+          "max_abs": 0.0,
+          "relative_l2": NaN
+        },
+        "lif2.threshold": {
+          "n_params": 1,
+          "l2": 0.0,
+          "max_abs": 0.0,
+          "relative_l2": 0.0
+        },
+        "lif3.beta": {
+          "n_params": 1,
+          "l2": 0.0,
+          "max_abs": 0.0,
+          "relative_l2": 0.0
+        },
+        "lif3.graded_spikes_factor": {
+          "n_params": 1,
+          "l2": 0.0,
+          "max_abs": 0.0,
+          "relative_l2": 0.0
+        },
+        "lif3.reset_mechanism_val": {
+          "n_params": 1,
+          "l2": 0.0,
+          "max_abs": 0.0,
+          "relative_l2": NaN
+        },
+        "lif3.threshold": {
+          "n_params": 1,
+          "l2": 0.0,
+          "max_abs": 0.0,
+          "relative_l2": 0.0
+        },
+        "lif4.beta": {
+          "n_params": 1,
+          "l2": 0.0,
+          "max_abs": 0.0,
+          "relative_l2": 0.0
+        },
+        "lif4.graded_spikes_factor": {
+          "n_params": 1,
+          "l2": 0.0,
+          "max_abs": 0.0,
+          "relative_l2": 0.0
+        },
+        "lif4.reset_mechanism_val": {
+          "n_params": 1,
+          "l2": 0.0,
+          "max_abs": 0.0,
+          "relative_l2": NaN
+        },
+        "lif4.threshold": {
+          "n_params": 1,
+          "l2": 0.0,
+          "max_abs": 0.0,
+          "relative_l2": 0.0
+        },
+        "lif_out.beta": {
+          "n_params": 1,
+          "l2": 0.0,
+          "max_abs": 0.0,
+          "relative_l2": 0.0
+        },
+        "lif_out.graded_spikes_factor": {
+          "n_params": 1,
+          "l2": 0.0,
+          "max_abs": 0.0,
+          "relative_l2": 0.0
+        },
+        "lif_out.reset_mechanism_val": {
+          "n_params": 1,
+          "l2": 0.0,
+          "max_abs": 0.0,
+          "relative_l2": NaN
+        },
+        "lif_out.threshold": {
+          "n_params": 1,
+          "l2": 0.0,
+          "max_abs": 0.0,
+          "relative_l2": 0.0
+        },
+        "linear.bias": {
+          "n_params": 4,
+          "l2": 0.00029444059181343943,
+          "max_abs": 0.00021563564359894372,
+          "relative_l2": 0.04957113798740074
+        },
+        "linear.weight": {
+          "n_params": 25088,
+          "l2": 0.3326706808557473,
+          "max_abs": 0.012198911514133215,
+          "relative_l2": 0.10314456821648574
+        }
+      },
+      "checkpoints": {
+        "selected": {
+          "file": "best_model.pt",
+          "divergence": {
+            "Blip": {
+              "n": 20,
+              "pcc": 1.0,
+              "pcc_std": 1.0235750533041807e-16,
+              "iou": 1.0,
+              "ssim": NaN,
+              "per_step_pcc": [
+                NaN,
+                1.0,
+                1.0,
+                1.0,
+                1.0,
+                1.0,
+                1.0,
+                1.0
+              ],
+              "com_shift": 0.0,
+              "com_shift_abs": 0.0
+            },
+            "Extremely_Loud": {
+              "n": 20,
+              "pcc": 1.0,
+              "pcc_std": 1.137640067256873e-16,
+              "iou": 1.0,
+              "ssim": NaN,
+              "per_step_pcc": [
+                NaN,
+                1.0,
+                1.0,
+                1.0,
+                1.0,
+                1.0,
+                1.0,
+                1.0
+              ],
+              "com_shift": 0.0,
+              "com_shift_abs": 0.0
+            },
+            "Scattered_Light": {
+              "n": 20,
+              "pcc": 1.0,
+              "pcc_std": 6.080941944488117e-17,
+              "iou": 1.0,
+              "ssim": NaN,
+              "per_step_pcc": [
+                NaN,
+                1.0,
+                1.0,
+                1.0,
+                1.0,
+                1.0,
+                1.0,
+                1.0
+              ],
+              "com_shift": 0.0,
+              "com_shift_abs": 0.0
+            },
+            "Violin_Mode": {
+              "n": 20,
+              "pcc": 1.0,
+              "pcc_std": 6.568167990716596e-17,
+              "iou": 1.0,
+              "ssim": NaN,
+              "per_step_pcc": [
+                NaN,
+                1.0,
+                1.0,
+                1.0,
+                1.0,
+                1.0,
+                1.0,
+                1.0
+              ],
+              "com_shift": 0.0,
+              "com_shift_abs": 0.0
+            }
+          },
+          "mean_iou": 1.0,
+          "mean_pcc": 1.0,
+          "worst_iou": 1.0,
+          "accuracy": 0.9832752613240419,
+          "accuracy_source": "run.json best_val_accuracy"
+        },
+        "final": {
+          "file": "final_model.pt",
+          "divergence": {
+            "Blip": {
+              "n": 20,
+              "pcc": 0.9889943145069611,
+              "pcc_std": 0.009650722564853078,
+              "iou": 0.6712409071507216,
+              "ssim": NaN,
+              "per_step_pcc": [
+                NaN,
+                0.8440054398734447,
+                0.8539528676438325,
+                0.9098123125223931,
+                0.8795315911906133,
+                0.881658186152414,
+                0.8258298210268477,
+                0.9111357362566309
+              ],
+              "com_shift": -0.045089101791381835,
+              "com_shift_abs": 0.045089101791381835
+            },
+            "Extremely_Loud": {
+              "n": 20,
+              "pcc": 0.9993919719227599,
+              "pcc_std": 0.0004480202476390853,
+              "iou": 0.7849365231326753,
+              "ssim": NaN,
+              "per_step_pcc": [
+                NaN,
+                0.9951193631368964,
+                0.9970331632599786,
+                0.9963802819008437,
+                0.9953951135942042,
+                0.9944736526492999,
+                0.9930162489171586,
+                0.9951169096795965
+              ],
+              "com_shift": 0.0009365558624267578,
+              "com_shift_abs": 0.004391813278198242
+            },
+            "Scattered_Light": {
+              "n": 20,
+              "pcc": 0.9846670268119716,
+              "pcc_std": 0.011520997620861324,
+              "iou": 0.7009561128387597,
+              "ssim": NaN,
+              "per_step_pcc": [
+                NaN,
+                0.7680327966890161,
+                0.8452811331488194,
+                0.8845459063638004,
+                0.8533024997167111,
+                0.8556497110648287,
+                0.7817321874969603,
+                0.8790514731154463
+              ],
+              "com_shift": -0.037321615219116214,
+              "com_shift_abs": 0.037321615219116214
+            },
+            "Violin_Mode": {
+              "n": 20,
+              "pcc": 0.9687385946538871,
+              "pcc_std": 0.013279547935700485,
+              "iou": 0.6876566265169575,
+              "ssim": NaN,
+              "per_step_pcc": [
+                NaN,
+                0.7748124694393741,
+                0.7276722307827385,
+                0.7980465835130639,
+                0.688476479015659,
+                0.717280870935654,
+                0.5599125598607195,
+                0.7514588056686903
+              ],
+              "com_shift": -0.04774174690246582,
+              "com_shift_abs": 0.04774174690246582
+            }
+          },
+          "mean_iou": 0.7111975424097785,
+          "mean_pcc": 0.985447976973895,
+          "worst_iou": 0.6712409071507216,
+          "accuracy": 0.9818815331010453,
+          "mean_rate": {
+            "1": 0.15276926438448854,
+            "2": 0.15719913639181718,
+            "3": 0.1666317975360876,
+            "4": 0.12671375851080852
+          },
+          "dead_fraction": {
+            "1": 0.1602160395408163,
+            "2": 0.12372448979591837,
+            "3": 0.10650510204081633,
+            "4": 0.21364795918367346
+          },
+          "saturated_fraction": {
+            "1": 0.0004982461734693878,
+            "2": 0.0,
+            "3": 0.0,
+            "4": 0.0
+          },
+          "cv_isi": {
+            "1": 0.39086167945335193,
+            "2": 0.4026572462217273,
+            "3": 0.38639960193468487,
+            "4": 0.3886721623262212
+          },
+          "cv_isi_defined_fraction": {
+            "1": 0.98,
+            "2": 0.95,
+            "3": 0.94,
+            "4": 0.93
+          }
+        }
+      }
+    },
+    "qat_wxux_112px_seed2345": {
+      "seed": 2345,
+      "epochs_run": 14,
+      "best_epoch": -1,
+      "recovered_over_ptq": 0.0,
+      "best_val_accuracy": 0.9818815331010453,
+      "weight_delta_l2": 0.7355764007077004,
+      "weight_delta_per_tensor": {
+        "conv1.bias": {
+          "n_params": 16,
+          "l2": 0.0017840046889348608,
+          "max_abs": 0.0011233454570174217,
+          "relative_l2": 0.006024918428237758
+        },
+        "conv1.weight": {
+          "n_params": 1200,
+          "l2": 0.025380443390823286,
+          "max_abs": 0.003735646605491638,
+          "relative_l2": 0.010199558866841367
+        },
+        "conv2.bias": {
+          "n_params": 32,
+          "l2": 0.002604053107265328,
+          "max_abs": 0.0010898048058152199,
+          "relative_l2": 0.015852371942645632
+        },
+        "conv2.weight": {
+          "n_params": 12800,
+          "l2": 0.08095611517444062,
+          "max_abs": 0.004814365413039923,
+          "relative_l2": 0.022223567217930146
+        },
+        "conv3.bias": {
+          "n_params": 64,
+          "l2": 0.0040415167115390475,
+          "max_abs": 0.0014014169573783875,
+          "relative_l2": 0.02622299376939677
+        },
+        "conv3.weight": {
+          "n_params": 51200,
+          "l2": 0.19975954829326859,
+          "max_abs": 0.0057082101702690125,
+          "relative_l2": 0.03420394336261594
+        },
+        "conv4.bias": {
+          "n_params": 128,
+          "l2": 0.006769423926557525,
+          "max_abs": 0.0020952317863702774,
+          "relative_l2": 0.03892903524226369
+        },
+        "conv4.weight": {
+          "n_params": 204800,
+          "l2": 0.38005726730753486,
+          "max_abs": 0.005920541472733021,
+          "relative_l2": 0.0479599015314528
+        },
+        "lif1.beta": {
+          "n_params": 1,
+          "l2": 0.0,
+          "max_abs": 0.0,
+          "relative_l2": 0.0
+        },
+        "lif1.graded_spikes_factor": {
+          "n_params": 1,
+          "l2": 0.0,
+          "max_abs": 0.0,
+          "relative_l2": 0.0
+        },
+        "lif1.reset_mechanism_val": {
+          "n_params": 1,
+          "l2": 0.0,
+          "max_abs": 0.0,
+          "relative_l2": NaN
+        },
+        "lif1.threshold": {
+          "n_params": 1,
+          "l2": 0.0,
+          "max_abs": 0.0,
+          "relative_l2": 0.0
+        },
+        "lif2.beta": {
+          "n_params": 1,
+          "l2": 0.0,
+          "max_abs": 0.0,
+          "relative_l2": 0.0
+        },
+        "lif2.graded_spikes_factor": {
+          "n_params": 1,
+          "l2": 0.0,
+          "max_abs": 0.0,
+          "relative_l2": 0.0
+        },
+        "lif2.reset_mechanism_val": {
+          "n_params": 1,
+          "l2": 0.0,
+          "max_abs": 0.0,
+          "relative_l2": NaN
+        },
+        "lif2.threshold": {
+          "n_params": 1,
+          "l2": 0.0,
+          "max_abs": 0.0,
+          "relative_l2": 0.0
+        },
+        "lif3.beta": {
+          "n_params": 1,
+          "l2": 0.0,
+          "max_abs": 0.0,
+          "relative_l2": 0.0
+        },
+        "lif3.graded_spikes_factor": {
+          "n_params": 1,
+          "l2": 0.0,
+          "max_abs": 0.0,
+          "relative_l2": 0.0
+        },
+        "lif3.reset_mechanism_val": {
+          "n_params": 1,
+          "l2": 0.0,
+          "max_abs": 0.0,
+          "relative_l2": NaN
+        },
+        "lif3.threshold": {
+          "n_params": 1,
+          "l2": 0.0,
+          "max_abs": 0.0,
+          "relative_l2": 0.0
+        },
+        "lif4.beta": {
+          "n_params": 1,
+          "l2": 0.0,
+          "max_abs": 0.0,
+          "relative_l2": 0.0
+        },
+        "lif4.graded_spikes_factor": {
+          "n_params": 1,
+          "l2": 0.0,
+          "max_abs": 0.0,
+          "relative_l2": 0.0
+        },
+        "lif4.reset_mechanism_val": {
+          "n_params": 1,
+          "l2": 0.0,
+          "max_abs": 0.0,
+          "relative_l2": NaN
+        },
+        "lif4.threshold": {
+          "n_params": 1,
+          "l2": 0.0,
+          "max_abs": 0.0,
+          "relative_l2": 0.0
+        },
+        "lif_out.beta": {
+          "n_params": 1,
+          "l2": 0.0,
+          "max_abs": 0.0,
+          "relative_l2": 0.0
+        },
+        "lif_out.graded_spikes_factor": {
+          "n_params": 1,
+          "l2": 0.0,
+          "max_abs": 0.0,
+          "relative_l2": 0.0
+        },
+        "lif_out.reset_mechanism_val": {
+          "n_params": 1,
+          "l2": 0.0,
+          "max_abs": 0.0,
+          "relative_l2": NaN
+        },
+        "lif_out.threshold": {
+          "n_params": 1,
+          "l2": 0.0,
+          "max_abs": 0.0,
+          "relative_l2": 0.0
+        },
+        "linear.bias": {
+          "n_params": 4,
+          "l2": 0.00016174595598091992,
+          "max_abs": 0.00011859973892569542,
+          "relative_l2": 0.008386558336717817
+        },
+        "linear.weight": {
+          "n_params": 25088,
+          "l2": 0.591147214604765,
+          "max_abs": 0.026934415102005005,
+          "relative_l2": 0.20171703559719137
+        }
+      },
+      "checkpoints": {
+        "selected": {
+          "file": "best_model.pt",
+          "divergence": {
+            "Blip": {
+              "n": 20,
+              "pcc": 1.0,
+              "pcc_std": 4.2998752849492583e-17,
+              "iou": 1.0,
+              "ssim": NaN,
+              "per_step_pcc": [
+                NaN,
+                1.0,
+                1.0,
+                1.0,
+                1.0,
+                1.0,
+                1.0,
+                1.0
+              ],
+              "com_shift": 0.0,
+              "com_shift_abs": 0.0
+            },
+            "Extremely_Loud": {
+              "n": 20,
+              "pcc": 1.0,
+              "pcc_std": 3.510833468576701e-17,
+              "iou": 1.0,
+              "ssim": NaN,
+              "per_step_pcc": [
+                NaN,
+                1.0,
+                1.0,
+                1.0,
+                1.0,
+                1.0,
+                1.0,
+                1.0
+              ],
+              "com_shift": 0.0,
+              "com_shift_abs": 0.0
+            },
+            "Scattered_Light": {
+              "n": 20,
+              "pcc": 1.0,
+              "pcc_std": 6.080941944488117e-17,
+              "iou": 1.0,
+              "ssim": NaN,
+              "per_step_pcc": [
+                NaN,
+                1.0,
+                1.0,
+                1.0,
+                1.0,
+                1.0,
+                1.0,
+                1.0
+              ],
+              "com_shift": 0.0,
+              "com_shift_abs": 0.0
+            },
+            "Violin_Mode": {
+              "n": 20,
+              "pcc": 1.0,
+              "pcc_std": 4.965068306494546e-17,
+              "iou": 1.0,
+              "ssim": NaN,
+              "per_step_pcc": [
+                NaN,
+                1.0,
+                1.0,
+                1.0,
+                1.0,
+                1.0,
+                1.0,
+                1.0
+              ],
+              "com_shift": 0.0,
+              "com_shift_abs": 0.0
+            }
+          },
+          "mean_iou": 1.0,
+          "mean_pcc": 1.0,
+          "worst_iou": 1.0,
+          "accuracy": 0.9818815331010453,
+          "accuracy_source": "run.json best_val_accuracy"
+        },
+        "final": {
+          "file": "final_model.pt",
+          "divergence": {
+            "Blip": {
+              "n": 20,
+              "pcc": 0.9872032919689202,
+              "pcc_std": 0.0010570335806720462,
+              "iou": 0.7964915727411042,
+              "ssim": NaN,
+              "per_step_pcc": [
+                NaN,
+                0.9008541700903576,
+                0.9048647695089829,
+                0.8880027762962378,
+                0.8919320475414626,
+                0.8213040090606307,
+                0.8229975718200645,
+                0.885201931232978
+              ],
+              "com_shift": -0.04491746425628662,
+              "com_shift_abs": 0.04491746425628662
+            },
+            "Extremely_Loud": {
+              "n": 20,
+              "pcc": 0.9942142707018723,
+              "pcc_std": 0.003969904243573631,
+              "iou": 0.7788096444310397,
+              "ssim": NaN,
+              "per_step_pcc": [
+                NaN,
+                0.9761499589452596,
+                0.9716380459580449,
+                0.9638992658584143,
+                0.9525752352140111,
+                0.9478355487008944,
+                0.9411347740644767,
+                0.9567577951543196
+              ],
+              "com_shift": -0.0106353759765625,
+              "com_shift_abs": 0.0106353759765625
+            },
+            "Scattered_Light": {
+              "n": 20,
+              "pcc": 0.9879662274000587,
+              "pcc_std": 0.001986822716690766,
+              "iou": 0.7837759879891335,
+              "ssim": NaN,
+              "per_step_pcc": [
+                NaN,
+                0.849855886480011,
+                0.9215451336353564,
+                0.8831301493139663,
+                0.894311693275128,
+                0.8441943068868245,
+                0.7984221764436626,
+                0.8915824843741629
+              ],
+              "com_shift": -0.04247794151306152,
+              "com_shift_abs": 0.04247794151306152
+            },
+            "Violin_Mode": {
+              "n": 20,
+              "pcc": 0.9866472229924032,
+              "pcc_std": 0.0019099931191832828,
+              "iou": 0.8076249914761524,
+              "ssim": NaN,
+              "per_step_pcc": [
+                NaN,
+                0.897442507539498,
+                0.910660548732781,
+                0.8779366967146304,
+                0.8840196042535607,
+                0.812222747517304,
+                0.8063997922775197,
+                0.8738439921950347
+              ],
+              "com_shift": -0.04139585494995117,
+              "com_shift_abs": 0.04139585494995117
+            }
+          },
+          "mean_iou": 0.7916755491593575,
+          "mean_pcc": 0.9890077532658136,
+          "worst_iou": 0.7788096444310397,
+          "accuracy": 0.9790940766550522,
+          "mean_rate": {
+            "1": 0.3939994529361179,
+            "2": 0.26845731943419787,
+            "3": 0.23096950997297871,
+            "4": 0.16910319577526134
+          },
+          "dead_fraction": {
+            "1": 0.04821029974489796,
+            "2": 0.052734375,
+            "3": 0.11088966836734694,
+            "4": 0.14939413265306123
+          },
+          "saturated_fraction": {
+            "1": 0.07621173469387756,
+            "2": 0.016302614795918366,
+            "3": 0.0033482142857142855,
+            "4": 0.00031887755102040814
+          },
+          "cv_isi": {
+            "1": 0.34576235672555783,
+            "2": 0.3869343951546912,
+            "3": 0.4060181239739303,
+            "4": 0.3883885059631205
+          },
+          "cv_isi_defined_fraction": {
+            "1": 0.985,
+            "2": 0.99,
+            "3": 0.96,
+            "4": 0.925
+          }
+        }
+      }
+    },
+    "qat_wxux_112px_seed3456": {
+      "seed": 3456,
+      "epochs_run": 6,
+      "best_epoch": -1,
+      "recovered_over_ptq": 0.0,
+      "best_val_accuracy": 0.9846689895470383,
+      "weight_delta_l2": 0.39911215223787083,
+      "weight_delta_per_tensor": {
+        "conv1.bias": {
+          "n_params": 16,
+          "l2": 0.0013300229027866219,
+          "max_abs": 0.0006456449627876282,
+          "relative_l2": 0.004600954039623446
+        },
+        "conv1.weight": {
+          "n_params": 1200,
+          "l2": 0.015249622910413246,
+          "max_abs": 0.0018475623801350594,
+          "relative_l2": 0.006434512555040653
+        },
+        "conv2.bias": {
+          "n_params": 32,
+          "l2": 0.0014726576633416766,
+          "max_abs": 0.0009297914803028107,
+          "relative_l2": 0.00886424920645703
+        },
+        "conv2.weight": {
+          "n_params": 12800,
+          "l2": 0.049919412421892476,
+          "max_abs": 0.0023605916649103165,
+          "relative_l2": 0.013528114716129556
+        },
+        "conv3.bias": {
+          "n_params": 64,
+          "l2": 0.0027821011175341863,
+          "max_abs": 0.0010843919590115547,
+          "relative_l2": 0.015542747774324584
+        },
+        "conv3.weight": {
+          "n_params": 51200,
+          "l2": 0.11479841426046336,
+          "max_abs": 0.0026976317167282104,
+          "relative_l2": 0.019087794193753976
+        },
+        "conv4.bias": {
+          "n_params": 128,
+          "l2": 0.0045629708589745065,
+          "max_abs": 0.001130917458795011,
+          "relative_l2": 0.02391138034925906
+        },
+        "conv4.weight": {
+          "n_params": 204800,
+          "l2": 0.21670309519551784,
+          "max_abs": 0.00290636345744133,
+          "relative_l2": 0.027542716116995734
+        },
+        "lif1.beta": {
+          "n_params": 1,
+          "l2": 0.0,
+          "max_abs": 0.0,
+          "relative_l2": 0.0
+        },
+        "lif1.graded_spikes_factor": {
+          "n_params": 1,
+          "l2": 0.0,
+          "max_abs": 0.0,
+          "relative_l2": 0.0
+        },
+        "lif1.reset_mechanism_val": {
+          "n_params": 1,
+          "l2": 0.0,
+          "max_abs": 0.0,
+          "relative_l2": NaN
+        },
+        "lif1.threshold": {
+          "n_params": 1,
+          "l2": 0.0,
+          "max_abs": 0.0,
+          "relative_l2": 0.0
+        },
+        "lif2.beta": {
+          "n_params": 1,
+          "l2": 0.0,
+          "max_abs": 0.0,
+          "relative_l2": 0.0
+        },
+        "lif2.graded_spikes_factor": {
+          "n_params": 1,
+          "l2": 0.0,
+          "max_abs": 0.0,
+          "relative_l2": 0.0
+        },
+        "lif2.reset_mechanism_val": {
+          "n_params": 1,
+          "l2": 0.0,
+          "max_abs": 0.0,
+          "relative_l2": NaN
+        },
+        "lif2.threshold": {
+          "n_params": 1,
+          "l2": 0.0,
+          "max_abs": 0.0,
+          "relative_l2": 0.0
+        },
+        "lif3.beta": {
+          "n_params": 1,
+          "l2": 0.0,
+          "max_abs": 0.0,
+          "relative_l2": 0.0
+        },
+        "lif3.graded_spikes_factor": {
+          "n_params": 1,
+          "l2": 0.0,
+          "max_abs": 0.0,
+          "relative_l2": 0.0
+        },
+        "lif3.reset_mechanism_val": {
+          "n_params": 1,
+          "l2": 0.0,
+          "max_abs": 0.0,
+          "relative_l2": NaN
+        },
+        "lif3.threshold": {
+          "n_params": 1,
+          "l2": 0.0,
+          "max_abs": 0.0,
+          "relative_l2": 0.0
+        },
+        "lif4.beta": {
+          "n_params": 1,
+          "l2": 0.0,
+          "max_abs": 0.0,
+          "relative_l2": 0.0
+        },
+        "lif4.graded_spikes_factor": {
+          "n_params": 1,
+          "l2": 0.0,
+          "max_abs": 0.0,
+          "relative_l2": 0.0
+        },
+        "lif4.reset_mechanism_val": {
+          "n_params": 1,
+          "l2": 0.0,
+          "max_abs": 0.0,
+          "relative_l2": NaN
+        },
+        "lif4.threshold": {
+          "n_params": 1,
+          "l2": 0.0,
+          "max_abs": 0.0,
+          "relative_l2": 0.0
+        },
+        "lif_out.beta": {
+          "n_params": 1,
+          "l2": 0.0,
+          "max_abs": 0.0,
+          "relative_l2": 0.0
+        },
+        "lif_out.graded_spikes_factor": {
+          "n_params": 1,
+          "l2": 0.0,
+          "max_abs": 0.0,
+          "relative_l2": 0.0
+        },
+        "lif_out.reset_mechanism_val": {
+          "n_params": 1,
+          "l2": 0.0,
+          "max_abs": 0.0,
+          "relative_l2": NaN
+        },
+        "lif_out.threshold": {
+          "n_params": 1,
+          "l2": 0.0,
+          "max_abs": 0.0,
+          "relative_l2": 0.0
+        },
+        "linear.bias": {
+          "n_params": 4,
+          "l2": 0.00028603149424162534,
+          "max_abs": 0.00019524991512298584,
+          "relative_l2": 0.019559306332507794
+        },
+        "linear.weight": {
+          "n_params": 25088,
+          "l2": 0.31047467474697843,
+          "max_abs": 0.011087143793702126,
+          "relative_l2": 0.10306534093122278
+        }
+      },
+      "checkpoints": {
+        "selected": {
+          "file": "best_model.pt",
+          "divergence": {
+            "Blip": {
+              "n": 20,
+              "pcc": 1.0,
+              "pcc_std": 6.080941944488117e-17,
+              "iou": 1.0,
+              "ssim": NaN,
+              "per_step_pcc": [
+                NaN,
+                1.0,
+                1.0,
+                1.0,
+                1.0,
+                1.0,
+                1.0,
+                1.0
+              ],
+              "com_shift": 0.0,
+              "com_shift_abs": 0.0
+            },
+            "Extremely_Loud": {
+              "n": 20,
+              "pcc": 1.0,
+              "pcc_std": 1.0235750533041807e-16,
+              "iou": 1.0,
+              "ssim": NaN,
+              "per_step_pcc": [
+                NaN,
+                1.0,
+                1.0,
+                1.0,
+                1.0,
+                1.0,
+                1.0,
+                1.0
+              ],
+              "com_shift": 0.0,
+              "com_shift_abs": 0.0
+            },
+            "Scattered_Light": {
+              "n": 20,
+              "pcc": 1.0,
+              "pcc_std": 7.850462293418876e-17,
+              "iou": 1.0,
+              "ssim": NaN,
+              "per_step_pcc": [
+                NaN,
+                1.0,
+                1.0,
+                1.0,
+                1.0,
+                1.0,
+                1.0,
+                1.0
+              ],
+              "com_shift": 0.0,
+              "com_shift_abs": 0.0
+            },
+            "Violin_Mode": {
+              "n": 20,
+              "pcc": 1.0,
+              "pcc_std": 7.021666937153402e-17,
+              "iou": 1.0,
+              "ssim": NaN,
+              "per_step_pcc": [
+                NaN,
+                1.0,
+                1.0,
+                1.0,
+                1.0,
+                1.0,
+                1.0,
+                1.0
+              ],
+              "com_shift": 0.0,
+              "com_shift_abs": 0.0
+            }
+          },
+          "mean_iou": 1.0,
+          "mean_pcc": 1.0,
+          "worst_iou": 1.0,
+          "accuracy": 0.9846689895470383,
+          "accuracy_source": "run.json best_val_accuracy"
+        },
+        "final": {
+          "file": "final_model.pt",
+          "divergence": {
+            "Blip": {
+              "n": 20,
+              "pcc": 0.9830189474006976,
+              "pcc_std": 0.006349708853210253,
+              "iou": 0.7674764327829003,
+              "ssim": NaN,
+              "per_step_pcc": [
+                NaN,
+                0.9133804956871291,
+                0.8737978215862908,
+                0.8752248719269067,
+                0.8489649225964172,
+                0.7785745142461468,
+                0.7547769621479704,
+                0.8277929169726651
+              ],
+              "com_shift": -0.03307080268859863,
+              "com_shift_abs": 0.03307080268859863
+            },
+            "Extremely_Loud": {
+              "n": 20,
+              "pcc": 0.9992477473575498,
+              "pcc_std": 0.0011060768455947024,
+              "iou": 0.7664904499198492,
+              "ssim": NaN,
+              "per_step_pcc": [
+                NaN,
+                0.993305176072129,
+                0.995902923240078,
+                0.9937545873782853,
+                0.9924104247925308,
+                0.99087114396259,
+                0.9888571560769259,
+                0.9929490058305929
+              ],
+              "com_shift": -0.01249074935913086,
+              "com_shift_abs": 0.01249074935913086
+            },
+            "Scattered_Light": {
+              "n": 20,
+              "pcc": 0.9828377626419365,
+              "pcc_std": 0.00871338910719142,
+              "iou": 0.7050216348594784,
+              "ssim": NaN,
+              "per_step_pcc": [
+                NaN,
+                0.8676765284191947,
+                0.8917453342415218,
+                0.8787033330451385,
+                0.8443782726022698,
+                0.7686830364707741,
+                0.7366528730611184,
+                0.8501813927686653
+              ],
+              "com_shift": -0.03359379768371582,
+              "com_shift_abs": 0.03359379768371582
+            },
+            "Violin_Mode": {
+              "n": 20,
+              "pcc": 0.9825436767574345,
+              "pcc_std": 0.006038496886310667,
+              "iou": 0.7513667787379351,
+              "ssim": NaN,
+              "per_step_pcc": [
+                NaN,
+                0.8995747942215069,
+                0.8599916576003173,
+                0.8491846954177984,
+                0.8095697693603393,
+                0.6959979213405517,
+                0.6974471569023714,
+                0.7900291134280539
+              ],
+              "com_shift": -0.04683372974395752,
+              "com_shift_abs": 0.04683372974395752
+            }
+          },
+          "mean_iou": 0.7475888240750407,
+          "mean_pcc": 0.9869120335394046,
+          "worst_iou": 0.7050216348594784,
+          "accuracy": 0.9804878048780488,
+          "mean_rate": {
+            "1": 0.2392394503056558,
+            "2": 0.1663652549298247,
+            "3": 0.21630200370653485,
+            "4": 0.14194759186340042
+          },
+          "dead_fraction": {
+            "1": 0.1329719387755102,
+            "2": 0.12476084183673469,
+            "3": 0.09988839285714286,
+            "4": 0.2536670918367347
+          },
+          "saturated_fraction": {
+            "1": 0.06760204081632654,
+            "2": 0.0,
+            "3": 0.0,
+            "4": 0.007174744897959184
+          },
+          "cv_isi": {
+            "1": 0.35911710620610776,
+            "2": 0.4274892398926857,
+            "3": 0.37806785715819624,
+            "4": 0.38466267452946273
+          },
+          "cv_isi_defined_fraction": {
+            "1": 0.985,
+            "2": 0.985,
+            "3": 0.965,
+            "4": 0.865
+          }
+        }
+      }
+    }
+  },
+  "anchor": {
+    "mean_iou": 0.7501539718813922,
+    "min_iou": 0.7111975424097785,
+    "max_iou": 0.7916755491593575,
+    "mean_pcc": 0.987122587926371,
+    "worst_class_iou": 0.6712409071507216,
+    "mean_accuracy": 0.9804878048780488
+  }
+}
