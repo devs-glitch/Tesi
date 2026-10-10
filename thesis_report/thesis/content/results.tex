@@ -44,11 +44,37 @@ reduced resolution.}
 Since accuracy is uninformative, the resolution was decided on the internal state
 of the network. For each hidden layer, the mean firing rate of every individual
 neuron is accumulated across the validation partition. A rate below $0.01$
-identifies a \emph{dead} neuron, above $0.80$ a \emph{saturated} one. Both are
-pathological in different ways: dead neurons represent wasted capacity and,
-being permanently silent, cannot appear in any explanation; saturated neurons
-carry almost no information, a nearly-always-firing binary unit having minimal
-entropy, while consuming the maximum possible energy.
+identifies a \emph{dead} neuron, above $0.80$ a \emph{saturated} one.
+
+The two ends are pathological for different reasons. A neuron firing on fewer
+than one input in a hundred is wasted capacity and, being silent, cannot appear
+in any explanation; its output is near-deterministic, carrying $0.081$ of the
+one bit a binary unit can hold. Saturation is not an information problem --- a
+Bernoulli variable at $0.80$ retains $0.722$ bits, as much as one at $0.20$ ---
+but an energy one: the energy of a spiking layer scales with the number of
+spikes it emits~\cite{suetake2023penalty}, so a unit near its ceiling spends the
+sparsity the architecture was chosen for.
+
+Neither cutoff is derived. Thresholds of this kind are conventions elsewhere
+too: the pruning literature trims neurons whose fraction of zero activations
+exceeds one standard deviation of the layer mean~\cite{hu2016trimming}, and the
+dormant-neuron analysis treats the cutoff as a tuned hyperparameter, reporting
+values between $0$ and $0.1$~\cite{sokar2023dormant}. Sweeping both cutoffs on
+the adopted configuration shows no plateau (Figure~\ref{fig:sweep}). Half an
+order of magnitude either side of $0.01$ moves the dead fraction by $11.2$,
+$9.0$, $6.7$ and $11.2$ percentage points in the four layers, so the
+distribution of rates holds no gap separating dead units from live ones. The
+dead fraction is the value of a monotone function read at a conventional point
+rather than the size of a well-defined population, and it carries meaning only
+as a comparison at fixed cutoff, which is how Table~\ref{tab:dead} uses it.
+
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=\linewidth]{dead_neuron_sweep.pdf}
+\caption{Dead and saturated fractions against the cutoff that defines them,
+mean and standard deviation over the three full-precision seeds at 112\,px.}
+\label{fig:sweep}
+\end{figure}
 
 \begin{table}[htbp]
 \centering
@@ -196,9 +222,14 @@ normalized per true class.}
 \label{fig:confusion}
 \end{figure}
 
-The dead fraction is $16.1 / 12.6 / 11.3 / 22.8$\,\% across the four layers, and
-\textbf{no neuron in any layer exceeds the saturation threshold}, a consequence
-of $\beta = 0.75$ (Figure~\ref{fig:firing}). These figures reproduce those of Section~\ref{sec:resolution}
+The dead fraction is $16.1 / 12.6 / 11.3 / 22.8$\,\% across the four layers
+(Figure~\ref{fig:firing}). Saturation is confined to the first layer and to
+$24$ of its $50\,176$ neurons, $0.05$\,\%, with none above the threshold in the
+other three. The reference checkpoint is the quiet one. Across the three seeds
+the layer-1 saturated fraction is $4.67 \pm 4.02$\,\%, and in two of them
+neurons fire on more than $99$\,\% of steps: $13$ at seed 2345, $40$ at seed
+3456. Layer 1 moves in both directions at once, holding the fewest dead units
+in the seed where it holds the most saturated ones. These figures reproduce those of Section~\ref{sec:resolution}
 exactly for the same seed, computed through an independent code path, which is a
 free verification of both.
 

@@ -481,12 +481,14 @@ spike contribution score} weights a past spike at $t'$ by its recency with
 respect to the current step $t$,
 \begin{equation}
 T(t, t') = \exp\left(-\gamma\,|t - t'|\right),
+\label{eq:tscs}
 \end{equation}
 where $\gamma$ sets how fast the contribution of a spike fades. A
 \emph{neuronal contribution score} sums these weights over the spikes the neuron
 emitted before $t$,
 \begin{equation}
 N^{k}_{ij,t} = \sum_{t' \in P^{k}_{ij},\; t' < t} T(t, t'),
+\label{eq:ncs}
 \end{equation}
 where $P^{k}_{ij}$ is the set of firing times of the neuron in channel $k$ at
 position $(i,j)$; it is high for a neuron that has fired often and recently, and
@@ -495,6 +497,7 @@ the score only of the neurons that are firing at $t$ and sums over the channels
 of the layer,
 \begin{equation}
 M_{ij,t} = \sum_{k} N^{k}_{ij,t}\, S^{k}_{ij,t},
+\label{eq:sam}
 \end{equation}
 yielding one spatial heat map per time step and per layer.
 

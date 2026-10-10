@@ -22,10 +22,7 @@ N_PER_CLASS = 15
 
 
 def get_upsampled_sam_map(net, image, time_steps, device, layer_index, gamma, image_size):
-    """
-    Calculates SAM aggregated on tiem and mean and it re-dimensions it
-    to the resolution of the original image
-    """
+    # Calculates SAM aggregated on tiem and mean and it re-dimensions it to the resolution of the original image
 
     spikes = get_layer_spikes(net, image, time_steps, device, layer_index)
     sam_maps = compute_sam(spikes, gamma)        # [T, H, W]
@@ -36,7 +33,8 @@ def get_upsampled_sam_map(net, image, time_steps, device, layer_index, gamma, im
     return upsampled.squeeze().cpu()
 
 
-def get_class_confidence(net, image, time_steps, device, target_class):
+def class_probabilities(net, image, time_steps, device):
+    # softmax over the per-class spike counts of one image, as a vector
 
     image_batched = image.unsqueeze(0).to(device)
     encoded_x = direct_encode(image_batched, time_steps=time_steps)
@@ -45,8 +43,12 @@ def get_class_confidence(net, image, time_steps, device, target_class):
         spike_out, _, _, _, _ = net(encoded_x)
 
     spike_count = spike_out.sum(dim=0)            # [1, 4]
-    probs = torch.softmax(spike_count, dim=1)
-    return probs[0, target_class].item()
+    return torch.softmax(spike_count, dim=1)[0]   # [4]
+
+
+def get_class_confidence(net, image, time_steps, device, target_class):
+
+    return class_probabilities(net, image, time_steps, device)[target_class].item()
 
 def mask_top_fraction(image, importance_map, fraction, ordering):
     # Set to zero the given fraction of pixels in the order supplied
@@ -93,10 +95,10 @@ def run_deletion_analysis(net, samples, time_steps, device, layer_index, gamma, 
         for image in image_list:
             sam_map = get_upsampled_sam_map(net, image, time_steps, device, layer_index, gamma, image_size)
 
-            target_class = torch.argmax(
-                torch.tensor([get_class_confidence(net, image, time_steps, device, c)
-                              for c in range(len(class_names))])
-            ).item()
+            # One forward pass
+            target_class = int(
+                class_probabilities(net, image, time_steps, device).argmax()
+            )
 
             sam_curves.append(deletion_curve(net, image, sam_map, time_steps, device, target_class, "sam"))
             random_curves.append(deletion_curve(net, image, sam_map, time_steps, device, target_class, "random"))

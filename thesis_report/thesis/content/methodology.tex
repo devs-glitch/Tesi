@@ -422,29 +422,14 @@ whole partition is what makes the estimate stable.
 \section{The Spike Activation Map}
 \label{sec:sam-method}
  
-SAM is implemented in two stages, following the original
-formulation~\cite{kim2021sam}. The temporal spike contribution score weights a
-past spike at $t'$ by its recency with respect to the current step $t$:
-\begin{equation}
-T(t, t') = \exp\left(-\gamma\,|t - t'|\right).
-\end{equation}
-The neuronal contribution score of a neuron at time $t$ sums that weight over the
-neuron's preceding spikes, so a unit that has recently fired repeatedly --- one
-with short inter-spike intervals --- receives a high score:
-\begin{equation}
-N^{k}_{ij,t} = \sum_{t' \in P^{k}_{ij},\; t' < t} T(t, t') .
-\label{eq:ncs}
-\end{equation}
-The heat map at time $t$ masks that score with the spikes actually emitted at $t$
-and sums over the channel axis, yielding one spatial map per time step:
-\begin{equation}
-M_{ij,t} = \sum_{k} N^{k}_{ij,t}\, S^{k}_{ij,t} .
-\end{equation}
+The definition is the one given in Section~\ref{sec:sam-background}: the
+recency weight of Equation~\ref{eq:tscs}, accumulated over a neuron's preceding
+spikes by Equation~\ref{eq:ncs}, masked by the spikes emitted at $t$ and summed
+over channels by Equation~\ref{eq:sam}. What the definition leaved open the
+implementation had to settle.
  
-\paragraph{The summation range is exclusive of $t$.} This is stated explicitly
-because an earlier implementation in this work summed over $t' \leq t$, and the
-error is instructive. The score measures the contribution of a neuron's
-\emph{preceding} trajectory; including $t' = t$ adds a term of weight
+\paragraph{The summation range is exclusive of $t$.} The score measures the contribution of a neuron's
+\emph{preceding} trajectory, as including $t' = t$ would mean adding a term of weight
 $\exp(0) = 1$ for every neuron firing at $t$, so the map produced is the correct
 SAM \emph{plus the raw binary spike map}. The pedestal is independent of both
 $\gamma$ and the spike history, and therefore inflates every correlation between
@@ -461,8 +446,8 @@ $O(T^2)$. A reference implementation computing the explicit sum is retained and
 the two are asserted equal at run time.
  
 Visualizations overlay every time step on the denormalized input under a
-\emph{shared colour scale}, so that a change in intensity across time is genuine
-and not an artefact of per-panel rescaling.
+\emph{shared colour scale} to assure that a change in intensity across time is genuine
+and is not an artefact of per-panel rescaling.
  
 The reference configuration for every analysis below is \textbf{layer 2 with
 $\gamma = 0.5$}, both recorded in the manifest. The choice of $\gamma$ is
@@ -473,17 +458,16 @@ justified in Section~\ref{sec:gamma}.
  
 \subsection{Multi-sample statistics}
  
-A single heat map is a glimpse, not a description of what the network attends to
-for a class. For each class, SAM is computed on 25 validation images, aggregated
+For each class, SAM is computed on 25 validation images, aggregated
 over time (mean over $T$) and stacked, and three maps are reported: the
-\emph{mean}, the region attended on average; the \emph{standard deviation},
-where the explanation varies most across instances; and their ratio, the
+\emph{mean}, meaning the region attended on average; the \emph{standard deviation},
+investiganting where the explanation varies most across instances; and their ratio, the
 \emph{coefficient of variation}, which indicates whether a region is attended
 consistently or only in some examples. Mean and standard deviation share a
-colour scale across classes so that they are numerically comparable; the
+colour scale across classes so that they are numerically comparable. The
 coefficient of variation has an extremely long tail where the mean is near zero,
 and its colour scale is truncated at the 95th percentile.
- 
+
 The same statistics are repeated for all four hidden layers, on 20 images per
 class. Since SAM sums over the channel axis and the four layers have 16, 32, 64
 and 128 channels, raw magnitudes are not comparable across depth, and both maps
@@ -492,78 +476,154 @@ shared scale.
  
 \subsection{Faithfulness: the deletion metric}
  
-Stability is not correctness, so faithfulness is tested separately with the
-deletion metric of Petsiuk et al.~\cite{petsiuk2018rise}:
-\begin{enumerate}
-  \item the time-aggregated SAM map of an image is upsampled bilinearly from the
-        layer resolution to the input resolution, so that importance is
-        expressed over input pixels;
-  \item the class predicted on the unmodified image is recorded and tracked
-        throughout, since SAM is class-agnostic and the metric measures
-        faithfulness to the model's decision;
-  \item pixels are removed in decreasing order of SAM score, in 21 steps from
-        0\,\% to 100\,\%, and the softmax confidence of the tracked class is
-        recorded at each step;
-  \item the identical procedure is repeated with pixels removed in random
-        order, as a control;
-  \item the curves are averaged over 15 images per class and compared through
-        their area under the curve (AUC), computed by the trapezoidal rule.
-\end{enumerate}
-A faithful map degrades the confidence faster than random removal, so
-$\Delta = \mathrm{AUC}_{\mathrm{SAM}} - \mathrm{AUC}_{\mathrm{random}} < 0$ is
-the expected outcome. Deleted pixels are set to zero in normalized space, which
-corresponds to the dataset mean rather than to black; the ordering is computed
-once per image and sliced progressively, so that the removed sets are nested for
-both curves.
+Stability does not imply itself correctness, so faithfulness is tested separately with the
+deletion metric of Petsiuk et al.~\cite{petsiuk2018rise}. Pixels are removed in
+decreasing order of attributed importance and the confidence of the model is
+read after each removal. A map that points at the evidence the model uses
+destroys that confidence faster than one that does not.
+Algorithm~\ref{alg:deletion} states the procedure for a single image;
+\texttt{xai/deletion\_metric.py} implements it.
  
+\begin{algorithm}[htbp]
+\caption{Deletion metric for one image}
+\label{alg:deletion}
+\begin{algorithmic}[1]
+\REQUIRE network $f$, image $x$, reference layer $\ell$, decay $\gamma$,
+         fractions $F = \{0,\, 0.05,\, \dots,\, 1\}$
+\ENSURE  confidence curves $c^{\mathrm{SAM}}$ and $c^{\mathrm{rand}}$ over $F$
+\STATE $M \gets \mathrm{SAM}(f, x, \ell, \gamma)$ \COMMENT{$[T, H, W]$, one map per time step}
+\STATE $A \gets \frac{1}{T}\sum_{t} M_{t}$
+\STATE $A \gets \mathrm{upsample}_{\mathrm{bilinear}}(A)$ \COMMENT{layer resolution to input resolution}
+\STATE $\hat{y} \gets \arg\max_{c} \mathrm{softmax}\!\left(f(x)\right)_{c}$
+\FOR{$\mathrm{ord} \in \{\mathrm{SAM},\, \mathrm{rand}\}$}
+  \IF{$\mathrm{ord} = \mathrm{SAM}$}
+    \STATE $\pi \gets \mathrm{argsort}(A,\ \text{descending})$
+  \ELSE
+    \STATE $\pi \gets$ uniform random permutation of $\{1, \dots, HW\}$
+  \ENDIF
+  \FOR{$\phi \in F$}
+    \STATE $x' \gets x$ with pixels $\pi_{1 \dots \lfloor \phi HW \rfloor}$ set to $0$ in all three channels
+    \STATE $c^{\mathrm{ord}}_{\phi} \gets \mathrm{softmax}\!\left(f(x')\right)_{\hat{y}}$
+  \ENDFOR
+\ENDFOR
+\end{algorithmic}
+\end{algorithm}
+ 
+SAM produces one map per time
+step and the metric needs one, so the maps are averaged over $t$, and what survives
+that average is an ordering of the pixels: only the ordering enters what
+follows. SAM is class-agnostic, so the tracked class is the one the model
+predicts on the unmodified image, held fixed while the pixels disappear.
+Removed pixels are set to zero in normalized space, which is the ImageNet
+channel mean of the preprocessing rather than black.
+ 
+The pixel ranking is computed once per image and per ordering, and the mask at
+each fraction takes its first $\lfloor \phi H W \rfloor$ entries. The removed
+sets are nested: a pixel deleted at one fraction stays deleted at every larger
+one. What the curve traces is the progressive degradation of a single ranking,
+not 21 unrelated maskings.
+
+At every fraction the two curves delete the same number of pixels and differ
+only in which ones. The gap between them isolates the ordering, the one thing
+the control changes, and cannot come from one condition removing more of the
+image than the other.
+
+The area under a curve is the confidence the model retains, integrated over the
+fraction deleted: a faithful map destroys that confidence early and leaves less
+area behind than random deletion, which makes
+$\Delta = \mathrm{AUC}_{\mathrm{SAM}} - \mathrm{AUC}_{\mathrm{random}}$ negative,
+its magnitude the margin the map gains over chance. The 15 curves of a class are
+averaged point by point, and the area under the mean curve is taken by the
+trapezoidal rule, which joins consecutive samples by a straight segment and sums
+the 20 trapezia lying between the 21 fractions. The curve has no analytic form
+and only 21 empirical samples, so a higher-order rule would interpolate
+structure that was never measured.
+
 \subsection{Divergence metrics}
 \label{sec:metrics}
- 
-Two explanations of the same image, produced by two models, are compared with
-three metrics, each answering a different question.
- 
+
+Two explanations of the same image produced by two models are compared with
+different metrics addressing different questions.
+The first two read the stack summed over time,
+$A = \sum_{t} M_{\cdot\,\cdot,\,t}$, and are spatial, while the third reads the stack
+unaggregated and is the only one that sees the time axis. Their provenance in
+the saliency literature is discussed in Section~\ref{sec:sam-background}.
+
 \paragraph{Spatial Pearson correlation (PCC).} The linear correlation between
-the two time-aggregated maps, flattened. It is invariant to an affine rescaling
-of either map, which is the property that makes it usable across models whose
-overall spiking activity differs.
- 
-\paragraph{Top-$k$ intersection over union (IoU).} The overlap between the sets
-of the $k = 20\,\%$ highest-scoring positions of the two maps. Two independent
-random rankings overlap at a chance level of $k / (2 - k) = 0.111$.
- 
+the two summed maps, flattened over the $HW$ positions,
+\begin{equation}
+\mathrm{PCC}(A, B) =
+\frac{\sum_{i} (A_i - \bar{A})(B_i - \bar{B})}
+     {\sqrt{\sum_{i} (A_i - \bar{A})^2}\ \sqrt{\sum_{i} (B_i - \bar{B})^2}} .
+\label{eq:pcc}
+\end{equation}
+Centring and dividing by the standard deviations makes it invariant to any
+affine rescaling $B \mapsto \alpha B + \beta$ with $\alpha > 0$, and that
+invariance is what allows a comparison across models whose overall spiking
+activity differs. Indeed, a quantized model that fires uniformly more than its parent
+is not charged for the offset, only for a change in the spatial pattern. The
+quantity is undefined when either map is constant, a case that in the implementation
+returns as missing rather than as zero.
+
+\paragraph{Top-$k$ intersection over union (IoU).} Let $A_k$ hold the positions
+whose value in $A$ exceeds the $(1-k)$ empirical quantile of $A$, and $B_k$ the
+same for $B$. The metric is the Jaccard index of the two sets,
+\begin{equation}
+\mathrm{IoU}_k = \frac{|A_k \cap B_k|}{|A_k \cup B_k|},
+\label{eq:iou}
+\end{equation}
+with $k = 0.20$, the value used by Rabbi et al.~\cite{rabbi2026}. Where the
+correlation weighs every position by its value, this reads the ranking alone
+and only at its top, as it asks whether the two models highlight the same region,
+not whether they assign it the same intensity. Two independent rankings select
+$kHW$ positions each and share $k^{2}HW$ of them in expectation, over a union
+of $2kHW - k^{2}HW$, so the chance level is $k/(2-k) = 0.111$.
+
+The threshold is
+a strict inequality against an empirical quantile, so the selected set holds
+exactly $kHW$ positions only when the values are distinct. Ties can leave it
+empty, which happens when $k$ is small enough for the quantile to fall inside a
+plateau, and the value is then undefined.
+
 \paragraph{Temporal centre of mass (CoM).} The mean time step at which the
-energy of the SAM map is concentrated,
+energy of the SAM stack is concentrated,
 \begin{equation}
 \mathrm{CoM} = \frac{\sum_t t \, E_t}{\sum_t E_t},
 \qquad E_t = \sum_{i,j} M_{ij,t},
+\label{eq:com}
 \end{equation}
-reported as the absolute difference between the two models. Being an aggregate
-over the whole map, it is the metric that carries the temporal axis.
- 
-In addition, the \emph{per-timestep correlation} between the maps at each $t$
-localizes in time where agreement breaks down.
+with the steps indexed from $0$ and $E_0 = 0$, SAM being identically zero at
+the first step. It is reported as $|\mathrm{CoM}_A - \mathrm{CoM}_B|$, in units
+of time steps. Aggregating over the whole map discards where the activity sits
+and keeps when it occurs, which makes it the complement of the two spatial
+metrics.
+
+Beyond the three, the \emph{per-timestep correlation} applies
+Equation~\ref{eq:pcc} to the pair of maps at each $t$ separately and returns a
+vector of length $T$ in place of a scalar. It localizes the step at which
+agreement breaks down, which provides an information that neither
+a summed map nor a single centre of mass can show.
  
 \subsection{Calibration protocol}
 \label{sec:calibration-protocol}
  
-The divergence metrics are calibrated before they are used, at three levels,
+The divergence metrics are calibrated before they are used, at different levels,
 all on fifteen validation images per class at the reference layer and $\gamma$,
 on the three checkpoints of the full-precision reference.
  
 \begin{enumerate}
   \item \textbf{Verification.} A checkpoint compared with itself must return
-        perfect agreement; two calls to the sampling routine must return
-        bit-identical images; and two forward passes of the same model must
+        perfect agreement, so two calls to the sampling routine must return
+        bit-identical images, and two forward passes of the same model must
         return identical maps.
   \item \textbf{Independent solutions.} The three full-precision checkpoints are
-        compared pairwise, which measures how similar two independently trained
+        compared pairwise to measure how similar two independently trained
         solutions are.
   \item \textbf{Numerical floor.} Gaussian noise is added to the weight tensors
         of one checkpoint, at magnitudes expressed as fractions of its measured
-        8-bit quantization step, and the perturbed model is compared with the
+        8-bit quantization step, and the perturbed model is then compared with the
         unperturbed one. Biases and the LIF buffers are excluded, since
         perturbing $\beta$ would mix membrane dynamics with weight noise.
 \end{enumerate}
 The $\gamma$ sensitivity analysis supplies a further reference point: the
 divergence produced by changing the explainer itself thirtyfold.
- 
