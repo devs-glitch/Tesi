@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.28 (MiKTeX 25.12) (preloaded format=pdflatex 2026.7.22)  10 OCT 2026 03:31
+This is pdfTeX, Version 3.141592653-2.6-1.40.28 (MiKTeX 25.12) (preloaded format=pdflatex 2026.7.22)  10 OCT 2026 16:58
 entering extended mode
  restricted \write18 enabled.
  file:line:error style messages enabled.
@@ -908,7 +908,7 @@ l.52 \include{content/abstract}
 pdfTeX warning (ext4): destination with the same identifier (name{page.2}) has been already used, duplicate ignored
 <to be read again> 
                    \relax 
-l.62 ...the deletion metric}{27}{subsection.3.7.2}
+l.62 ...the deletion metric}{28}{subsection.3.7.2}
                                                   % [2
 
 
@@ -987,31 +987,47 @@ File: figures/correlation_matrix.png Graphic file (type png)
 <use figures/correlation_matrix.png>
 Package pdftex.def Info: figures/correlation_matrix.png  used on input line 125.
 (pdftex.def)             Requested size: 358.50229pt x 175.51456pt.
- [20 <./figures/label_counts.png> <./figures/spectrogram_examples.png>] [21 <./figures/pairplot.png> <./figures/umap.png>] [22 <./figures/correlation_matrix.png>] [23] [24] [25] [26] [27]
-Underfull \hbox (badness 1939) in paragraph at lines 513--517
+ [20 <./figures/label_counts.png> <./figures/spectrogram_examples.png>] [21 <./figures/pairplot.png> <./figures/umap.png>] [22 <./figures/correlation_matrix.png>]
+
+LaTeX Warning: File `network_architecture_112px.pdf' not found on input line 247.
+
+
+content/methodology.tex:247: Package pdftex.def Error: File `network_architecture_112px.pdf' not found: using draft setting.
+
+See the pdftex.def package documentation for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.247 ...inewidth]{network_architecture_112px.pdf}
+                                                  
+Try typing  <return>  to proceed.
+If that doesn't work, type  X <return>  to quit.
+
+[23] [24] [25] [26] [27]
+Underfull \hbox (badness 1939) in paragraph at lines 520--524
  []\T1/FiraSans-OsF/semibold/n/10 Spatial Pear-son cor-re-la-tion (PCC).[] \T1/pplx/m/n/10 The lin-ear cor-re-la-tion be-tween the two time-
  []
 
-) [28]
+[28]) [29]
 \openout2 = `content/quantization.aux'.
 
  (content/quantization.tex
 Chapter 4.
-[29
+[30
 
 
 
 
-] [30] [31]
+] [31] [32]
 LaTeX Font Info:    Trying to load font information for TS1+pplx on input line 237.
  (C:\Users\devam\AppData\Local\Programs\MiKTeX\tex/latex/psnfss\ts1pplx.fd
 File: ts1pplx.fd 2004/09/06 font definitions for TS1/pplx.
-) [32] [33]) [34]
+) [33] [34]) [35]
 \openout2 = `content/results.aux'.
 
  (content/results.tex
 Chapter 5.
-[35
+[36
 
 
 
@@ -1029,56 +1045,56 @@ Package hyperref Warning: Token not allowed in a PDF string (Unicode):
 Package hyperref Warning: Token not allowed in a PDF string (Unicode):
 (hyperref)                removing `math shift' on input line 126.
 
-[36]
-<figures/confusion_matrix.png, id=948, 436.5108pt x 327.1422pt>
+[37]
+<figures/confusion_matrix.png, id=953, 436.5108pt x 327.1422pt>
 File: figures/confusion_matrix.png Graphic file (type png)
 <use figures/confusion_matrix.png>
 Package pdftex.def Info: figures/confusion_matrix.png  used on input line 193.
 (pdftex.def)             Requested size: 239.00558pt x 179.12508pt.
-<figures/firing_rate_distributions.png, id=951, 1176.5556pt x 295.8252pt>
+<figures/firing_rate_distributions.png, id=956, 1176.5556pt x 295.8252pt>
 File: figures/firing_rate_distributions.png Graphic file (type png)
 <use figures/firing_rate_distributions.png>
 Package pdftex.def Info: figures/firing_rate_distributions.png  used on input line 213.
 (pdftex.def)             Requested size: 398.3386pt x 100.15492pt.
- [37]
-<figures/cv_isi_distributions.png, id=960, 1154.3928pt x 295.8252pt>
+ [38]
+<figures/cv_isi_distributions.png, id=965, 1154.3928pt x 295.8252pt>
 File: figures/cv_isi_distributions.png Graphic file (type png)
 <use figures/cv_isi_distributions.png>
 Package pdftex.def Info: figures/cv_isi_distributions.png  used on input line 232.
 (pdftex.def)             Requested size: 398.3386pt x 102.07785pt.
-<figures/sam_visualization.png, id=962, 1198.7184pt x 176.3388pt>
+<figures/sam_visualization.png, id=967, 1198.7184pt x 176.3388pt>
 File: figures/sam_visualization.png Graphic file (type png)
 <use figures/sam_visualization.png>
 Package pdftex.def Info: figures/sam_visualization.png  used on input line 248.
 (pdftex.def)             Requested size: 398.3386pt x 58.59827pt.
- [38 <./figures/confusion_matrix.png> <./figures/firing_rate_distributions.png>]
-<figures/sam_class_stats.png, id=973, 820.0236pt x 748.2354pt>
+ [39 <./figures/confusion_matrix.png> <./figures/firing_rate_distributions.png>]
+<figures/sam_class_stats.png, id=978, 820.0236pt x 748.2354pt>
 File: figures/sam_class_stats.png Graphic file (type png)
 <use figures/sam_class_stats.png>
 Package pdftex.def Info: figures/sam_class_stats.png  used on input line 267.
 (pdftex.def)             Requested size: 358.50229pt x 327.12384pt.
-<figures/sam_layer_Blip.png, id=975, 826.287pt x 493.845pt>
+<figures/sam_layer_Blip.png, id=980, 826.287pt x 493.845pt>
 File: figures/sam_layer_Blip.png Graphic file (type png)
 <use figures/sam_layer_Blip.png>
 Package pdftex.def Info: figures/sam_layer_Blip.png  used on input line 288.
 (pdftex.def)             Requested size: 195.1881pt x 116.65642pt.
-<figures/sam_layer_Extremely_Loud.png, id=976, 826.287pt x 493.845pt>
+<figures/sam_layer_Extremely_Loud.png, id=981, 826.287pt x 493.845pt>
 File: figures/sam_layer_Extremely_Loud.png Graphic file (type png)
 <use figures/sam_layer_Extremely_Loud.png>
 Package pdftex.def Info: figures/sam_layer_Extremely_Loud.png  used on input line 292.
 (pdftex.def)             Requested size: 195.1881pt x 116.65642pt.
-<figures/sam_layer_Scattered_Light.png, id=977, 832.5504pt x 493.845pt>
+<figures/sam_layer_Scattered_Light.png, id=982, 832.5504pt x 493.845pt>
 File: figures/sam_layer_Scattered_Light.png Graphic file (type png)
 <use figures/sam_layer_Scattered_Light.png>
 Package pdftex.def Info: figures/sam_layer_Scattered_Light.png  used on input line 297.
 (pdftex.def)             Requested size: 195.1881pt x 115.77477pt.
-<figures/sam_layer_Violin_Mode.png, id=978, 832.5504pt x 493.845pt>
+<figures/sam_layer_Violin_Mode.png, id=983, 832.5504pt x 493.845pt>
 File: figures/sam_layer_Violin_Mode.png Graphic file (type png)
 <use figures/sam_layer_Violin_Mode.png>
 Package pdftex.def Info: figures/sam_layer_Violin_Mode.png  used on input line 301.
 (pdftex.def)             Requested size: 195.1881pt x 115.77477pt.
- [39 <./figures/cv_isi_distributions.png> <./figures/sam_visualization.png>] [40 <./figures/sam_class_stats.png>]
-<figures/gamma_Violin_Mode.png, id=995, 1003.5894pt x 328.5876pt>
+ [40 <./figures/cv_isi_distributions.png> <./figures/sam_visualization.png>] [41 <./figures/sam_class_stats.png>]
+<figures/gamma_Violin_Mode.png, id=1001, 1003.5894pt x 328.5876pt>
 File: figures/gamma_Violin_Mode.png Graphic file (type png)
 <use figures/gamma_Violin_Mode.png>
 Package pdftex.def Info: figures/gamma_Violin_Mode.png  used on input line 376.
@@ -1088,72 +1104,72 @@ Overfull \hbox (4.7013pt too wide) in paragraph at lines 402--413
  [][] 
  []
 
-<figures/deletion_metric.png, id=999, 1171.2558pt x 295.8252pt>
+<figures/deletion_metric.png, id=1005, 1171.2558pt x 295.8252pt>
 File: figures/deletion_metric.png Graphic file (type png)
 <use figures/deletion_metric.png>
 Package pdftex.def Info: figures/deletion_metric.png  used on input line 419.
 (pdftex.def)             Requested size: 398.3386pt x 100.60631pt.
-[41 <./figures/sam_layer_Blip.png> <./figures/sam_layer_Extremely_Loud.png> <./figures/sam_layer_Scattered_Light.png> <./figures/sam_layer_Violin_Mode.png>] [42 <./figures/gamma_Violin_Mode.png> <./figures/deletion_metric.png>] [43] [44] [45] [46] [47]
-<figures/grid_headline.pdf, id=1057, 520.34402pt x 187.902pt>
+[42 <./figures/sam_layer_Blip.png> <./figures/sam_layer_Extremely_Loud.png> <./figures/sam_layer_Scattered_Light.png> <./figures/sam_layer_Violin_Mode.png>] [43 <./figures/gamma_Violin_Mode.png> <./figures/deletion_metric.png>] [44] [45] [46] [47] [48]
+<figures/grid_headline.pdf, id=1062, 520.34402pt x 187.902pt>
 File: figures/grid_headline.pdf Graphic file (type pdf)
 <use figures/grid_headline.pdf>
 Package pdftex.def Info: figures/grid_headline.pdf  used on input line 818.
 (pdftex.def)             Requested size: 398.3386pt x 143.85063pt.
- [48 <./figures/grid_headline.pdf>] [49] [50] [51] [52] [53]) [54]
+ [49 <./figures/grid_headline.pdf>] [50] [51] [52] [53] [54]) [55]
 \openout2 = `content/conclusions.aux'.
 
  (content/conclusions.tex
 Chapter 6.
-[55
+[56
 
 
 
 
-] [56] [57] [58]) [59]
+] [57] [58] [59]) [60]
 \openout2 = `backmatter.aux'.
 
  (backmatter.tex (thesis.bbl (thesis.brf)
 \tf@brf=\write7
 \openout7 = `thesis.brf'.
 
- [60
+ [61
 
 
 
 
 
-] [61]
+] [62]
 Underfull \hbox (badness 1127) in paragraph at lines 227--227
 []\T1/pplx/m/n/10 Ruokai Yin, Yuhang Li, Ab-hishek Moitra, and Priyadarshini Panda.  MINT:
  []
 
-) [62]
+) [63]
 Appendix A.
-<figures/gamma_Blip.png, id=1328, 1003.5894pt x 328.5876pt>
+<figures/gamma_Blip.png, id=1333, 1003.5894pt x 328.5876pt>
 File: figures/gamma_Blip.png Graphic file (type png)
 <use figures/gamma_Blip.png>
 Package pdftex.def Info: figures/gamma_Blip.png  used on input line 20.
 (pdftex.def)             Requested size: 398.3386pt x 130.4199pt.
-<figures/gamma_Extremely_Loud.png, id=1329, 1003.5894pt x 328.5876pt>
+<figures/gamma_Extremely_Loud.png, id=1334, 1003.5894pt x 328.5876pt>
 File: figures/gamma_Extremely_Loud.png Graphic file (type png)
 <use figures/gamma_Extremely_Loud.png>
 Package pdftex.def Info: figures/gamma_Extremely_Loud.png  used on input line 21.
 (pdftex.def)             Requested size: 398.3386pt x 130.4199pt.
-<figures/gamma_Scattered_Light.png, id=1330, 1003.5894pt x 328.5876pt>
+<figures/gamma_Scattered_Light.png, id=1335, 1003.5894pt x 328.5876pt>
 File: figures/gamma_Scattered_Light.png Graphic file (type png)
 <use figures/gamma_Scattered_Light.png>
 Package pdftex.def Info: figures/gamma_Scattered_Light.png  used on input line 22.
 (pdftex.def)             Requested size: 398.3386pt x 130.4199pt.
-<figures/feature_boxplots.png, id=1333, 1399.629pt x 1110.0672pt>
+<figures/feature_boxplots.png, id=1338, 1399.629pt x 1110.0672pt>
 File: figures/feature_boxplots.png Graphic file (type png)
 <use figures/feature_boxplots.png>
 Package pdftex.def Info: figures/feature_boxplots.png  used on input line 30.
 (pdftex.def)             Requested size: 398.3386pt x 315.9151pt.
-[63
+[64
 
- <./figures/gamma_Blip.png> <./figures/gamma_Extremely_Loud.png> <./figures/gamma_Scattered_Light.png>] [64 <./figures/feature_boxplots.png>]
+ <./figures/gamma_Blip.png> <./figures/gamma_Extremely_Loud.png> <./figures/gamma_Scattered_Light.png>] [65 <./figures/feature_boxplots.png>]
 Appendix B.
-) [65
+) [66
 
 ] (thesis.aux (content/abstract.aux) (contents.aux) (content/introduction.aux) (content/state_of_the_art.aux) (content/methodology.aux) (content/quantization.aux) (content/results.aux) (content/conclusions.aux) (backmatter.aux))
  ***********
@@ -1165,22 +1181,22 @@ L3 programming layer <2025-12-24>
 LaTeX Font Warning: Some font shapes were not available, defaults substituted.
 
 Package rerunfilecheck Info: File `thesis.out' has not changed.
-(rerunfilecheck)             Checksum: 46D2AAEEB936DA531A4F7636A03C734B;18711.
+(rerunfilecheck)             Checksum: E38CB551D4DA38287A18787E1B9CB185;18711.
 Package rerunfilecheck Info: File `thesis.brf' has not changed.
-(rerunfilecheck)             Checksum: 4B240FBC72EB992220BBDA3FDF42A36B;4544.
+(rerunfilecheck)             Checksum: C8062F50D0AB14F672C5735FDFE907DD;4544.
  ) 
 Here is how much of TeX's memory you used:
- 28090 strings out of 467871
- 532708 string characters out of 5418376
- 1062240 words of memory out of 5000000
- 55962 multiletter control sequences out of 15000+600000
+ 28123 strings out of 467871
+ 533955 string characters out of 5418376
+ 1062241 words of memory out of 5000000
+ 55993 multiletter control sequences out of 15000+600000
  839957 words of font info for 207 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
  105i,13n,134p,754b,651s stack positions out of 10000i,1000n,20000p,200000b,200000s
  <C:\Users\devam\AppData\Local\MiKTeX\fonts/pk/ljfour/jknappen/ec/dpi600\ectt0900.pk> <C:\Users\devam\AppData\Local\MiKTeX\fonts/pk/ljfour/jknappen/ec/dpi600\ectt1000.pk><C:/Users/devam/AppData/Local/Programs/MiKTeX/fonts/type1/public/fira/FiraSans-Regular.pfb><C:/Users/devam/AppData/Local/Programs/MiKTeX/fonts/type1/public/fira/FiraSans-SemiBold.pfb><C:/Users/devam/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmex10.pfb><C:/Users/devam/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmsy10.pfb><C:/Users/devam/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmsy7.pfb><C:/Users/devam/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/euler/euex10.pfb><C:/Users/devam/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/euler/eufm10.pfb><C:/Users/devam/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/euler/eufm7.pfb><C:/Users/devam/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/euler/eurm10.pfb><C:/Users/devam/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/euler/eurm7.pfb><C:/Users/devam/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/euler/eusm10.pfb><C:/Users/devam/AppData/Local/Programs/MiKTeX/fonts/type1/public/fpl/fplrc8a.pfb><C:/Users/devam/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/symbols/msam10.pfb><C:/Users/devam/AppData/Local/Programs/MiKTeX/fonts/type1/urw/palatino/uplb8a.pfb><C:/Users/devam/AppData/Local/Programs/MiKTeX/fonts/type1/urw/palatino/uplr8a.pfb><C:/Users/devam/AppData/Local/Programs/MiKTeX/fonts/type1/urw/palatino/uplri8a.pfb>
-Output written on thesis.pdf (67 pages, 4622474 bytes).
+Output written on thesis.pdf (68 pages, 4623882 bytes).
 PDF statistics:
- 1577 PDF objects out of 1728 (max. 8388607)
- 340 named destinations out of 1000 (max. 500000)
+ 1584 PDF objects out of 1728 (max. 8388607)
+ 342 named destinations out of 1000 (max. 500000)
  898 words of extra memory for PDF output out of 10000 (max. 10000000)
 

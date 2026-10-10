@@ -217,9 +217,9 @@ duration, peak frequency and bandwidth similarly matched.
 \subsection{Architecture}
  
 \texttt{GWGlitchSNN} is a four-block convolutional spiking network. Each block is
-a $5 \times 5$ convolution with stride 2 and padding 2 followed by a LIF layer;
-spatial downsampling is performed by the stride rather than by pooling, which
-keeps the spike tensors dense in time and avoids inserting a non-spiking operator
+a $5 \times 5$ convolution with stride 2 and padding 2 followed by a LIF layer. The
+spatial downsampling is performed by the stride rather than by pooling, in this way
+the spike tensors are kept dense in time and it avoids inserting a non-spiking operator
 between layers.
  
 \begin{table}[htbp]
@@ -238,18 +238,25 @@ Readout & Flatten (6\,272) $\to$ Linear $\to$ LIF & $[B, 4]$ & one neuron per cl
 \end{tabular}
 \caption{Layer configuration at the working resolution of 112\,px. The flattened
 width is derived from the input size at construction ($25\,088$ at 224\,px,
-$6\,272$ at 112\,px, $2\,048$ at 64\,px), and the forward pass raises if the
-input resolution does not match the one the model was built for.}
+$6\,272$ at 112\,px, $2\,048$ at 64\,px).}
 \label{tab:architecture}
 \end{table}
  
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=\linewidth]{network_architecture_112px.pdf}
+\caption{Datapath of \texttt{GWGlitchSNN} at the working resolution, and its
+unrolling over the $T$ time steps.}
+\label{fig:architecture}
+\end{figure}
+
 The forward pass returns the stacked output spike train \emph{and} the four
 hidden spike tensors of shape $[T, B, C, H, W]$, so that every diagnostic and
 explainability procedure consumes raw hidden spike trains directly from the model
-interface rather than through hooks.
+interface.
  
 Parameter count is nearly resolution-independent: $295\,332$ at 112\,px, of which
-$270\,240$ are convolutional and unaffected by input size. Only the linear
+$270\,240$ are convolutional and unaffected by input size, since only the linear
 readout shrinks with resolution, a fact with consequences for the design of the
 quantization grid discussed in Section~\ref{sec:grid}.
  
