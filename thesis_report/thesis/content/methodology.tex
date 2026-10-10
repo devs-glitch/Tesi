@@ -260,9 +260,9 @@ $270\,240$ are convolutional and unaffected by input size, since only the linear
 readout shrinks with resolution, a fact with consequences for the design of the
 quantization grid discussed in Section~\ref{sec:grid}.
  
-Batch normalization, pooling and dropout are intentionally absent. Normalization
+Batch normalization, pooling and dropout are intentionally absent, since firstly normalization
 layers interact non-trivially with quantization, and their treatment belongs to a
-later phase: batch normalization must be reconsidered for spiking networks in
+later phas. Batch normalization, indeed, must be reconsidered for spiking networks in
 general, quantizing its parameters is a problem distinct from quantizing weights
 and potentials, and two alternative hardware strategies exist --- approximating
 it with shifts, or eliminating it entirely.
@@ -272,7 +272,7 @@ it with shifts, or eliminating it entirely.
 Classification uses a \emph{rate-coded readout}: output spikes are summed over
 the $T$ time steps and the resulting per-class counts are passed to a
 cross-entropy loss as logits. Optimization uses Adam~\cite{kingma2015adam}. This
-keeps SAM in the multi-spike regime where its inter-spike-interval formulation
+keeps SAM in the multi-spike regime, where its inter-spike-interval formulation
 remains meaningful.
  
 \section{Training}
@@ -283,71 +283,67 @@ remains meaningful.
 Hyperparameters are searched with Optuna~\cite{akiba2019optuna}, maximizing
 validation accuracy. Each trial reports validation accuracy after every epoch
 and is pruned by a Hyperband pruner~\cite{li2018hyperband} (minimum resource 1
-epoch, maximum 15, reduction factor 3), which allocates epochs to promising
-configurations and truncates the others early. A handler catches out-of-memory
-errors, releases the model and optimizer and marks the trial as pruned, so that
-configurations with a long time window can fail on the 6\,GB budget of the
-available GPU without interrupting the study. Studies are persisted to SQLite,
+epoch, maximum 15, reduction factor 3), which allows to allocate epochs to promising
+configurations and truncating the others early. Studies are persisted to SQLite,
 one study name per search and resolution.
  
-Two studies were run. The first (v4), at 224\,px, searched the learning rate in
-$[10^{-4}, 3 \times 10^{-3}]$ (log-uniform), $\beta$ in $(0, 1)$ and
+Two studies were run. The first (v4), at 224\,px resolution, searched the learning rate in
+the interval $[10^{-4}, 3 \times 10^{-3}]$ (log-uniform), $\beta$ in $(0, 1)$ and
 $T \in \{5, \dots, 15\}$, and selected a learning rate of
-$1.036 \times 10^{-4}$, $\beta = 0.4148$ and $T = 7$; this configuration was
-used for the resolution study. The second (v5), at the working resolution,
-imposes the deployment constraints described in
+$1.036 \times 10^{-4}$, $\beta = 0.4148$ and $T = 7$. This was the configuration
+used for the resolution study. The second (v5), at the working resolution found
+after the study (112\,px, as it will be better discussed in Section~\ref{sec:Selecting the operating configuration}),
+imposed the deployment constraints described in
 Section~\ref{sec:constrained-search} and produced the configuration used
 throughout the rest of the thesis.
  
 \subsection{Experiment tracking}
  
 Every trial is logged to Weights \& Biases. Beyond validation loss and
-accuracy, the logged metrics include the mean firing rate of each of the four
+accuracy, the logged metrics also include the mean firing rate of each of the four
 hidden layers. Firing rate is the proxy for energy consumption in spiking
 hardware~\cite{roy2019towards}, so tracking it per layer during the search shows
 whether high-accuracy configurations achieve their accuracy through dense and
-expensive activity or through sparse spiking, and whether any layer is silent or
+expensive activity or through sparse spiking, and also whether any layer is silent or
 saturated before any explainability diagnostic is run.
  
 A separately logged quantity, recorded under the name
 \texttt{avg\_firing\_rate}, is the mean over the four \emph{output} neurons only.
 A value near $0.25$ indicates that roughly one output neuron fires consistently,
-which is a signature of confident classification rather than a measure of
-network activity. It is \emph{not} the global firing rate of the network and is
+which is a signature of confident classification.
+It is relevant to note that it is \emph{not} the global firing rate of the network and is
 never used for energy accounting, for which only the per-hidden-layer rates are
 valid.
  
 \subsection{Final training}
  
-The training script reads the frozen configuration and trains from scratch,
-parametrized on input resolution and seed, so that the same code serves the
+The training script reads the frozen configuration and trains the model. The script is
+parametrized on input resolution and seed, the same code indeed serves the
 resolution study, the final training and the multi-seed reference. The seed is
 set explicitly before the model is constructed. The checkpoint is written
 whenever validation accuracy improves, and training stops after five
-consecutive epochs without improvement in validation loss, with a ceiling of 50
-epochs. Each run writes the checkpoint together with a record of the full
+consecutive epochs without improvement in validation loss, which permits early stopping,
+and with a ceiling set at 50 epochs.
+Each run writes the checkpoint together with a record of the full
 per-epoch history, the per-layer firing rates, the per-class validation recall,
 the seed and the resolution.
  
-All experiments run on a single NVIDIA RTX 4050 Laptop GPU (6\,GB). One epoch
-over the balanced training partition takes approximately three minutes at
-224\,px and 45 seconds at 112\,px.
- 
 \section{Selecting the operating configuration}
+\label{sec:Selecting the operating configuration}
  
-Three choices define the operating point: the input resolution, the three
-hyperparameters, and the decay constant of the explainer. Each is settled on
-evidence and recorded in a single frozen manifest. Taking any of them on test-set
-performance would consume the split reserved for the final estimate, so all three
-are decided on validation.
+The final operating point is defined by the input resolution, the three
+hyperparameters, and the layer and decay constant at which the explanations
+are read. Each is settled on
+evidence and recorded in a single frozen manifest and
+are decided on validation set.
  
 \subsection{Input resolution}
  
 Nine training runs were performed: three resolutions (224, 112, 64\,px) at three
 seeds each, on the frozen partition, with hyperparameters held fixed and only the
 input size varying. Since those hyperparameters had been found at 224\,px, the
-protocol systematically handicaps the lower resolutions, and any deficit they
-show is an upper bound.
+protocol systematically handicaps the lower resolutions, so any deficit they
+show must also be evaluated under this light.
  
 The procedure and its outcome are reported in Section~\ref{sec:resolution}.
  
@@ -360,46 +356,55 @@ hyperparameters chosen because they govern three distinct axes: learning rate
 (optimization stability), $\beta$ (membrane leak and temporal memory), and $T$
 (latency, computation and memory cost).
  
-\textbf{Two deployment constraints are imposed inside the search space rather
-than by rounding the result.} $\beta$ is restricted to
+\textbf{Two deployment constraints are imposed inside the search space.} Firstly, $\beta$ is restricted to
 $\{0.25, 0.5, 0.75, 0.875\}$, values whose decay is realizable as a bit shift,
-and the set spans both families ($\beta = 2^{-k}$ and $\beta = 1 - 2^{-k}$)
-deliberately. $T$ is capped at 8 for the same reason. A rounded value is one that
-was never validated; constraining the search guarantees that whatever it returns
+and the set spans both families ($\beta = 2^{-k}$ and $\beta = 1 - 2^{-k}$).
+$T$ is capped at 8. Constraining the search guarantees that whatever it returns
 is deployable by construction, and Section~\ref{sec:hyperparameters} shows that
 in this case the two differ.
  
 The lower bound of the learning rate was moved from $10^{-4}$ to $10^{-5}$,
 because the v4 optimum ($1.036 \times 10^{-4}$) sat on the boundary of the
-earlier range and a boundary optimum is not an optimum.
+earlier range, and a boundary optimum should be investigated further to clarify whether it is
+ a consequence of the decided range.
  
 \subsection{Baseline manifest}
  
 The outcome of these choices is recorded in a single file,
-\texttt{baseline\_manifest.json}: the input resolution, the three
+\texttt{baseline\_manifest.json}. It containes the input resolution, the three
 hyperparameters, the originating study, the decay rate and reference layer of
 the explainer, the list of seeds (1234, 2345, 3456), the checkpoint paths, the
 size of each partition, and the first sixteen hexadecimal digits of the SHA-256
-digest of the partition file (\texttt{754b2515b6509075}). Every downstream
-script reads the model and its configuration from the manifest rather than from
-hard-coded paths, so that no analysis can silently run on a different model or a
-different partition.
+digest of the partition file (\texttt{754b2515b6509075}).
+Every downstream script reads the model and its configuration from the manifest.
+
  
 \section{Diagnostics of the network dynamics}
 \label{sec:diagnostics}
  
 Two diagnostics characterize whether a trained network is a healthy spiking
-system or a formally correct one whose neurons are dead or saturated. Both are
+system or a formally correct one whose neurons are dead or saturated. The two are
 reused unchanged on every quantized model.
  
-\paragraph{Dead and saturated neurons.} For each hidden layer, the mean firing
-rate of every individual neuron is accumulated across the validation partition,
-weighted by batch size. A rate below $0.01$ identifies a \emph{dead} neuron,
-above $0.80$ a \emph{saturated} one. Dead neurons are wasted capacity and, being
-permanently silent, cannot appear in any explanation; saturated neurons carry
-almost no information, a nearly-always-firing binary unit having minimal
-entropy, while consuming the maximum possible energy.
- 
+\paragraph{Dead and saturated neurons.} For each hidden layer, the mean firing rate of every individual neuron is
+accumulated across the validation partition, weighted by batch size. A rate
+below $0.01$ identifies a \emph{dead} neuron, while a rate above $0.80$ a \emph{saturated}
+one. Neither cutoff is derived, since thresholds of this kind are conventions read
+off the distribution: the pruning literature trims neurons whose fraction of
+zero activations exceeds one standard deviation of the layer
+mean~\cite{hu2016trimming}, and the dormant-neuron analysis treats the cutoff
+as a tuned hyperparameter, reporting values between $0$ and
+$0.1$~\cite{sokar2023dormant}.
+
+The two ends are pathological for different reasons. A neuron firing on fewer
+than one input in a hundred is wasted capacity and, being silent, it cannot
+appear in any explanation; its output is near-deterministic, carrying $0.081$
+of the one bit a binary unit can hold. Saturation, instead, is not an information
+problem --- a Bernoulli variable at $0.80$ retains $0.722$ bits so as much as one
+at $0.20$ --- but an energy one: the energy of a spiking layer scales with the
+number of spikes it emits~\cite{suetake2023penalty}, so a unit near its ceiling
+spends the sparsity the architecture was chosen for.
+
 \paragraph{Regularity of firing.} The coefficient of variation of the
 inter-spike intervals,
 \begin{equation}
@@ -407,10 +412,10 @@ inter-spike intervals,
 \end{equation}
 distinguishes regular, clock-like firing ($\mathrm{CV} \to 0$) from irregular,
 Poisson-like firing ($\mathrm{CV} \approx 1$). It is relevant here because the
-Spike Activation Map is built on inter-spike intervals. A random sample of 200
-neuron positions per layer is fixed once, at the first batch, and the intervals
-of exactly those positions are accumulated over every validation image; the CV
-is computed only where at least five intervals were observed. Since a neuron can
+Spike Activation Map (SAM) is exactly built on inter-spike intervals. A random sample of 200
+neuron positions per layer is fixed once at the first batch, and the intervals
+of exactly those positions are accumulated over every validation image. The CV
+is then computed only where at least five intervals were observed. Since a neuron can
 produce at most $T - 1 = 7$ intervals within a single image, pooling over the
 whole partition is what makes the estimate stable.
  

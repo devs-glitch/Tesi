@@ -99,6 +99,12 @@ Mark Horowitz.
 \newblock In {\em IEEE International Solid-State Circuits Conference (ISSCC)},
   pages 10--14, 2014.
 
+\bibitem{hu2016trimming}
+Hengyuan Hu, Rui Peng, Yu-Wing Tai, and Chi-Keung Tang.
+\newblock Network trimming: A data-driven neuron pruning approach towards
+  efficient deep architectures.
+\newblock {\em arXiv preprint arXiv:1607.03250}, 2016.
+
 \bibitem{jacob2018quantization}
 B.~Jacob, S.~Kligys, B.~Chen, M.~Zhu, M.~Tang, A.~Howard, H.~Adam, and
   D.~Kalenichenko.
@@ -211,6 +217,19 @@ Ramprasaath~R. Selvaraju, Michael Cogswell, Abhishek Das, Ramakrishna Vedantam,
 Evan~Gibson Smith, Jacob Whitehill, and Fatemeh Ganji.
 \newblock Quantization of spiking neural networks beyond accuracy.
 \newblock {\em arXiv preprint arXiv:2604.14487}, 2026.
+
+\bibitem{sokar2023dormant}
+Ghada Sokar, Rishabh Agarwal, Pablo~Samuel Castro, and Utku Evci.
+\newblock The dormant neuron phenomenon in deep reinforcement learning.
+\newblock In {\em Proceedings of the 40th International Conference on Machine
+  Learning}, volume 202 of {\em Proceedings of Machine Learning Research},
+  pages 32145--32168, 2023.
+
+\bibitem{suetake2023penalty}
+Kazuma Suetake, Takuya Ushimaru, Ryuji Saiin, and Yoshihide Sawada.
+\newblock Spiking synaptic penalty: Appropriate penalty term for
+  energy-efficient spiking neural networks.
+\newblock {\em arXiv preprint arXiv:2302.01500}, 2023.
 
 \bibitem{wang2004ssim}
 Zhou Wang, Alan~C. Bovik, Hamid~R. Sheikh, and Eero~P. Simoncelli.

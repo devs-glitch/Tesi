@@ -64,6 +64,9 @@
 \backcite {roy2019towards}{{25}{3.3.2}{subsection.3.3.2}}
 \backcite {akiba2019optuna}{{26}{3.4.2}{subsection.3.4.2}}
 \backcite {li2018hyperband}{{26}{3.4.2}{subsection.3.4.2}}
+\backcite {hu2016trimming}{{27}{3.5}{section*.31}}
+\backcite {sokar2023dormant}{{27}{3.5}{section*.31}}
+\backcite {suetake2023penalty}{{27}{3.5}{section*.31}}
 \backcite {kim2021sam}{{27}{3.6}{section.3.6}}
 \backcite {petsiuk2018rise}{{28}{3.7.2}{subsection.3.7.2}}
 \backcite {bengio2013ste}{{31}{4.2}{section.4.2}}
