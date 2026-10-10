@@ -565,6 +565,56 @@ behaviour under $\gamma$, this class cannot register an explanation change by an
 measure tested here. A flat grid result for Extremely\_Loud will not distinguish
 absence of effect from inability to detect one, and this is stated in advance.
 
+\subsection{Fine-tuning alone}
+\label{sec:anchor}
+
+Every quantized model in the grid is its parent with bits removed \emph{and} then
+fine-tuned. Part of any divergence measured against that parent belongs to the
+fine-tuning. The three levels above cannot separate the two contributions: the
+numerical floor is a perturbed copy that was never trained, and the
+independent-solutions level is two networks grown from different
+initializations. What is missing is the model that went through the whole
+procedure with nothing removed.
+
+The control arm supplies it, but not through the checkpoint the grid uses. That
+checkpoint is the parent (Section~\ref{sec:grid}) and returns $1.000$ on
+every class and every seed, which measures nothing. The weights after the last
+epoch are a different model: the parameter vector moves by an $L_2$ distance of
+$0.395$, $0.736$ and $0.399$ over the three seeds, nine tenths of it in the last
+convolution and the linear readout.
+
+\begin{table}[htbp]
+\centering
+\begin{tabular}{lcccccc}
+\toprule
+Seed & Epochs & $\lVert \Delta w \rVert_2$ & Accuracy & IoU & PCC & Worst class IoU \\
+\midrule
+1234 & 6  & 0.395 & 0.9819 & 0.711 & 0.985 & 0.671 \\
+2345 & 14 & 0.736 & 0.9791 & 0.792 & 0.989 & 0.779 \\
+3456 & 6  & 0.399 & 0.9805 & 0.748 & 0.987 & 0.705 \\
+\midrule
+Mean &    &       & 0.9805 & \textbf{0.750} & 0.987 & 0.671 \\
+\bottomrule
+\end{tabular}
+\caption{The control arm after its last fine-tuning epoch, against its own
+full-precision parent, twenty validation images per class at layer 2,
+$\gamma = 0.5$. No bits are removed in any of these runs.}
+\label{tab:finetuning-anchor}
+\end{table}
+
+Six to fourteen epochs with the learning rate scaled by $0.1$, and no bits
+removed, move the top-20\,\% overlap to $0.750$, with a seed range of $0.711$ to
+$0.792$. Validation accuracy falls by $0.3$ points over the same runs, so the
+movement is not a model that degraded; it is a model that kept training.
+
+Two details are worth recording. The seed whose weights moved furthest, $2345$ at
+$0.736$, is the seed whose explanation moved \emph{least}, at $0.792$: over three
+runs this is an observation rather than a result, but distance in parameter space
+does not predict distance in explanation space, which is the premise the grid
+rests on. And the Pearson correlation of this anchor is $0.987$ against an IoU of
+$0.750$ --- the metric disagreement that recurs throughout the grid appears here
+too, where there is no quantization to attribute it to.
+
 \subsection{What the calibration establishes}
 
 \begin{table}[htbp]
@@ -574,18 +624,25 @@ absence of effect from inability to detect one, and this is stated in advance.
 Level & What it measures & PCC & IoU & CoM \\
 \midrule
 Numerical floor & Weight noise at $1\times$ the 8-bit step & 0.975 & 0.704 & 0.029 \\
+Fine-tuning alone & The procedure with no bits removed & 0.987 & 0.750 & --- \\
 $\gamma$ reference & A thirtyfold change in the kernel & 0.960 & --- & 0.90 \\
 Independent solutions & Two FP32 models, different seeds & 0.153 & 0.234 & 0.115 \\
 \bottomrule
 \end{tabular}
-\caption{The three calibration levels, worst class in each case, at 112\,px,
-layer 2, $\gamma = 0.5$, on validation.}
+\caption{The four calibration levels, worst class in each case, at 112\,px,
+layer 2, $\gamma = 0.5$, on validation. The first, third and fourth use fifteen
+images per class, the fine-tuning level twenty, matching the grid it is read
+against.}
 \label{tab:calibration}
 \end{table}
 
-The \emph{numerical floor} is the operative threshold for the grid: a divergence
-below what a negligible weight perturbation already produces is measurement
-noise. The \emph{$\gamma$ reference} gives an intuition: if quantization produced
+The \emph{numerical floor} marks measurement noise: a divergence below what a
+negligible weight perturbation already produces cannot be read at all. The
+operative threshold for the grid is the one above it. \emph{Fine-tuning alone}
+is what the procedure costs when nothing is quantized, so a configuration that
+diverges by less than $0.750$ has not been moved by the removed bits in any way
+this experiment can establish --- it has been moved by the training that followed
+them. The \emph{$\gamma$ reference} gives an intuition: if quantization produced
 a PCC of $0.90$, it would be doing more than a thirtyfold change of the explainer
 itself. The \emph{independent-solutions} level is a pessimistic upper bound and a
 result in its own right.

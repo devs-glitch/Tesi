@@ -24,7 +24,7 @@ what makes the hypothesis of Chapter~\ref{ch:introduction} testable.
 Arm & Weights & Membrane potential & Purpose \\
 \midrule
 FP32 reference & 32-bit float & 32-bit float & baseline for every comparison \\
-FP32 control & 32-bit float & 32-bit float & same fine-tuning, quantizer inert \\
+FP32 control & 32-bit float & 32-bit float & separates the pipeline from the bits \\
 Weight-only (W) & 8 / 4 / 2 bit & 32-bit float & isolates the synaptic (spatial) effect \\
 Membrane-only (U) & 32-bit float & 8 / 4 / 2 bit & isolates the state (temporal) effect \\
 Joint (W+U) & 8 / 4 / 2 bit & 8 / 4 / 2 bit & deployable configuration \\
@@ -35,10 +35,20 @@ each at the three seeds of the reference (30 fine-tuning runs).}
 \label{tab:grid}
 \end{table}
 
-The \emph{control} arm runs exactly the same fine-tuning procedure with no
-quantizer attached. It answers the question of whether the pipeline itself ---
-reloading, fine-tuning, checkpoint selection, re-evaluation --- changes the model
-or its explanations when nothing is quantized.
+The \emph{control} arm runs the same fine-tuning procedure with the quantizer
+attached and no bits removed. It separates the effect of the removed bits from
+the effect of everything around them: reloading, fine-tuning, checkpoint
+selection, re-evaluation. Two distinct results come out of it, and they are
+reported in different places. The selected checkpoint is bit-identical to its
+parent --- same label on all $1\,435$ validation and $1\,436$ test images, per-layer
+firing rates equal to the last represented digit --- because checkpoint selection
+keeps the un-fine-tuned candidate unless an epoch exceeds its validation accuracy
+strictly, and with an inert quantizer that candidate already scores the parent's
+accuracy. Every difference measured in the other nine configurations is therefore
+attributable to the removed bits and not to the instrumentation. The weights after
+the last epoch are kept separately and are not identical to the parent; they
+measure what continued training alone does to the explanation, and supply the
+third calibration level of Section~\ref{sec:anchor}.
 
 Two quantities are deliberately left out of the grid. The membrane decay
 $\beta = 0.75$ is already shift-implementable, having been constrained inside the
