@@ -5,8 +5,6 @@ This chapter describes the data pipeline, the model, the procedure by which the
 operating configuration was selected, and the implementation of the explainability
 metrics. Every measurement reported here is on the validation partition.
 
-\todo{aggiungere come sono stati gestiti dati mancati e corrotti nelle osservazioni}
-
 \section{Data}
 
 \subsection{Acquisition}
@@ -25,8 +23,10 @@ with that reference classifier.
 
 \subsection{Class selection}
 
-The original dataset featured twentyfour glitch type classes, of which only 
-four were retained --- \textbf{Blip}, \textbf{Extremely\_Loud},
+The original dataset featured twenty-four classes, of which two are not glitch
+morphologies: \texttt{No\_Glitch}, the absence of a morphological trigger, and
+\texttt{None\_of\_the\_Above}, the classifier's residual category.
+Only four classes were retained --- \textbf{Blip}, \textbf{Extremely\_Loud},
 \textbf{Scattered\_Light}, \textbf{Violin\_Mode} --- on three criteria
 established before any separability analysis, the successive multivariate checks
 are therefore a verification rather than the selection rule.
@@ -45,18 +45,19 @@ imbalanced.}
 \label{fig:label-counts}
 \end{figure}
 
-\emph{Morphological diversity.} The four retained classes all span
+\emph{Morphological diversity.} The four retained classes span
 physically distinct families of instrumental noise~\cite{zevin2017, glanzer2023, bahaadini2018}:
-short broadband transients of teardrop morphology and $\sim$0.04\,s duration (Blip);
+short broadband transients of teardrop morphology and $\sim$0.04\,s
+duration (Blip)~\cite{cabero2019blip};
 high-amplitude events that saturate the spectrogram (Extremely\_Loud);
 long-duration arches of 2--2.5\,s correlated with ground motion, caused in O3 by
 relative motion between the optical suspension and reaction-mass chains
-(Scattered\_Light); and narrowband lines at $\sim$500\,Hz and harmonics,
-corresponding to resonances of the glass fibres suspending the mirrors
-(Violin\_Mode). The choice of spanning the morphological range
-serves our scope by both preserving class separability, which keeps the classification
-problem itself manageable, since it is not the main scope of the project, and
-by making the explanation analysis informative,
+(Scattered\_Light)~\cite{soni2021scattered}; and narrowband lines at
+$\sim$500\,Hz and harmonics, corresponding to resonances of the glass fibres
+suspending the mirrors (Violin\_Mode). The choice of spanning the morphological range
+serves two purposes: it preserves class separability, which keeps the classification
+problem itself manageable, since it is not the main scope of the thesis, and
+makes the explanation analysis informative,
 since each class should elicit a recognizably different
 attention pattern. An example of each is shown in
 Figure~\ref{fig:examples}.
@@ -116,7 +117,7 @@ are not directly comparable to the full Gravity Spy benchmark.
 \subsection{Feature selection}
 
 Of the twelve numerical Omicron descriptors, only four were kept and
-retained indicative. The feature selection was mainly operated based on three distinct
+retained indicative. The feature selection was mainly operated based on four distinct
 criteria, direved from their distributions and from their correlation matrix
 (Figure~\ref{fig:correlation}).
 
@@ -157,7 +158,8 @@ frequency and time of the event, $\mathrm{SNR} \sim A / \sqrt{S_n(f,t)}$. The
 noise curve spans three to four orders of magnitude between $10$ and
 $2048$\,Hz and differs between H1 and L1 and between observing runs, so across
 the population the denominator varies more than the numerator. Their linear
-correlation is $0.06$, indeed the two descriptors are not statistically redundant, and neither one the
+correlation is $0.06$, indeed the two descriptors are not statistically redundant,
+and neither one is the
 substitute for the other. Amplitude was dropped because an absolute strain
 amplitude is not comparable across frequency, detector and epoch,
 while SNR is comparable and is the quantity on which the release itself is
@@ -187,15 +189,21 @@ colour bar and annotation, therefore a centre crop of $470 \times 550$ pixels is
 spectrogram panel, which is then resized to the working resolution. The order of operation
 matters, since cropping the original and resizing afterwards keeps the same
 portion of the spectrogram framed at every resolution. Channel-wise
-normalization uses the standard ImageNet statistics, which also fixes the neutral
-reference value used later by the deletion metric. \todo{inserire commento valori normalizzazione imgagenet}
+normalization uses the standard ImageNet statistics, mean
+$(0.485, 0.456, 0.406)$ and standard deviation $(0.229, 0.224, 0.225)$. These
+are not the statistics of this corpus, and has a consequence that
+matters later in the analyses: zero in normalized space is the ImageNet channel mean, and that
+is the value the deletion metric substitutes for a removed pixel
+(Section~\ref{sec:deletion-method}). A removed pixel is therefore set to a
+neutral grey rather than to black, which would itself be a strong input.
  
 \textbf{The partition is frozen to disk.} A dedicated script generates the
 train/validation/test assignment once, 70\,/\,15\,/\,15 under a fixed seed, and
 writes it as a per-file record of path, class and split, so that every subsequent run
 reads that file. A file listed but absent from disk is dropped from its partition
-with a warning; a file present but unlisted raises, since an unassigned sample
-would otherwise be used without anyone knowing where it belongs.
+with a warning. A file present on disk but absent from the assignment is never
+loaded, the loader iterating the assignment rather than the directory, so
+no sample can enter a partition without it having been assigned to one.
  
 Freezing the partition allows for the assignment to be a function of the file list rather than
 of the corpus size, so removing a file removes exactly that file instead of
@@ -208,10 +216,10 @@ two are permanently unavailable at source (0.02\,\% of the corpus) and were
 excluded.
  
 The final corpus is \textbf{9\,566 images, partitioned $6\,695 / 1\,435 /
-1\,436$}. Beyond class balance, the three partitions are indistinguishable on the
-physical properties of the events: median SNR is $14.97 / 14.09 / 14.98$, with
-duration, peak frequency and bandwidth similarly matched.
-\todo{verificare questa omogeneità dei dati tabulari tra le partizioni}
+1\,436$}.  Beyond class balance, the partitions are matched on the physical
+properties of the events: the medians of SNR, duration, peak frequency and
+bandwidth are $14.97 / 14.09 / 14.98$, $1.25 / 1.25 / 1.10$\,s,
+$75.3 / 75.3 / 75.3$\,Hz and $4112 / 4254 / 4131$\,Hz.
 \section{Model}
  
 \subsection{Architecture}
@@ -260,11 +268,11 @@ $270\,240$ are convolutional and unaffected by input size, since only the linear
 readout shrinks with resolution, a fact with consequences for the design of the
 quantization grid discussed in Section~\ref{sec:grid}.
  
-Batch normalization, pooling and dropout are intentionally absent, since firstly normalization
+Batch normalization, pooling and dropout are intentionally absent. Normalization
 layers interact non-trivially with quantization, and their treatment belongs to a
-later phas. Batch normalization, indeed, must be reconsidered for spiking networks in
-general, quantizing its parameters is a problem distinct from quantizing weights
-and potentials, and two alternative hardware strategies exist --- approximating
+later phase. Batch normalization must indeed be reconsidered for spiking networks in
+general, as quantizing its parameters is a problem distinct from quantizing weights
+and potentials. In this persepctive, two alternative hardware strategies exist --- approximating
 it with shifts, or eliminating it entirely.
  
 \subsection{Readout and loss}
@@ -283,7 +291,7 @@ remains meaningful.
 Hyperparameters are searched with Optuna~\cite{akiba2019optuna}, maximizing
 validation accuracy. Each trial reports validation accuracy after every epoch
 and is pruned by a Hyperband pruner~\cite{li2018hyperband} (minimum resource 1
-epoch, maximum 15, reduction factor 3), which allows to allocate epochs to promising
+epoch, maximum 15, reduction factor 3), which allocates epochs to promising
 configurations and truncating the others early. Studies are persisted to SQLite,
 one study name per search and resolution.
  
@@ -333,9 +341,8 @@ the seed and the resolution.
  
 The final operating point is defined by the input resolution, the three
 hyperparameters, and the layer and decay constant at which the explanations
-are read. Each is settled on
-evidence and recorded in a single frozen manifest and
-are decided on validation set.
+are read. Each is settled on evidence measured on the validation partition and
+recorded in a single frozen manifest.
  
 \subsection{Input resolution}
  
@@ -343,7 +350,7 @@ Nine training runs were performed: three resolutions (224, 112, 64\,px) at three
 seeds each, on the frozen partition, with hyperparameters held fixed and only the
 input size varying. Since those hyperparameters had been found at 224\,px, the
 protocol systematically handicaps the lower resolutions, so any deficit they
-show must also be evaluated under this light.
+show is an upper bound on the deficit attributable to resolution itself.
  
 The procedure and its outcome are reported in Section~\ref{sec:resolution}.
  
@@ -356,22 +363,25 @@ hyperparameters chosen because they govern three distinct axes: learning rate
 (optimization stability), $\beta$ (membrane leak and temporal memory), and $T$
 (latency, computation and memory cost).
  
-\textbf{Two deployment constraints are imposed inside the search space.} Firstly, $\beta$ is restricted to
-$\{0.25, 0.5, 0.75, 0.875\}$, values whose decay is realizable as a bit shift,
-and the set spans both families ($\beta = 2^{-k}$ and $\beta = 1 - 2^{-k}$).
-$T$ is capped at 8. Constraining the search guarantees that whatever it returns
-is deployable by construction, and Section~\ref{sec:hyperparameters} shows that
-in this case the two differ.
+\textbf{Two deployment constraints are imposed inside the search space.} The
+first restricts $\beta$ to $\{0.25, 0.5, 0.75, 0.875\}$, values whose decay is
+realizable as a bit shift, the set spanning both families ($\beta = 2^{-k}$ and
+$\beta = 1 - 2^{-k}$). The second caps $T$ at 8. Constraining the search
+guarantees that whatever it returns is deployable by construction, and
+Section~\ref{sec:hyperparameters} shows that this is not equal to rounding an
+unconstrained optimum afterwards: the free search selects $\beta = 0.4148$,
+whose admissible neighbours are $0.25$ and $0.5$, while the constrained search
+selects $0.75$.
  
 The lower bound of the learning rate was moved from $10^{-4}$ to $10^{-5}$,
 because the v4 optimum ($1.036 \times 10^{-4}$) sat on the boundary of the
 earlier range, and a boundary optimum should be investigated further to clarify whether it is
- a consequence of the decided range.
+a consequence of the decided range.
  
 \subsection{Baseline manifest}
  
 The outcome of these choices is recorded in a single file,
-\texttt{baseline\_manifest.json}. It containes the input resolution, the three
+\texttt{baseline\_manifest.json}. It contains the input resolution, the three
 hyperparameters, the originating study, the decay rate and reference layer of
 the explainer, the list of seeds (1234, 2345, 3456), the checkpoint paths, the
 size of each partition, and the first sixteen hexadecimal digits of the SHA-256
@@ -425,9 +435,9 @@ whole partition is what makes the estimate stable.
 The definition is the one given in Section~\ref{sec:sam-background}: the
 recency weight of Equation~\ref{eq:tscs}, accumulated over a neuron's preceding
 spikes by Equation~\ref{eq:ncs}, masked by the spikes emitted at $t$ and summed
-over channels by Equation~\ref{eq:sam}. What the definition leaved open the
+over channels by Equation~\ref{eq:sam}. What the definition leaves open the
 implementation had to settle.
- 
+
 \paragraph{The summation range is exclusive of $t$.} The score measures the contribution of a neuron's
 \emph{preceding} trajectory, as including $t' = t$ would mean adding a term of weight
 $\exp(0) = 1$ for every neuron firing at $t$, so the map produced is the correct
@@ -461,7 +471,8 @@ justified in Section~\ref{sec:gamma}.
 For each class, SAM is computed on 25 validation images, aggregated
 over time (mean over $T$) and stacked, and three maps are reported: the
 \emph{mean}, meaning the region attended on average; the \emph{standard deviation},
-investiganting where the explanation varies most across instances; and their ratio, the
+showing where the explanation varies most across
+instances; and their ratio, the
 \emph{coefficient of variation}, which indicates whether a region is attended
 consistently or only in some examples. Mean and standard deviation share a
 colour scale across classes so that they are numerically comparable. The
@@ -475,8 +486,9 @@ are normalized by the channel count of their layer before being plotted on a
 shared scale.
  
 \subsection{Faithfulness: the deletion metric}
- 
-Stability does not imply itself correctness, so faithfulness is tested separately with the
+
+Stability does not by itself imply correctness, so faithfulness is tested
+separately with the
 deletion metric of Petsiuk et al.~\cite{petsiuk2018rise}. Pixels are removed in
 decreasing order of attributed importance and the confidence of the model is
 read after each removal. A map that points at the evidence the model uses
@@ -593,10 +605,12 @@ energy of the SAM stack is concentrated,
 \label{eq:com}
 \end{equation}
 with the steps indexed from $0$ and $E_0 = 0$, SAM being identically zero at
-the first step. It is reported as $|\mathrm{CoM}_A - \mathrm{CoM}_B|$, in units
-of time steps. Aggregating over the whole map discards where the activity sits
-and keeps when it occurs, which makes it the complement of the two spatial
-metrics.
+the first step. It is reported both as a signed difference between the two
+centres of mass, whose sign says whether the energy of the explanation moves
+earlier or later, and as its absolute value, which is the form the numerical
+floors are calibrated against. Both are in units of time steps. Aggregating over
+the whole map discards where the activity sits and keeps when it occurs, which
+is what makes it the complement of the two spatial metrics.
 
 Beyond the three, the \emph{per-timestep correlation} applies
 Equation~\ref{eq:pcc} to the pair of maps at each $t$ separately and returns a

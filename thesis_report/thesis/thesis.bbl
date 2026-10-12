@@ -45,6 +45,11 @@ Zoya Bylinskii, Tilke Judd, Aude Oliva, Antonio Torralba, and Fr{\'e}do Durand.
 \newblock {\em IEEE Transactions on Pattern Analysis and Machine Intelligence},
   41(3):740--757, 2019.
 
+\bibitem{cabero2019blip}
+M.~Cabero, A.~Lundgren, A.~H. Nitz, et~al.
+\newblock Blip glitches in {Advanced LIGO} data.
+\newblock {\em Classical and Quantum Gravity}, 36(15):155010, 2019.
+
 \bibitem{davies2018loihi}
 Mike Davies, Narayan Srinivasa, Tsung-Han Lin, Gautham Chinya, Yongqiang Cao,
   Sri~Harsha Choday, Georgios Dimou, Prasad Joshi, Nabil Imam, Shweta Jain,
@@ -224,6 +229,11 @@ Ghada Sokar, Rishabh Agarwal, Pablo~Samuel Castro, and Utku Evci.
 \newblock In {\em Proceedings of the 40th International Conference on Machine
   Learning}, volume 202 of {\em Proceedings of Machine Learning Research},
   pages 32145--32168, 2023.
+
+\bibitem{soni2021scattered}
+S.~Soni, C.~Austin, A.~Effler, et~al.
+\newblock Reducing scattered light in {LIGO}'s third observing run.
+\newblock {\em Classical and Quantum Gravity}, 38(2):025016, 2021.
 
 \bibitem{suetake2023penalty}
 Kazuma Suetake, Takuya Ushimaru, Ryuji Saiin, and Yoshihide Sawada.

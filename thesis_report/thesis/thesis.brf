@@ -57,6 +57,8 @@
 \backcite {smith2026}{{18}{2.5}{section.2.5}}
 \backcite {glanzer2021}{{19}{3.1.1}{subsection.3.1.1}}
 \backcite {zevin2017, glanzer2023, bahaadini2018}{{19}{3.1.2}{figure.caption.24}}
+\backcite {cabero2019blip}{{19}{3.1.2}{figure.caption.24}}
+\backcite {soni2021scattered}{{19}{3.1.2}{figure.caption.24}}
 \backcite {mcinnes2018umap}{{20}{3.1.2}{figure.caption.25}}
 \backcite {kingma2015adam}{{25}{3.2.2}{subsection.3.2.2}}
 \backcite {akiba2019optuna}{{25}{3.3.1}{subsection.3.3.1}}
@@ -70,6 +72,8 @@
 \backcite {petsiuk2018rise}{{28}{3.7.2}{subsection.3.7.2}}
 \backcite {rabbi2026}{{29}{3.7.3}{equation.3.4}}
 \backcite {bengio2013ste}{{32}{4.2}{section.4.2}}
+\backcite {jacob2018quantization}{{34}{4.4}{section.4.4}}
+\backcite {yin2024mint}{{34}{4.4}{section.4.4}}
 \backcite {smith2026}{{34}{4.4}{table.caption.43}}
 \backcite {yin2024mint}{{34}{4.5}{section.4.5}}
 \backcite {smith2026}{{35}{4.6}{section*.44}}

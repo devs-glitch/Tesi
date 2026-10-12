@@ -10,7 +10,7 @@ performed on the validation partition.
 \section{Design principle: three separate arms}
 \label{sec:grid}
 
-The critical and fundamental design choice is to \textbf{quantize the two targets separately
+The fundamental design choice is to \textbf{quantize the two targets separately
 before quantizing them together}, as separating them turns the grid into a causal ablation and is
 what makes the hypothesis of Chapter~\ref{ch:introduction} testable.
 
@@ -51,13 +51,13 @@ epoch exceeds its validation accuracy \emph{strictly}. An inert quantizer
 leaves that initial candidate at the parent's own accuracy, so an epoch would
 have to beat the parent to displace it, and on none of the three seeds
 did it. The instrumentation contributes nothing measurable, from which it can
-be deducted that every
+be deduced that every
 difference observed in the other nine configurations is attributable to the
 removed bits.
 
 The second is the state of the weights after the last epoch, kept separately
-and not identical to the parent. Fine-tuning indeed moved them even though it never
-succeeded to replace the checkpoint. The contribution here is the measurement of what continued
+and not identical to the parent. Fine-tuning moved them even though it never
+succeeded in replacing the checkpoint.. The contribution here is the measurement of what continued
 training alone does to an explanation, and that is the third calibration level
 of Section~\ref{sec:anchor}.
 
@@ -115,8 +115,8 @@ way of the step after. The membrane grid is fixed in advance, unsigned on $[0, 2
 the clipping study.
 
 \paragraph{Every quantized model is fine-tuned from the full-precision
-checkpoint of the same seed.} This is the constraint essential to guarantee
-that the quantisation effect is distinct from initialization variance.
+checkpoint of the same seed.} This is the constraint that guarantees
+that the quantization effect is distinct from initialization variance.
 The numerical floor of the calibration ($\mathrm{PCC} = 0.975$) holds
 for comparisons between a model and its own parent, where no channel permutation
 exists, so a quantized model trained from a random initialization would be an
@@ -157,11 +157,11 @@ Both gates passed (Section~\ref{sec:grid-gates}).
 \section{Weight quantizer}
 \label{sec:weight-quantizer}
 
-Weights are quantized on a \emph{symmetric signed} grid with
-$q_{\max} = 2^{b-1} - 1$ levels on each side of zero, so that zero is exactly
-representable: 255 levels at 8 bits, 15 at 4 bits and 3 at 2 bits (the values
-$-\Delta, 0, +\Delta$). The quantizer is applied to every
-convolutional and linear weight tensor, including the readout.
+Weights are quantized on a \emph{symmetric signed} grid whose outermost level is
+$q_{\max} = 2^{b-1} - 1$ on each side of zero, for a total of $2q_{\max} + 1$:
+255 levels at 8 bits, 15 at 4 bits and 3 at 2 bits (the values $-\Delta$, $0$,
+$+\Delta$). Zero is exactly representable at every bit-width. The quantizer is
+applied to every convolutional and linear weight tensor, including the readout.
 
 \textbf{The scale is computed per output channel.} A single scale for the whole
 tensor is set by its largest weight, so a channel whose own weights are small
@@ -182,11 +182,11 @@ outermost level whatever its magnitude.
 \toprule
 Layer & $\max|w|$, tensor & $\max|w|$, weakest channel & Ratio & Bits lost per-tensor \\
 \midrule
-conv1  & 0.144 & 0.115 & 1.25 & 0.33 \\
-conv2  & 0.126 & 0.060 & 2.11 & 1.08 \\
-conv3  & 0.113 & 0.054 & 2.11 & 1.08 \\
-conv4  & 0.099 & 0.044 & 2.26 & 1.18 \\
-linear & 0.214 & 0.146 & 1.46 & 0.55 \\
+conv1  & 0.144 & 0.115 & 1.25 & 0.32 \\
+conv2  & 0.126 & 0.060 & 2.10 & 1.07 \\
+conv3  & 0.113 & 0.054 & 2.09 & 1.07 \\
+conv4  & 0.099 & 0.044 & 2.25 & 1.17 \\
+linear & 0.214 & 0.146 & 1.47 & 0.55 \\
 \bottomrule
 \end{tabular}
 \caption{Weight ranges of the reference checkpoint (seed 1234). ``Bits lost''
@@ -207,8 +207,11 @@ The membrane potential of the four hidden LIF layers is quantized at every time
 step. The quantizer acts on the potential returned by each layer after the spike
 decision, so the quantized value is the \emph{state} carried into the next step:
 what is stored, and therefore what costs memory, is what is quantized. The
-output layer (four neurons) is left in full precision because its state is negligible in
-memory and quantizing it would act directly on the logits.
+membrane of the output layer (four neurons) is left in full precision because
+its state is negligible in memory and quantizing it would act directly on the
+logits; its \emph{weights} instead are quantized with every other linear tensor
+(Section~\ref{sec:weight-quantizer}), so the readout is split between the two
+arms.
 
 As has been established, a grid for the membrane can not be designed without knowing the range of the
 quantity, and unlike a weight, the potential has no range until the network is
@@ -216,8 +219,11 @@ run. Its distribution was therefore measured over the whole validation partition
 (Section~\ref{sec:membrane-prep}), and the clipping range was chosen by testing
 candidate ranges on the full-precision network, so before any quantization.
 
-\todo{aggiungere paper sulla procedura di quantizzazione di weight e membrana se serve, 
-o se è già stata esaustiva nella premessa allora aggiungere dei brevi rimandi}
+The weight scheme is the symmetric per-channel formulation of Jacob et
+al.~\cite{jacob2018quantization}. For the membrane no comparable convention
+exists: MINT~\cite{yin2024mint} quantizes the potential of a spiking network,
+but ties its scale to the weights, which is the coupling
+Section~\ref{sec:joint} avoids.
 
 \textbf{The membrane grid is unsigned over $[0, 2]$}, twice the firing threshold
 $U_{\text{thr}} = 1$, with $2^b$ levels starting exactly at zero. The step is
@@ -241,16 +247,15 @@ rest and threshold.}
 \end{table}
 
 Zero is the value to which every neuron is initialized and around which it
-rests, so it must be exactly representable, which a signed grid guarantees 
-by construction, as its first level is zero.
+rests, so it must be exactly representable, which the unsigned grid guarantees
+by construction, its first level being zero.
 
-Table~\ref{tab:membrane-grid} contains a quantitative prediction. At 8 bits the
-rounding error is below one percent of the threshold; at 4 bits it is an eighth
-of it; at 2 bits the error is of the same order as the threshold itself, and a
-neuron's state can encode only whether it is at rest, part-way to threshold, or
-above it. This is the mechanism behind the observation of Smith et
-al.~\cite{smith2026} that membrane quantization needs at least four bits, and the
-grid tests it directly.
+Table~\ref{tab:membrane-grid} contains a quantitative prediction. The step is
+$0.8\,\%$ of the threshold at 8 bits, $13.3\,\%$ at 4 bits and $66.7\,\%$ at 2
+bits, where it is of the same order as the threshold itself, and where a neuron's state
+can encode only whether it is at rest, part-way to threshold, or above it. This
+is the mechanism behind the observation of Smith et al.~\cite{smith2026} that
+membrane quantization needs at least four bits, and the grid tests it directly.
 
 The unsigned grid is a consequence of the clipping which found that the network
  makes no use of negative potentials, so a
@@ -267,11 +272,10 @@ independent.} MINT~\cite{yin2024mint} shares a single scale between weights and
 membrane so that the inference loop needs no rescaling multiplier, but that choice
 is an optimization of a specific integer datapath, and imposing it here would
 couple the two targets that the grid exists to separate. With independent scales
-the joint arm is exactly the composition of the two single-target arms, meaning that
-the two quantisers never see each other's grids or state, and that every effect the two
-independenly do not account for is to be attributable
-to an interaction within the network.
-
+the joint arm is mechanically the composition of the two single-target arms:
+the two quantisers never see each other's grids or state, and that any outcome
+of the joint arm that the two single-target arms do not account for is therefore an interaction
+within the network, not a coupling introduced by the instrument.
 \section{Reading the results}
 \label{sec:reading}
 
@@ -285,8 +289,8 @@ mass (absolute and signed shift), and the per-timestep correlation curve.
 \begin{itemize}
   \item \textbf{cross-faithfulness}: the deletion metric applied to the quantized
         model with its \emph{own} map and with the map of its \emph{parent}, on
-        ten validation images per class and eleven deletion fractions.
-         The deletion baseline is
+        fifteen validation images per class and twenty-one deletion fractions.
+        The deletion baseline is
         recomputed for the parent of each seed, and a class is interpretable for
         a seed only if its baseline gap between SAM and random deletion is at
         least $0.05$;
@@ -340,7 +344,7 @@ principle that keeps together the other ones and the whole analysis.
 Because the three
 parents differ from each other far more than any quantized model differs from
 its own (Section~\ref{sec:calibration}), a comparison against the wrong seed
-would produce a false large, spurious divergence. The guard against that error is a
+would produce a large spurious divergence. The guard against that error is
 that in every comparison the 8-bit weight arm, the smallest
 intervention in the grid, must keep a spatial correlation above $0.98$ with its
 parent in every seed.
@@ -360,7 +364,7 @@ be reported as a relation, which an aggregate divergence does not permit.
 The hypothesis is that divergence increases as event strength decreases, with a
 mechanism specific to spiking networks: quantizing the membrane potential flips a
 neuron's spike decision only where the potential lies within the quantization
-error of the threshold, and weak events are exaclty what produce potentials that sit close to
+error of the threshold, and weak events are exactly what produce potentials that sit close to
 threshold. Because a flipped spike is a discrete
 event that propagates both to the next layer and forward in time through the
 decay and reset, and since SAM is constructed from spike trains, the flip
