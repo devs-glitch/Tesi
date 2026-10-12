@@ -4,16 +4,14 @@
 This chapter describes how the quantized models are built and how they are
 compared with their full-precision parents. Every design choice below is either
 inherited from the calibration of Section~\ref{sec:calibration} or settled by a
-measurement reported in Section~\ref{sec:membrane-prep}; none is taken on the
-test partition.
+measurement reported in Section~\ref{sec:membrane-prep}. Again, the whole analysis is
+performed on the validation partition.
 
 \section{Design principle: three separate arms}
 \label{sec:grid}
 
-The critical design choice is to \textbf{quantize the two targets separately
-before quantizing them together}. Quantizing weights and membrane potential at
-once would produce a single observation from which the contribution of each could
-not be recovered; separating them turns the grid into a causal ablation and is
+The critical and fundamental design choice is to \textbf{quantize the two targets separately
+before quantizing them together}, as separating them turns the grid into a causal ablation and is
 what makes the hypothesis of Chapter~\ref{ch:introduction} testable.
 
 \begin{table}[htbp]
@@ -35,30 +33,43 @@ each at the three seeds of the reference (30 fine-tuning runs).}
 \label{tab:grid}
 \end{table}
 
-The \emph{control} arm runs the same fine-tuning procedure with the quantizer
-attached and no bits removed. It separates the effect of the removed bits from
-the effect of everything around them: reloading, fine-tuning, checkpoint
-selection, re-evaluation. Two distinct results come out of it, and they are
-reported in different places. The selected checkpoint is bit-identical to its
-parent --- same label on all $1\,435$ validation and $1\,436$ test images, per-layer
-firing rates equal to the last represented digit --- because checkpoint selection
-keeps the un-fine-tuned candidate unless an epoch exceeds its validation accuracy
-strictly, and with an inert quantizer that candidate already scores the parent's
-accuracy. Every difference measured in the other nine configurations is therefore
-attributable to the removed bits and not to the instrumentation. The weights after
-the last epoch are kept separately and are not identical to the parent; they
-measure what continued training alone does to the explanation, and supply the
-third calibration level of Section~\ref{sec:anchor}.
+The \emph{control} arm runs the whole fine-tuning procedure with the quantizer
+attached and inert: 32 bits on both targets, a grid fine enough to leave every
+value unchanged. Its purpose is subtractive. Indeed, since the nine quantized configurations
+differ from their parent in two respects at once, the bits removed and the
+operations that removes them --- reloading the parent, fine-tuning it, selecting
+a checkpoint, re-evaluating --- the control runs those operations alone, so
+whatever it produces is deemed to be solely its contribution.
 
-Two quantities are deliberately left out of the grid. The membrane decay
-$\beta = 0.75$ is already shift-implementable, having been constrained inside the
-hyperparameter search (Section~\ref{sec:constrained-search}), and is not
-re-quantized, which would be a third, unplanned intervention. The biases are kept
+It produces two sets of weights. The first is the checkpoint the selection
+rule returns, and it is bit-identical
+to the parent: the same label on all $1\,435$ validation and $1\,436$ test
+images, per-layer firing rates equal to the last digit reported. The identity
+follows from the rule: the selection begins with the
+un-fine-tuned model already held as a candidate and replaces it only when an
+epoch exceeds its validation accuracy \emph{strictly}. An inert quantizer
+leaves that initial candidate at the parent's own accuracy, so an epoch would
+have to beat the parent to displace it, and on none of the three seeds
+did it. The instrumentation contributes nothing measurable, from which it can
+be deducted that every
+difference observed in the other nine configurations is attributable to the
+removed bits.
+
+The second is the state of the weights after the last epoch, kept separately
+and not identical to the parent. Fine-tuning indeed moved them even though it never
+succeeded to replace the checkpoint. The contribution here is the measurement of what continued
+training alone does to an explanation, and that is the third calibration level
+of Section~\ref{sec:anchor}.
+
+
+Two quantities are deliberately left out of the grid. Firstly the membrane decay
+$\beta = 0.75$, which is already shift-implementable, having been constrained inside the
+hyperparameter search (Section~\ref{sec:constrained-search}) and is not
+re-quantized. Secondly, the biases are kept
 in full precision: there are 244 of them, under $0.1\,\%$ of the parameters,
 and on integer hardware they are added once to a wide accumulator.
 
-The two arms have \emph{opposite} sensitivities to the resolution choice, which
-independently justifies treating them as separate ablations. Because $270\,240$
+The two arms have \emph{opposite} sensitivities to the resolution choice: since $270\,240$
 of the $295\,332$ parameters are convolutional and therefore
 resolution-independent, the weight arm achieves nearly the same absolute memory
 reduction at any resolution, whereas the membrane state falls twelvefold between
@@ -68,50 +79,80 @@ reduction at any resolution, whereas the membrane state falls twelvefold between
 \label{sec:qat}
 
 Quantization-aware training is implemented by fake quantization: in the forward
-pass each quantized tensor is rounded to its grid and clamped to the grid's
+pass each quantized tensor is rounded to its grid and then clamped to the grid's
 bounds, and in the backward pass the rounding is replaced by the identity, the
-straight-through estimator~\cite{bengio2013ste}. The weight quantizer is attached
-as a parametrization of each weight tensor, so that the optimizer updates the
-underlying full-precision weights while the forward pass only ever sees their
-quantized values; the membrane quantizer is attached as a forward hook on each
-hidden LIF layer.
+straight-through estimator~\cite{bengio2013ste}.
+
+The two quantizers are attached by
+different means because they act on different
+kinds of object: a weight is a parameter, owned and updated by the optimizer, while
+a membrane potential is a state that is rebuilt at every time step.
+
+Weights are quantized through a \emph{parametrization}. PyTorch moves the
+stored tensor aside and recomputes \texttt{weight} from it on every access, so
+the module's weight becomes a function of a hidden full-precision tensor.
+The optimizer holds and updates that
+hidden tensor, the forward pass only ever reads its quantized image, and the
+straight-through estimator carries the gradient back to it unchanged. Keeping
+the full-precision copy is essential to fine-tuning and makes it possible: an update
+smaller than half a quantization step applied to a value already on the grid
+would round away and leave nothing behind, whereas if accumulated in the hidden
+tensor many such updates eventually carry the weight to the next level.
+
+When the
+training ends the parametrization is folded away and the quantized values are
+written into ordinary parameters, so the saved checkpoint holds weights
+already sitting on the grid.
+
+The membrane is quantized through a \emph{forward hook} on each of the four
+hidden LIF layers. A hook that returns a value replaces the output of the
+module it is attached to, and a \texttt{Leaky} layer returns the pair of spike
+and membrane: the hook passes the spike untouched, binary as it
+already is, and substitutes the quantized membrane. That substituted value is
+the one the forward loop carries into the following step, so the grid
+constrains the state as it crosses a time step and reaches the spikes only by
+way of the step after. The membrane grid is fixed in advance, unsigned on $[0, 2]$ from
+the clipping study.
 
 \paragraph{Every quantized model is fine-tuned from the full-precision
-checkpoint of the same seed.} This is the constraint that determines the rest of
-the design. The numerical floor of the calibration ($\mathrm{PCC} = 0.975$) holds
+checkpoint of the same seed.} This is the constraint essential to guarantee
+that the quantisation effect is distinct from initialization variance.
+The numerical floor of the calibration ($\mathrm{PCC} = 0.975$) holds
 for comparisons between a model and its own parent, where no channel permutation
-exists; a quantized model trained from a random initialization would be an
+exists, so a quantized model trained from a random initialization would be an
 independent solution, for which the relevant level is $0.153$ and almost no
 quantization effect would be distinguishable from initialization variance.
 
 \paragraph{Schedule.} The fine-tuning is short and at reduced learning rate,
-adapting the parent to its grid rather than finding a new solution: Adam at one
+adapting the parent to its grid: Adam is set at one
 tenth of the reference learning rate ($1.047 \times 10^{-5}$), at most 20 epochs,
-early stopping after 5 epochs without improvement of the validation loss. Before
-the first epoch the model is evaluated with the quantizer attached and no
+early stopping occurs after 5 epochs without improvement of the validation loss.
+
+Before the first epoch the model is evaluated with the quantizer attached and no
 training, which gives the \emph{post-training quantization} (PTQ) accuracy of the
-same configuration at no extra cost; that un-fine-tuned model is saved as the
+same configuration at no extra cost: that un-fine-tuned model is saved as it represents the
 first candidate checkpoint, and it is replaced only by an epoch that strictly
 improves the validation accuracy. The selected checkpoint is the one on which
 every subsequent measurement --- accuracy, explanations, firing statistics,
 energy --- is taken. The 30 runs took 13 hours on the GPU of
 Section~\ref{sec:training}.
 
-\paragraph{Gates before the grid.} Two checks were run before any fine-tuning.
+\paragraph{Gates before the grid.} Two checks were run before any fine-tuning
+to validate the quantizer and then to validate the PTQ gate.
 The first verifies the quantizer itself: attaching and removing it restores the
 original weights exactly, and folding the quantized values into a plain
-checkpoint and reloading it leaves no drift ($0$ at 4 bits). The second is the
-PTQ gate: the joint 8-bit model, with no fine-tuning, must match its parent to
+checkpoint and reloading it leaves no drift ($0$ at 4 bits).
+
+The second targets the
+PTQ gate: the joint 8-bit model, with no fine-tuning, must indeed match its parent to
 within the spread of the full-precision reference, four samples out of
 $1\,435$. At 8 bits the weight step is of the order of the perturbation that
 left the spatial correlation at $0.975$ in the calibration, so an appreciable
-loss of accuracy there would indicate a defect of the implementation rather than
-a physical effect. Both gates passed (Section~\ref{sec:grid-gates}).
+loss of accuracy there would effectively indicate a defect of the implementation.
+Both gates passed (Section~\ref{sec:grid-gates}).
 
-\paragraph{Execution order.} All 8-bit configurations were run first, then
-4-bit, then 2-bit, so that a defect would surface on the configurations where
-nothing is expected to happen. The runner skips any configuration whose result
-is already on disk.
+\paragraph{ } All 8-bit configurations were run first, then
+4-bit, then 2-bit.
 
 \section{Weight quantizer}
 \label{sec:weight-quantizer}
