@@ -1088,4 +1088,114 @@ Package pdftex.def Info: figures/sam_layer_Scattered_Light.png  used on input li
 File: figures/sam_layer_Violin_Mode.png Graphic file (type png)
 <use figures/sam_layer_Violin_Mode.png>
 Package pdftex.def Info: figures/sam_layer_Violin_Mode.png  used on input line 332.
-(pdftex.def)             Req
+(pdftex.def)             Requested size: 195.1881pt x 115.77477pt.
+ [43 <./figures/sam_class_stats.png>] [44 <./figures/sam_layer_Blip.png> <./figures/sam_layer_Extremely_Loud.png> <./figures/sam_layer_Scattered_Light.png> <./figures/sam_layer_Violin_Mode.png>]
+<figures/gamma_Violin_Mode.png, id=1281, 1003.5894pt x 328.5876pt>
+File: figures/gamma_Violin_Mode.png Graphic file (type png)
+<use figures/gamma_Violin_Mode.png>
+Package pdftex.def Info: figures/gamma_Violin_Mode.png  used on input line 407.
+(pdftex.def)             Requested size: 398.3386pt x 130.4199pt.
+
+Overfull \hbox (4.7013pt too wide) in paragraph at lines 433--444
+ [][] 
+ []
+
+<figures/deletion_metric.png, id=1285, 1171.2558pt x 295.8252pt>
+File: figures/deletion_metric.png Graphic file (type png)
+<use figures/deletion_metric.png>
+Package pdftex.def Info: figures/deletion_metric.png  used on input line 450.
+(pdftex.def)             Requested size: 398.3386pt x 100.60631pt.
+[45 <./figures/gamma_Violin_Mode.png>] [46 <./figures/deletion_metric.png>] [47] [48] [49] [50]
+<figures/grid_headline.pdf, id=1334, 520.34402pt x 187.902pt>
+File: figures/grid_headline.pdf Graphic file (type pdf)
+<use figures/grid_headline.pdf>
+Package pdftex.def Info: figures/grid_headline.pdf  used on input line 849.
+(pdftex.def)             Requested size: 398.3386pt x 143.85063pt.
+ [51 <./figures/grid_headline.pdf>] [52] [53] [54] [55] [56]) [57]
+\openout2 = `content/conclusions.aux'.
+
+ (content/conclusions.tex
+Chapter 6.
+[58
+
+
+
+
+] [59] [60] [61]) [62]
+\openout2 = `backmatter.aux'.
+
+ (backmatter.tex (thesis.bbl (thesis.brf)
+\tf@brf=\write7
+\openout7 = `thesis.brf'.
+
+ [63
+
+
+
+
+
+] [64]
+Underfull \hbox (badness 1127) in paragraph at lines 256--256
+[]\T1/pplx/m/n/10 Ruokai Yin, Yuhang Li, Ab-hishek Moitra, and Priyadarshini Panda.  MINT:
+ []
+
+[65]) [66]
+Appendix A.
+<figures/gamma_Blip.png, id=1616, 1003.5894pt x 328.5876pt>
+File: figures/gamma_Blip.png Graphic file (type png)
+<use figures/gamma_Blip.png>
+Package pdftex.def Info: figures/gamma_Blip.png  used on input line 20.
+(pdftex.def)             Requested size: 398.3386pt x 130.4199pt.
+<figures/gamma_Extremely_Loud.png, id=1617, 1003.5894pt x 328.5876pt>
+File: figures/gamma_Extremely_Loud.png Graphic file (type png)
+<use figures/gamma_Extremely_Loud.png>
+Package pdftex.def Info: figures/gamma_Extremely_Loud.png  used on input line 21.
+(pdftex.def)             Requested size: 398.3386pt x 130.4199pt.
+<figures/gamma_Scattered_Light.png, id=1618, 1003.5894pt x 328.5876pt>
+File: figures/gamma_Scattered_Light.png Graphic file (type png)
+<use figures/gamma_Scattered_Light.png>
+Package pdftex.def Info: figures/gamma_Scattered_Light.png  used on input line 22.
+(pdftex.def)             Requested size: 398.3386pt x 130.4199pt.
+<figures/feature_boxplots.png, id=1621, 1399.629pt x 1110.0672pt>
+File: figures/feature_boxplots.png Graphic file (type png)
+<use figures/feature_boxplots.png>
+Package pdftex.def Info: figures/feature_boxplots.png  used on input line 30.
+(pdftex.def)             Requested size: 398.3386pt x 315.9151pt.
+[67
+
+ <./figures/gamma_Blip.png> <./figures/gamma_Extremely_Loud.png> <./figures/gamma_Scattered_Light.png>] [68 <./figures/feature_boxplots.png>]
+Appendix B.
+) [69
+
+] (thesis.aux (content/abstract.aux) (contents.aux) (content/introduction.aux) (content/state_of_the_art.aux) (content/methodology.aux) (content/quantization.aux) (content/results.aux) (content/conclusions.aux) (backmatter.aux))
+ ***********
+LaTeX2e <2025-11-01>
+L3 programming layer <2025-12-24>
+ ***********
+
+
+LaTeX Font Warning: Some font shapes were not available, defaults substituted.
+
+
+LaTeX Warning: There were undefined references.
+
+Package rerunfilecheck Info: File `thesis.out' has not changed.
+(rerunfilecheck)             Checksum: 5E55F2A5DAF87ECC5F53470273EAA8E7;18535.
+Package rerunfilecheck Info: File `thesis.brf' has not changed.
+(rerunfilecheck)             Checksum: EED48370AC8308E3386EF85B77F16021;5112.
+ ) 
+Here is how much of TeX's memory you used:
+ 28214 strings out of 467871
+ 535130 string characters out of 5418376
+ 1061241 words of memory out of 5000000
+ 56065 multiletter control sequences out of 15000+600000
+ 839957 words of font info for 207 fonts, out of 8000000 for 9000
+ 1141 hyphenation exceptions out of 8191
+ 105i,13n,134p,755b,729s stack positions out of 10000i,1000n,20000p,200000b,200000s
+ <C:\Users\devam\AppData\Local\MiKTeX\fonts/pk/ljfour/jknappen/ec/dpi600\ectt0900.pk> <C:\Users\devam\AppData\Local\MiKTeX\fonts/pk/ljfour/jknappen/ec/dpi600\ectt1000.pk><C:/Users/devam/AppData/Local/Programs/MiKTeX/fonts/type1/public/fira/FiraSans-Regular.pfb><C:/Users/devam/AppData/Local/Programs/MiKTeX/fonts/type1/public/fira/FiraSans-SemiBold.pfb><C:/Users/devam/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmex10.pfb><C:/Users/devam/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmsy10.pfb><C:/Users/devam/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmsy7.pfb><C:/Users/devam/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/euler/euex10.pfb><C:/Users/devam/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/euler/eufm10.pfb><C:/Users/devam/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/euler/eufm7.pfb><C:/Users/devam/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/euler/eurm10.pfb><C:/Users/devam/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/euler/eurm7.pfb><C:/Users/devam/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/euler/eusm10.pfb><C:/Users/devam/AppData/Local/Programs/MiKTeX/fonts/type1/public/fpl/fplrc8a.pfb><C:/Users/devam/AppData/Local/Programs/MiKTeX/fonts/type1/urw/palatino/uplb8a.pfb><C:/Users/devam/AppData/Local/Programs/MiKTeX/fonts/type1/urw/palatino/uplr8a.pfb><C:/Users/devam/AppData/Local/Programs/MiKTeX/fonts/type1/urw/palatino/uplri8a.pfb>
+Output written on thesis.pdf (71 pages, 4817143 bytes).
+PDF statistics:
+ 1870 PDF objects out of 2073 (max. 8388607)
+ 361 named destinations out of 1000 (max. 500000)
+ 900 words of extra memory for PDF output out of 10000 (max. 10000000)
+
