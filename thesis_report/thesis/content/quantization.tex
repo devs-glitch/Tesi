@@ -33,6 +33,13 @@ each at the three seeds of the reference (30 fine-tuning runs).}
 \label{tab:grid}
 \end{table}
 
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=\linewidth]{quantization_arms.pdf}
+\caption{The three arms, as which parts of the datapath each one quantizes.}
+\label{fig:arms}
+\end{figure}
+
 The \emph{control} arm runs the whole fine-tuning procedure with the quantizer
 attached and inert: 32 bits on both targets, a grid fine enough to leave every
 value unchanged. Its purpose is subtractive. Indeed, since the nine quantized configurations
@@ -195,6 +202,14 @@ resolution that channel ceases under a single per-tensor scale.}
 \label{tab:weight-ranges}
 \end{table}
 
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=\linewidth]{weight_scale_granularity.pdf}
+\caption{Grid levels reachable by the weakest channel of conv4 at 4 bits, under
+a scale derived from the tensor maximum and from the channel's own.}
+\label{fig:scale-granularity}
+\end{figure}
+
 The global 8-bit step used in the calibration ($0.00168$, from the largest
 absolute weight of the network, $0.214$) is therefore an upper bound on the
 per-channel steps actually applied, whose mean is between $0.0005$ (conv4) and
@@ -245,6 +260,14 @@ potentials are $0$, $2/3$, $4/3$ and $2$: a single level lies strictly between
 rest and threshold.}
 \label{tab:membrane-grid}
 \end{table}
+
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=\linewidth]{membrane_grid.pdf}
+\caption{The membrane grid at each bit-width over the clipped range, with the
+firing threshold marked.}
+\label{fig:membrane-grid}
+\end{figure}
 
 Zero is the value to which every neuron is initialized and around which it
 rests, so it must be exactly representable, which the unsigned grid guarantees
