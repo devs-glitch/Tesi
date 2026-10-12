@@ -60,6 +60,10 @@
 \backcite {cabero2019blip}{{19}{3.1.2}{figure.caption.24}}
 \backcite {soni2021scattered}{{19}{3.1.2}{figure.caption.24}}
 \backcite {mcinnes2018umap}{{20}{3.1.2}{figure.caption.25}}
+\backcite {zheng2021tdbn}{{25}{3.2.1}{figure.caption.30}}
+\backcite {kim2021bntt}{{25}{3.2.1}{figure.caption.30}}
+\backcite {hubara2016bnn}{{25}{3.2.1}{figure.caption.30}}
+\backcite {jacob2018quantization}{{25}{3.2.1}{figure.caption.30}}
 \backcite {kingma2015adam}{{25}{3.2.2}{subsection.3.2.2}}
 \backcite {akiba2019optuna}{{25}{3.3.1}{subsection.3.3.1}}
 \backcite {li2018hyperband}{{25}{3.3.1}{subsection.3.3.1}}
@@ -75,9 +79,9 @@
 \backcite {jacob2018quantization}{{35}{4.4}{section.4.4}}
 \backcite {yin2024mint}{{35}{4.4}{section.4.4}}
 \backcite {smith2026}{{35}{4.4}{figure.caption.46}}
-\backcite {yin2024mint}{{35}{4.5}{section.4.5}}
+\backcite {yin2024mint}{{36}{4.5}{section.4.5}}
 \backcite {smith2026}{{36}{4.6}{section*.47}}
-\backcite {horowitz2014}{{37}{4.8}{equation.4.1}}
+\backcite {horowitz2014}{{38}{4.8}{equation.4.1}}
 \backcite {suetake2023penalty}{{39}{5.1.2}{subsection.5.1.2}}
 \backcite {hu2016trimming}{{40}{5.1.2}{subsection.5.1.2}}
 \backcite {sokar2023dormant}{{40}{5.1.2}{subsection.5.1.2}}

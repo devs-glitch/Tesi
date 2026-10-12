@@ -144,11 +144,12 @@ event time correlates at $-0.22$ with peak frequency, reflecting instrumental
 drift across observing runs. A model given the time of the trigger could
 separate the classes by observing period instead of by morphology, and that
 separation would not transfer to data recorded later.
- 
+
 \emph{Degenerate distributions.} The nanosecond remainders are uniformly
-distributed and correlate with everything between $0.00$ and $0.11$, consistent
-with timing quantization noise, while the quality factor contains a sentinel value of
-order $10^{20}$ that compresses the real distribution to the axis origin.
+distributed and no correlation of theirs exceeds $0.12$ in absolute value,
+consistent with timing quantization noise, while the quality factor contains a
+sentinel value of order $10^{20}$ that compresses the real distribution to the
+axis origin.
  
 \emph{Reference to the noise floor.} Amplitude and SNR measure the strength of
 the same event on two scales. Omicron reports amplitude as a strain amplitude
@@ -214,21 +215,29 @@ manifest records the SHA-256 digest of the assignment file.
 Four downloaded files proved unreadable. Two were recovered by re-downloading;
 two are permanently unavailable at source (0.02\,\% of the corpus) and were
 excluded.
- 
+
 The final corpus is \textbf{9\,566 images, partitioned $6\,695 / 1\,435 /
-1\,436$}.  Beyond class balance, the partitions are matched on the physical
-properties of the events: the medians of SNR, duration, peak frequency and
-bandwidth are $14.97 / 14.09 / 14.98$, $1.25 / 1.25 / 1.10$\,s,
-$75.3 / 75.3 / 75.3$\,Hz and $4112 / 4254 / 4131$\,Hz.
+1\,436$}. The split is uniform and unstratified, drawn once under seed 42, so
+the balance of the corpus carries into the partitions by sampling: class
+shares lie between $23.9\,\%$ and $25.9\,\%$ in all three.
+The physical properties were checked afterwards. The medians of SNR, duration,
+peak frequency and bandwidth are $14.97 / 14.09 / 14.98$,
+$1.25 / 1.25 / 1.10$\,s, $75.3 / 75.3 / 75.3$\,Hz and $4112 / 4254 / 4131$\,Hz:
+peak frequency is identical across the three, bandwidth agrees to $3.5\,\%$, SNR
+to a little over $6\,\%$. Duration is the exception, the test median sitting
+$12\,\%$ below the other two.
 \section{Model}
  
 \subsection{Architecture}
  
 \texttt{GWGlitchSNN} is a four-block convolutional spiking network. Each block is
 a $5 \times 5$ convolution with stride 2 and padding 2 followed by a LIF layer. The
-spatial downsampling is performed by the stride rather than by pooling, in this way
-the spike tensors are kept dense in time and it avoids inserting a non-spiking operator
-between layers.
+spatial downsampling is carried by the stride rather than by pooling, which
+keeps it inside the convolution. Average pooling would put analog values on
+a path that carries only spikes; max pooling keeps them binary but
+adds a second operator between a LIF layer and the convolution that follows it.
+Table~\ref{tab:architecture} gives the layer configuration at the working
+resolution.
  
 \begin{table}[htbp]
 \centering
@@ -237,11 +246,11 @@ between layers.
 Stage & Operation & Output shape & Notes \\
 \midrule
 Input & direct encoding $\times T$ & $[T, B, 3, 112, 112]$ & analog frame repeated \\
-Block 1 & Conv $3\to16$, k5, s2, p2 + LIF & $[B, 16, 56, 56]$ & exposed as \texttt{spike1} \\
-Block 2 & Conv $16\to32$, k5, s2, p2 + LIF & $[B, 32, 28, 28]$ & exposed as \texttt{spike2} \\
-Block 3 & Conv $32\to64$, k5, s2, p2 + LIF & $[B, 64, 14, 14]$ & exposed as \texttt{spike3} \\
-Block 4 & Conv $64\to128$, k5, s2, p2 + LIF & $[B, 128, 7, 7]$ & exposed as \texttt{spike4} \\
-Readout & Flatten (6\,272) $\to$ Linear $\to$ LIF & $[B, 4]$ & one neuron per class \\
+Block 1 & Conv $3\to16$, k5, s2, p2 + LIF & $[T, B, 16, 56, 56]$ & exposed as \texttt{spike1} \\
+Block 2 & Conv $16\to32$, k5, s2, p2 + LIF & $[T, B, 32, 28, 28]$ & exposed as \texttt{spike2} \\
+Block 3 & Conv $32\to64$, k5, s2, p2 + LIF & $[T, B, 64, 14, 14]$ & exposed as \texttt{spike3} \\
+Block 4 & Conv $64\to128$, k5, s2, p2 + LIF & $[T, B, 128, 7, 7]$ & exposed as \texttt{spike4} \\
+Readout & Flatten (6\,272) $\to$ Linear $\to$ LIF & $[T, B, 4]$ & one per class, summed over $T$ \\
 \bottomrule
 \end{tabular}
 \caption{Layer configuration at the working resolution of 112\,px. The flattened
@@ -261,8 +270,9 @@ unrolling over the $T$ time steps.}
 The forward pass returns the stacked output spike train \emph{and} the four
 hidden spike tensors of shape $[T, B, C, H, W]$, so that every diagnostic and
 explainability procedure consumes raw hidden spike trains directly from the model
-interface.
- 
+interface. Figure~\ref{fig:architecture} draws the datapath and its
+unrolling over the $T$ steps, the form in which those tensors are produced.
+
 Parameter count is nearly resolution-independent: $295\,332$ at 112\,px, of which
 $270\,240$ are convolutional and unaffected by input size, since only the linear
 readout shrinks with resolution, a fact with consequences for the design of the
@@ -270,11 +280,16 @@ quantization grid discussed in Section~\ref{sec:grid}.
  
 Batch normalization, pooling and dropout are intentionally absent. Normalization
 layers interact non-trivially with quantization, and their treatment belongs to a
-later phase. Batch normalization must indeed be reconsidered for spiking networks in
-general, as quantizing its parameters is a problem distinct from quantizing weights
-and potentials. In this persepctive, two alternative hardware strategies exist --- approximating
-it with shifts, or eliminating it entirely.
- 
+later phase. The interaction is not only a quantization one: the statistics a
+spiking network would normalize accumulate over the time axis as well as over the
+batch, which is why two of the variants proposed for directly trained spiking
+networks redefine the operation --- tdBN ties the
+normalization to the firing threshold~\cite{zheng2021tdbn}, BNTT gives each time
+step its own learnable parameters~\cite{kim2021bntt}. On the hardware side two
+routes exist. The multiplication can be approximated by a shift, as in the
+shift-based normalization of binarized networks~\cite{hubara2016bnn}, or the
+layer can be removed altogether by folding its parameters into the preceding
+convolution before deployment~\cite{jacob2018quantization}.
 \subsection{Readout and loss}
  
 Classification uses a \emph{rate-coded readout}: output spikes are summed over
@@ -384,8 +399,9 @@ The outcome of these choices is recorded in a single file,
 \texttt{baseline\_manifest.json}. It contains the input resolution, the three
 hyperparameters, the originating study, the decay rate and reference layer of
 the explainer, the list of seeds (1234, 2345, 3456), the checkpoint paths, the
-size of each partition, and the first sixteen hexadecimal digits of the SHA-256
-digest of the partition file (\texttt{754b2515b6509075}).
+sizes of the training and validation partitions, and the first sixteen
+hexadecimal digits of the SHA-256 digest of the partition file
+(\texttt{754b2515b6509075}).
 Every downstream script reads the model and its configuration from the manifest.
 
  
@@ -486,6 +502,7 @@ are normalized by the channel count of their layer before being plotted on a
 shared scale.
  
 \subsection{Faithfulness: the deletion metric}
+\label{sec:deletion-method}
 
 Stability does not by itself imply correctness, so faithfulness is tested
 separately with the
@@ -620,10 +637,10 @@ a summed map nor a single centre of mass can show.
  
 \subsection{Calibration protocol}
 \label{sec:calibration-protocol}
- 
-The divergence metrics are calibrated before they are used, at different levels,
-all on fifteen validation images per class at the reference layer and $\gamma$,
-on the three checkpoints of the full-precision reference.
+
+The divergence metrics are calibrated before they are used, at three levels, all
+on fifteen validation images per class at the reference layer and $\gamma$, on
+the three checkpoints of the full-precision reference.
  
 \begin{enumerate}
   \item \textbf{Verification.} A checkpoint compared with itself must return
@@ -639,5 +656,13 @@ on the three checkpoints of the full-precision reference.
         unperturbed one. Biases and the LIF buffers are excluded, since
         perturbing $\beta$ would mix membrane dynamics with weight noise.
 \end{enumerate}
-The $\gamma$ sensitivity analysis supplies a further reference point: the
-divergence produced by changing the explainer itself thirtyfold.
+
+Two further reference points come from outside that protocol. The $\gamma$
+sensitivity analysis gives the divergence produced by changing the explainer
+itself thirtyfold. The control arm of the quantization grid
+(Section~\ref{sec:grid}) gives the divergence produced by running the whole
+fine-tuning procedure with no bits removed, on twenty images per class rather
+than fifteen, matching the grid it is read against. The latter is the
+operative threshold: a grid result closer to its parent than the control arm is
+a result about continued training and not about the removed bits; 
+section~\ref{sec:anchor} reports it.

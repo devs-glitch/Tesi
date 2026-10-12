@@ -110,6 +110,13 @@ Hengyuan Hu, Rui Peng, Yu-Wing Tai, and Chi-Keung Tang.
   efficient deep architectures.
 \newblock {\em arXiv preprint arXiv:1607.03250}, 2016.
 
+\bibitem{hubara2016bnn}
+Itay Hubara, Matthieu Courbariaux, Daniel Soudry, Ran El-Yaniv, and Yoshua
+  Bengio.
+\newblock Binarized neural networks.
+\newblock In {\em Advances in Neural Information Processing Systems},
+  volume~29, 2016.
+
 \bibitem{jacob2018quantization}
 B.~Jacob, S.~Kligys, B.~Chen, M.~Zhu, M.~Tang, A.~Howard, H.~Adam, and
   D.~Kalenichenko.
@@ -117,6 +124,12 @@ B.~Jacob, S.~Kligys, B.~Chen, M.~Zhu, M.~Tang, A.~Howard, H.~Adam, and
   integer-arithmetic-only inference.
 \newblock In {\em Proceedings of the IEEE Conference on Computer Vision and
   Pattern Recognition (CVPR)}, pages 2704--2713, 2018.
+
+\bibitem{kim2021bntt}
+Youngeun Kim and Priyadarshini Panda.
+\newblock Revisiting batch normalization for training low-latency deep spiking
+  neural networks from scratch.
+\newblock {\em Frontiers in Neuroscience}, 15:773954, 2021.
 
 \bibitem{kim2021sam}
 Youngeun Kim and Priyadarshini Panda.
@@ -259,5 +272,11 @@ M.~Zevin, S.~Coughlin, S.~Bahaadini, et~al.
 \newblock Gravity spy: integrating advanced {LIGO} detector characterization,
   machine learning, and citizen science.
 \newblock {\em Classical and Quantum Gravity}, 34(6):064003, 2017.
+
+\bibitem{zheng2021tdbn}
+Hanle Zheng, Yujie Wu, Lei Deng, Yifan Hu, and Guoqi Li.
+\newblock Going deeper with directly-trained larger spiking neural networks.
+\newblock In {\em Proceedings of the AAAI Conference on Artificial
+  Intelligence}, volume~35, pages 11062--11070, 2021.
 
 \end{thebibliography}

@@ -13,6 +13,9 @@ performed on the validation partition.
 The fundamental design choice is to \textbf{quantize the two targets separately
 before quantizing them together}, as separating them turns the grid into a causal ablation and is
 what makes the hypothesis of Chapter~\ref{ch:introduction} testable.
+Table~\ref{tab:grid} lists the
+configurations that follow; Figure~\ref{fig:arms} shows where in the datapath
+each arm acts, and that the two never act on the same tensor.
 
 \begin{table}[htbp]
 \centering
@@ -40,13 +43,14 @@ each at the three seeds of the reference (30 fine-tuning runs).}
 \label{fig:arms}
 \end{figure}
 
-The \emph{control} arm runs the whole fine-tuning procedure with the quantizer
-attached and inert: 32 bits on both targets, a grid fine enough to leave every
-value unchanged. Its purpose is subtractive. Indeed, since the nine quantized configurations
-differ from their parent in two respects at once, the bits removed and the
-operations that removes them --- reloading the parent, fine-tuning it, selecting
-a checkpoint, re-evaluating --- the control runs those operations alone, so
-whatever it produces is deemed to be solely its contribution.
+The \emph{control} arm runs the whole fine-tuning procedure with no quantizer
+attached. Both bit-widths are left unset, so neither the weight parametrization
+nor the membrane hook is ever registered and the network trains in full
+precision. Its purpose is subtractive. The nine quantized configurations differ
+from their parent in two respects at once, the bits removed and the operations
+that remove them --- reloading the parent, fine-tuning it, selecting a
+checkpoint, re-evaluating --- and the control runs those operations alone, so
+whatever it produces is their contribution and theirs alone.
 
 It produces two sets of weights. The first is the checkpoint the selection
 rule returns, and it is bit-identical
@@ -54,20 +58,20 @@ to the parent: the same label on all $1\,435$ validation and $1\,436$ test
 images, per-layer firing rates equal to the last digit reported. The identity
 follows from the rule: the selection begins with the
 un-fine-tuned model already held as a candidate and replaces it only when an
-epoch exceeds its validation accuracy \emph{strictly}. An inert quantizer
-leaves that initial candidate at the parent's own accuracy, so an epoch would
-have to beat the parent to displace it, and on none of the three seeds
-did it. The instrumentation contributes nothing measurable, from which it can
-be deduced that every
-difference observed in the other nine configurations is attributable to the
-removed bits.
+epoch exceeds its validation accuracy \emph{strictly}. With nothing quantized, that initial candidate sits at
+the parent's own accuracy, so an epoch would have to beat the parent to displace
+it, and on none of the three seeds did it. What the control establishes 
+is that reloading the parent, selecting a checkpoint and re-evaluating
+leave the model bit-identical, so none of the divergence measured in the other
+nine configurations can be charged to the apparatus around the training. The
+training itself is not covered by that argument, and it is the subject of the
+second set of weights.
 
-The second is the state of the weights after the last epoch, kept separately
-and not identical to the parent. Fine-tuning moved them even though it never
-succeeded in replacing the checkpoint.. The contribution here is the measurement of what continued
-training alone does to an explanation, and that is the third calibration level
-of Section~\ref{sec:anchor}.
-
+The second is the state of the weights after the last epoch, kept separately and
+not identical to the parent. Fine-tuning moved them even though it never
+succeeded in replacing the checkpoint. What that state measures is the effect of
+continued training alone on an explanation, and it is the fine-tuning level of
+the calibration (Section~\ref{sec:anchor}).
 
 Two quantities are deliberately left out of the grid. Firstly the membrane decay
 $\beta = 0.75$, which is already shift-implementable, having been constrained inside the
@@ -76,11 +80,11 @@ re-quantized. Secondly, the biases are kept
 in full precision: there are 244 of them, under $0.1\,\%$ of the parameters,
 and on integer hardware they are added once to a wide accumulator.
 
-The two arms have \emph{opposite} sensitivities to the resolution choice: since $270\,240$
-of the $295\,332$ parameters are convolutional and therefore
-resolution-independent, the weight arm achieves nearly the same absolute memory
-reduction at any resolution, whereas the membrane state falls twelvefold between
-224 and 64 pixels.
+The two arms respond differently to the resolution choice. $270\,240$ of the
+$295\,332$ parameters are convolutional and therefore resolution-independent, so
+what the weight arm saves is nearly constant across resolutions. The membrane
+state, which is what the other arm quantizes, falls twelvefold between 224 and
+64 pixels.
 
 \section{Quantization-aware fine-tuning from the parent}
 \label{sec:qat}
@@ -141,8 +145,8 @@ same configuration at no extra cost: that un-fine-tuned model is saved as it rep
 first candidate checkpoint, and it is replaced only by an epoch that strictly
 improves the validation accuracy. The selected checkpoint is the one on which
 every subsequent measurement --- accuracy, explanations, firing statistics,
-energy --- is taken. The 30 runs took 13 hours on the GPU of
-Section~\ref{sec:training}.
+energy --- is taken. The 30 runs took 13 hours on the same 6\,GB consumer GPU
+used for every training run in this thesis.
 
 \paragraph{Gates before the grid.} Two checks were run before any fine-tuning
 to validate the quantizer and then to validate the PTQ gate.
@@ -181,7 +185,10 @@ critical: the signed grid is $\{-\Delta, 0, +\Delta\}$ with $\Delta$
 the tensor maximum, so every weight of a channel whose maximum lies below
 $\Delta/2$ rounds to zero and the channel vanishes. A per-channel scale takes
 $\Delta$ from each channel's own maximum, so every channel reaches the
-outermost level whatever its magnitude.
+outermost level whatever its magnitude. Figure~\ref{fig:scale-granularity} draws the two
+cases for the weakest channel of conv4 at 4 bits: seven of the fifteen levels
+are reachable under a scale set by the tensor, fifteen of fifteen under the
+channel's own.
 
 \begin{table}[htbp]
 \centering
@@ -223,8 +230,9 @@ step. The quantizer acts on the potential returned by each layer after the spike
 decision, so the quantized value is the \emph{state} carried into the next step:
 what is stored, and therefore what costs memory, is what is quantized. The
 membrane of the output layer (four neurons) is left in full precision because
-its state is negligible in memory and quantizing it would act directly on the
-logits; its \emph{weights} instead are quantized with every other linear tensor
+its state is negligible in memory and quantizing it would act on the spike
+decisions of those four neurons, whose summed counts are the logits; its
+\emph{weights} instead are quantized with every other linear tensor
 (Section~\ref{sec:weight-quantizer}), so the readout is split between the two
 arms.
 
@@ -275,15 +283,22 @@ by construction, its first level being zero.
 
 Table~\ref{tab:membrane-grid} contains a quantitative prediction. The step is
 $0.8\,\%$ of the threshold at 8 bits, $13.3\,\%$ at 4 bits and $66.7\,\%$ at 2
-bits, where it is of the same order as the threshold itself, and where a neuron's state
-can encode only whether it is at rest, part-way to threshold, or above it. This
-is the mechanism behind the observation of Smith et al.~\cite{smith2026} that
-membrane quantization needs at least four bits, and the grid tests it directly.
+bits, where it is of the same order as the threshold itself, and where a
+neuron's state can encode only whether it is at rest, part-way to threshold, or
+above it. Figure~\ref{fig:membrane-grid} draws the three grids on one axis: the
+8-bit row reads as a ruler, the 2-bit row as four states. This is the mechanism
+behind the observation of Smith et al.~\cite{smith2026} that membrane
+quantization needs at least four bits, and the grid tests it directly.
 
-The unsigned grid is a consequence of the clipping which found that the network
- makes no use of negative potentials, so a
-signed grid would spend half of its levels on values that carry no information,
-the equivalent of losing one bit at every bit-width.
+The unsigned grid follows from the clipping study. While potentials do go negative:
+the median of \texttt{lif1} sits at $-0.08$ and its first percentile at $-6.6$,
+clipping them away changes nothing the classifier uses. The symmetric range
+$[-2, +2]$ and the unsigned range $[0, +2]$ return the same accuracy to the last
+digit, $0.9826$, one validation sample below the unclipped network, so a
+signed grid would spend half of its levels below zero, where no decision is
+made. At 8 and 4 bits that costs a factor of two in resolution, one bit. At 2
+bits it costs a factor of three: the step grows from $2/3$ to the full $2$, and
+no level at all remains between rest and threshold.
 
 \section{Joint arm}
 \label{sec:joint}
@@ -349,7 +364,7 @@ run, aid in the reading of those numbers.
   \item \textbf{A flat result on Extremely\_Loud is uninformative.} The
         calibration moved that class by nothing: PCC $0.9997$ under the largest
         perturbation applied, worst per-timestep correlation is $0.996$, a
-        sensitivity in $1 - \mathrm{PCC}$ $57$ times below Violin\_Mode's. On
+        sensitivity in $1 - \mathrm{PCC}$ $94$ times below Violin\_Mode's. On
         the other three classes the calibration showed the metrics responding
         to a change known to have been made,but Extremely\_Loud never produced a response
         to calibrate against. This means that a flat reading is consistent both with
@@ -400,12 +415,12 @@ signal and should be flatter. It is tested on the membrane arm at 4 and 2 bits,
 the configurations in which the arm has an effect and accuracy is intact.
 
 Two preconditions were verified. SNR does translate into image intensity, the
-Gravity Spy colour scale being fixed rather than auto-scaled per image. And SNR
-is very nearly a proxy for class --- the top global SNR quartile is 92.8\,\%
-Extremely\_Loud --- so stratification uses \textbf{terciles computed within each
-class}, fifteen images per class and tercile. The summary statistic is the IoU
-gradient, high-SNR tercile minus low-SNR tercile; a positive gradient means that
-weak events lose their explanation more.
+Gravity Spy colour scale being fixed, not auto-scaled per image. SNR is
+also very nearly a proxy for class: on the validation partition the top SNR
+quartile is $89.7\,\%$ Extremely\_Loud. Stratification uses \textbf{terciles
+computed within each class}, fifteen images per class and tercile. The summary
+statistic is the IoU gradient, high-SNR tercile minus low-SNR tercile; a
+positive gradient means that weak events lose their explanation more.
 
 \section{Energy and memory}
 \label{sec:energy-method}
@@ -434,9 +449,10 @@ more expensive than its convolutional equivalent (Section~\ref{sec:energy-fp32})
 included, use $4.6$\,pJ per MAC and $0.9$\,pJ per accumulate; configurations with
 quantized weights use the 8-bit integer figures, $0.2$ and $0.03$\,pJ. Narrower
 integer operations are not tabulated, so at 4 and 2 bits the costs are
-extrapolated: an accumulate scales linearly with the operand width and a
-multiplication quadratically, giving $0.015$ and $0.05$\,pJ at 4 bits and
-$0.0075$ and $0.0125$\,pJ at 2 bits. These two rows are estimates. 
+extrapolated: a multiplication scales quadratically with the operand width and
+an accumulate linearly, giving $0.05$ and $0.015$\,pJ at 4 bits and $0.0125$ and
+$0.0075$\,pJ at 2 bits. These two rows are estimates.
+
 The first convolution is costed at the weight
 bit-width, which assumes that the input image is quantized to the same width;
 Section~\ref{sec:energy-grid} shows how much the conclusion depends on that
