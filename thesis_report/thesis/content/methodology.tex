@@ -671,13 +671,3 @@ matching the grid it is read against.
         compared pairwise in order to measure how similar two independently trained
         solutions are.
 \end{enumerate}
-
-Two further reference points come from outside that protocol. The $\gamma$
-sensitivity analysis gives the divergence produced by changing the explainer
-itself thirtyfold. The control arm of the quantization grid
-(Section~\ref{sec:grid}) gives the divergence produced by running the whole
-fine-tuning procedure with no bits removed, on twenty images per class rather
-than fifteen, matching the grid it is read against. The latter is the
-operative threshold: a grid result closer to its parent than the control arm is
-a result about continued training and not about the removed bits; 
-section~\ref{sec:anchor} reports it.
