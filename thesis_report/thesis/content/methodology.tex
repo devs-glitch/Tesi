@@ -444,6 +444,13 @@ of exactly those positions are accumulated over every validation image. The CV
 is then computed only where at least five intervals were observed. Since a neuron can
 produce at most $T - 1 = 7$ intervals within a single image, pooling over the
 whole partition is what makes the estimate stable.
+
+A second coefficient is computed inside the single image, over the intervals a
+neuron produces within the $T$ steps of that image, and it assesses whether
+firing is periodic there. Two
+spikes give one interval whose standard deviation is zero by construction, so
+the per-image coefficient is read only where a neuron produced at least three
+spikes, and the full-precision parents are measured under the same rule.
  
 \section{The Spike Activation Map}
 \label{sec:sam-method}
@@ -638,23 +645,31 @@ a summed map nor a single centre of mass can show.
 \subsection{Calibration protocol}
 \label{sec:calibration-protocol}
 
-The divergence metrics are calibrated before they are used, at three levels, all
-on fifteen validation images per class at the reference layer and $\gamma$, on
-the three checkpoints of the full-precision reference.
- 
+The divergence metrics are calibrated before they are used. One check precedes
+the calibration: a checkpoint compared with itself must return perfect
+agreement, meaning thaat two calls to the sampling routine must return bit-identical images
+and two forward passes of the same model must return identical maps. What
+follows are four reference divergences, measured on fifteen validation images
+per class at the reference layer and $\gamma$ --- twenty for the second,
+matching the grid it is read against.
+
 \begin{enumerate}
-  \item \textbf{Verification.} A checkpoint compared with itself must return
-        perfect agreement, so two calls to the sampling routine must return
-        bit-identical images, and two forward passes of the same model must
-        return identical maps.
-  \item \textbf{Independent solutions.} The three full-precision checkpoints are
-        compared pairwise to measure how similar two independently trained
-        solutions are.
   \item \textbf{Numerical floor.} Gaussian noise is added to the weight tensors
         of one checkpoint, at magnitudes expressed as fractions of its measured
-        8-bit quantization step, and the perturbed model is then compared with the
-        unperturbed one. Biases and the LIF buffers are excluded, since
+        8-bit quantization step, and the perturbed model is then compared with
+        the unperturbed one. Biases and the LIF buffers are excluded, since
         perturbing $\beta$ would mix membrane dynamics with weight noise.
+  \item \textbf{Fine-tuning alone.} The control arm of the quantization grid
+        (Section~\ref{sec:grid}) runs the whole procedure with no bits removed.
+        The result is the divergence that continued training costs on its
+        own, and it is the operative threshold: a grid result closer to its
+        parent than the control arm is a result about continued training, and not
+        about the removed bits. Section~\ref{sec:anchor} reports it.
+  \item \textbf{$\gamma$ reference.} The sensitivity analysis gives the
+        divergence produced by changing the explainer itself thirtyfold.
+  \item \textbf{Independent solutions.} The three full-precision checkpoints are
+        compared pairwise in order to measure how similar two independently trained
+        solutions are.
 \end{enumerate}
 
 Two further reference points come from outside that protocol. The $\gamma$

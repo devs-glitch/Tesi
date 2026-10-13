@@ -353,7 +353,9 @@ run, aid in the reading of those numbers.
   \item \textbf{Below the numerical floor is noise.} A divergence smaller than
         the one produced by weight noise of one 8-bit step ($\mathrm{PCC}$ $0.975$,
         IoU $0.704$, CoM difference $0.029$ steps, worst class) can not be 
-        deemed a result.
+        deemed a result. The threshold that decides whether a result belongs
+        to the removed bits sits above it, at the fine-tuning level of
+        Section~\ref{sec:anchor}.
   \item \textbf{IoU is an early indicator, and PCC a graded measure.} IoU has a
         dynamic range of $2.6\times$ its floor and saturates early, while PCC has
         $34\times$.

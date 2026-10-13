@@ -1,0 +1,353 @@
+{
+  "fp32_112px_seed1234": {
+    "arm": "fp32",
+    "seed": 1234,
+    "time_steps": 8,
+    "layers": {
+      "1": {
+        "n_neuron_images": 72002560,
+        "fraction_with_an_interval": 0.21954506895310388,
+        "fraction_with_two_intervals": 0.1820316666518524,
+        "mean_cv_from_one_interval": 0.13834287254918795,
+        "mean_cv_from_two_intervals": 0.1668528122146535,
+        "fraction_cv_exactly_zero": 0.4756555135805638
+      },
+      "2": {
+        "n_neuron_images": 36001280,
+        "fraction_with_an_interval": 0.22965669553971416,
+        "fraction_with_two_intervals": 0.19055833570361944,
+        "mean_cv_from_one_interval": 0.11510231043583105,
+        "mean_cv_from_two_intervals": 0.13871876119233567,
+        "fraction_cv_exactly_zero": 0.5420955567242692
+      },
+      "3": {
+        "n_neuron_images": 18000640,
+        "fraction_with_an_interval": 0.25231369551304844,
+        "fraction_with_two_intervals": 0.20154611169380643,
+        "mean_cv_from_one_interval": 0.1240382558921669,
+        "mean_cv_from_two_intervals": 0.1552823344798248,
+        "fraction_cv_exactly_zero": 0.5005114445890927
+      },
+      "4": {
+        "n_neuron_images": 9000320,
+        "fraction_with_an_interval": 0.19079732720614379,
+        "fraction_with_two_intervals": 0.1435325632866387,
+        "mean_cv_from_one_interval": 0.11560084226834144,
+        "mean_cv_from_two_intervals": 0.1536677895421642,
+        "fraction_cv_exactly_zero": 0.5133720223650161
+      }
+    }
+  },
+  "fp32_112px_seed2345": {
+    "arm": "fp32",
+    "seed": 2345,
+    "time_steps": 8,
+    "layers": {
+      "1": {
+        "n_neuron_images": 72002560,
+        "fraction_with_an_interval": 0.554652820677487,
+        "fraction_with_two_intervals": 0.5105300144883738,
+        "mean_cv_from_one_interval": 0.1734556913402862,
+        "mean_cv_from_two_intervals": 0.18844668429703898,
+        "fraction_cv_exactly_zero": 0.41694311245200827
+      },
+      "2": {
+        "n_neuron_images": 36001280,
+        "fraction_with_an_interval": 0.4216610353854085,
+        "fraction_with_two_intervals": 0.3403270661487591,
+        "mean_cv_from_one_interval": 0.16674342827441666,
+        "mean_cv_from_two_intervals": 0.2065930500490094,
+        "fraction_cv_exactly_zero": 0.33213314169443714
+      },
+      "3": {
+        "n_neuron_images": 18000640,
+        "fraction_with_an_interval": 0.3488325970632155,
+        "fraction_with_two_intervals": 0.2800895412607552,
+        "mean_cv_from_one_interval": 0.15148561075288985,
+        "mean_cv_from_two_intervals": 0.18866509180877455,
+        "fraction_cv_exactly_zero": 0.40024725340657713
+      },
+      "4": {
+        "n_neuron_images": 9000320,
+        "fraction_with_an_interval": 0.25010621844556635,
+        "fraction_with_two_intervals": 0.17574108476143072,
+        "mean_cv_from_one_interval": 0.10980844085536304,
+        "mean_cv_from_two_intervals": 0.1562740660957037,
+        "fraction_cv_exactly_zero": 0.47298963284412093
+      }
+    }
+  },
+  "fp32_112px_seed3456": {
+    "arm": "fp32",
+    "seed": 3456,
+    "time_steps": 8,
+    "layers": {
+      "1": {
+        "n_neuron_images": 72002560,
+        "fraction_with_an_interval": 0.3211842051171514,
+        "fraction_with_two_intervals": 0.27341657018861554,
+        "mean_cv_from_one_interval": 0.13010574531066105,
+        "mean_cv_from_two_intervals": 0.15283605657093846,
+        "fraction_cv_exactly_zero": 0.5253700050079513
+      },
+      "2": {
+        "n_neuron_images": 36001280,
+        "fraction_with_an_interval": 0.23742697481867311,
+        "fraction_with_two_intervals": 0.20694658634359667,
+        "mean_cv_from_one_interval": 0.1582755461823072,
+        "mean_cv_from_two_intervals": 0.18158735923986474,
+        "fraction_cv_exactly_zero": 0.4191759250783387
+      },
+      "3": {
+        "n_neuron_images": 18000640,
+        "fraction_with_an_interval": 0.3320763039536372,
+        "fraction_with_two_intervals": 0.2820134173007182,
+        "mean_cv_from_one_interval": 0.16943494703875525,
+        "mean_cv_from_two_intervals": 0.1995129576165269,
+        "fraction_cv_exactly_zero": 0.3734167490409584
+      },
+      "4": {
+        "n_neuron_images": 9000320,
+        "fraction_with_an_interval": 0.20937488889283937,
+        "fraction_with_two_intervals": 0.162063126644386,
+        "mean_cv_from_one_interval": 0.14472558059400717,
+        "mean_cv_from_two_intervals": 0.18697592095278515,
+        "fraction_cv_exactly_zero": 0.42191866284570345
+      }
+    }
+  },
+  "qat_wxu2_112px_seed1234": {
+    "arm": "membrane-only",
+    "seed": 1234,
+    "time_steps": 8,
+    "layers": {
+      "1": {
+        "n_neuron_images": 72002560,
+        "fraction_with_an_interval": 0.20155129206517103,
+        "fraction_with_two_intervals": 0.20155129206517103,
+        "mean_cv_from_one_interval": 0.0,
+        "mean_cv_from_two_intervals": 0.0,
+        "fraction_cv_exactly_zero": 1.0
+      },
+      "2": {
+        "n_neuron_images": 36001280,
+        "fraction_with_an_interval": 0.2851450559535661,
+        "fraction_with_two_intervals": 0.2253981247333428,
+        "mean_cv_from_one_interval": 0.03607210870720069,
+        "mean_cv_from_two_intervals": 0.04563384663402348,
+        "fraction_cv_exactly_zero": 0.8631037728071341
+      },
+      "3": {
+        "n_neuron_images": 18000640,
+        "fraction_with_an_interval": 0.33077607240631446,
+        "fraction_with_two_intervals": 0.23403340103462988,
+        "mean_cv_from_one_interval": 0.10415254869635858,
+        "mean_cv_from_two_intervals": 0.14720621431208086,
+        "fraction_cv_exactly_zero": 0.5901155800568322
+      },
+      "4": {
+        "n_neuron_images": 9000320,
+        "fraction_with_an_interval": 0.24139319490862546,
+        "fraction_with_two_intervals": 0.18650303544762853,
+        "mean_cv_from_one_interval": 0.12417378156780469,
+        "mean_cv_from_two_intervals": 0.16071966756249012,
+        "fraction_cv_exactly_zero": 0.5336982831393309
+      }
+    }
+  },
+  "qat_wxu2_112px_seed2345": {
+    "arm": "membrane-only",
+    "seed": 2345,
+    "time_steps": 8,
+    "layers": {
+      "1": {
+        "n_neuron_images": 72002560,
+        "fraction_with_an_interval": 0.5333983263928394,
+        "fraction_with_two_intervals": 0.5333983263928394,
+        "mean_cv_from_one_interval": 0.0,
+        "mean_cv_from_two_intervals": 0.0,
+        "fraction_cv_exactly_zero": 1.0
+      },
+      "2": {
+        "n_neuron_images": 36001280,
+        "fraction_with_an_interval": 0.46868211352485245,
+        "fraction_with_two_intervals": 0.38664897470312165,
+        "mean_cv_from_one_interval": 0.055991252140673416,
+        "mean_cv_from_two_intervals": 0.06787060126654428,
+        "fraction_cv_exactly_zero": 0.7965977095456003
+      },
+      "3": {
+        "n_neuron_images": 18000640,
+        "fraction_with_an_interval": 0.4036382039749698,
+        "fraction_with_two_intervals": 0.3078015559446775,
+        "mean_cv_from_one_interval": 0.11089983372541695,
+        "mean_cv_from_two_intervals": 0.14542944582806333,
+        "fraction_cv_exactly_zero": 0.558609182177101
+      },
+      "4": {
+        "n_neuron_images": 9000320,
+        "fraction_with_an_interval": 0.29860238302638126,
+        "fraction_with_two_intervals": 0.21595121062362227,
+        "mean_cv_from_one_interval": 0.11902243014567242,
+        "mean_cv_from_two_intervals": 0.1645759760848552,
+        "fraction_cv_exactly_zero": 0.47532915215344484
+      }
+    }
+  },
+  "qat_wxu2_112px_seed3456": {
+    "arm": "membrane-only",
+    "seed": 3456,
+    "time_steps": 8,
+    "layers": {
+      "1": {
+        "n_neuron_images": 72002560,
+        "fraction_with_an_interval": 0.2975685864502595,
+        "fraction_with_two_intervals": 0.2975685864502595,
+        "mean_cv_from_one_interval": 0.0,
+        "mean_cv_from_two_intervals": 0.0,
+        "fraction_cv_exactly_zero": 1.0
+      },
+      "2": {
+        "n_neuron_images": 36001280,
+        "fraction_with_an_interval": 0.2633918849552016,
+        "fraction_with_two_intervals": 0.2276503779865605,
+        "mean_cv_from_one_interval": 0.052582516180251636,
+        "mean_cv_from_two_intervals": 0.0608380630636225,
+        "fraction_cv_exactly_zero": 0.8175194202329147
+      },
+      "3": {
+        "n_neuron_images": 18000640,
+        "fraction_with_an_interval": 0.3879604280736685,
+        "fraction_with_two_intervals": 0.32198432944606414,
+        "mean_cv_from_one_interval": 0.10252920078473415,
+        "mean_cv_from_two_intervals": 0.12353791470202496,
+        "fraction_cv_exactly_zero": 0.6206054461721721
+      },
+      "4": {
+        "n_neuron_images": 9000320,
+        "fraction_with_an_interval": 0.23229218516674963,
+        "fraction_with_two_intervals": 0.18303826975040888,
+        "mean_cv_from_one_interval": 0.11419224569536991,
+        "mean_cv_from_two_intervals": 0.14492032905384575,
+        "fraction_cv_exactly_zero": 0.5548029231463096
+      }
+    }
+  },
+  "qat_w2u2_112px_seed1234": {
+    "arm": "joint",
+    "seed": 1234,
+    "time_steps": 8,
+    "layers": {
+      "1": {
+        "n_neuron_images": 72002560,
+        "fraction_with_an_interval": 0.20019552082592618,
+        "fraction_with_two_intervals": 0.20019552082592618,
+        "mean_cv_from_one_interval": 0.0,
+        "mean_cv_from_two_intervals": 0.0,
+        "fraction_cv_exactly_zero": 1.0
+      },
+      "2": {
+        "n_neuron_images": 36001280,
+        "fraction_with_an_interval": 0.32467926140403897,
+        "fraction_with_two_intervals": 0.28034675433762357,
+        "mean_cv_from_one_interval": 0.013315417290585609,
+        "mean_cv_from_two_intervals": 0.015421044775098047,
+        "fraction_cv_exactly_zero": 0.95433783665691
+      },
+      "3": {
+        "n_neuron_images": 18000640,
+        "fraction_with_an_interval": 0.4699592903363436,
+        "fraction_with_two_intervals": 0.4225901412394226,
+        "mean_cv_from_one_interval": 0.03804732517035886,
+        "mean_cv_from_two_intervals": 0.04231214169789983,
+        "fraction_cv_exactly_zero": 0.8699653064661222
+      },
+      "4": {
+        "n_neuron_images": 9000320,
+        "fraction_with_an_interval": 0.16838356858422812,
+        "fraction_with_two_intervals": 0.13754422064993244,
+        "mean_cv_from_one_interval": 0.05570048592489095,
+        "mean_cv_from_two_intervals": 0.0681893179341906,
+        "fraction_cv_exactly_zero": 0.7783005988972019
+      }
+    }
+  },
+  "qat_w2u2_112px_seed2345": {
+    "arm": "joint",
+    "seed": 2345,
+    "time_steps": 8,
+    "layers": {
+      "1": {
+        "n_neuron_images": 72002560,
+        "fraction_with_an_interval": 0.5075998825597312,
+        "fraction_with_two_intervals": 0.5075998825597312,
+        "mean_cv_from_one_interval": 0.0,
+        "mean_cv_from_two_intervals": 0.0,
+        "fraction_cv_exactly_zero": 1.0
+      },
+      "2": {
+        "n_neuron_images": 36001280,
+        "fraction_with_an_interval": 0.49872865631444213,
+        "fraction_with_two_intervals": 0.45844358867240276,
+        "mean_cv_from_one_interval": 0.01988668184136388,
+        "mean_cv_from_two_intervals": 0.02163419526057224,
+        "fraction_cv_exactly_zero": 0.9354856319673186
+      },
+      "3": {
+        "n_neuron_images": 18000640,
+        "fraction_with_an_interval": 0.3354957379293181,
+        "fraction_with_two_intervals": 0.29268570450828413,
+        "mean_cv_from_one_interval": 0.04865466340962343,
+        "mean_cv_from_two_intervals": 0.0557711974069174,
+        "fraction_cv_exactly_zero": 0.8268488553733204
+      },
+      "4": {
+        "n_neuron_images": 9000320,
+        "fraction_with_an_interval": 0.16340752328806088,
+        "fraction_with_two_intervals": 0.13362891541634075,
+        "mean_cv_from_one_interval": 0.06301255884882205,
+        "mean_cv_from_two_intervals": 0.07705462657874768,
+        "fraction_cv_exactly_zero": 0.7435726027123903
+      }
+    }
+  },
+  "qat_w2u2_112px_seed3456": {
+    "arm": "joint",
+    "seed": 3456,
+    "time_steps": 8,
+    "layers": {
+      "1": {
+        "n_neuron_images": 72002560,
+        "fraction_with_an_interval": 0.3307750307766835,
+        "fraction_with_two_intervals": 0.3307750307766835,
+        "mean_cv_from_one_interval": 0.0,
+        "mean_cv_from_two_intervals": 0.0,
+        "fraction_cv_exactly_zero": 1.0
+      },
+      "2": {
+        "n_neuron_images": 36001280,
+        "fraction_with_an_interval": 0.37397628639870584,
+        "fraction_with_two_intervals": 0.32414703032781056,
+        "mean_cv_from_one_interval": 0.024255189143613645,
+        "mean_cv_from_two_intervals": 0.02798379967465212,
+        "fraction_cv_exactly_zero": 0.9161008141763273
+      },
+      "3": {
+        "n_neuron_images": 18000640,
+        "fraction_with_an_interval": 0.4923601605276257,
+        "fraction_with_two_intervals": 0.43008037492000284,
+        "mean_cv_from_one_interval": 0.04852605613663493,
+        "mean_cv_from_two_intervals": 0.055553097008088866,
+        "fraction_cv_exactly_zero": 0.8346552614521678
+      },
+      "4": {
+        "n_neuron_images": 9000320,
+        "fraction_with_an_interval": 0.17673638270639266,
+        "fraction_with_two_intervals": 0.14863427078148334,
+        "mean_cv_from_one_interval": 0.06690480265529451,
+        "mean_cv_from_two_intervals": 0.07955441732792415,
+        "fraction_cv_exactly_zero": 0.7378311141942178
+      }
+    }
+  }
+}

@@ -139,11 +139,12 @@ The core contributions are therefore:
         sums over strictly earlier time steps ($t' < t$), which removes a
         constant pedestal that had inflated map correlations.
 
-  \item \textbf{A calibration of the explanation-divergence metrics} at three
-        levels: numerical noise, a thirtyfold change in $\gamma$, and
-        independently initialized networks of equal accuracy. Spatial metrics are validated
-        only between a model and its own parent, so every quantized model is
-        compared with the full-precision counterpart model of its own seed.
+  \item \textbf{A calibration of the explanation-divergence metrics} at four
+        levels: numerical noise, continued training with no bits removed, a
+        thirtyfold change in $\gamma$, and independently initialized networks of
+        equal accuracy. Spatial metrics are validated only between a model and
+        its own parent, so every quantized model is compared with the
+        full-precision counterpart model of its own seed.
 
   \item \textbf{A bit-width characterization of explanation fidelity.} Weight and membrane quantization are applied
         separately and then together, at 8, 4 and 2 bits and three seeds,
@@ -172,10 +173,12 @@ all four classes, while moving the centre of mass by a similar amount in the
 opposite direction.  At 2 bits the membrane modifies \emph{where} the explanation points more than
 \emph{when}. The mechanism behind the hypothesis is supported, as the same
 quantization makes the inter-spike intervals of the first layer exactly
-regular, with a coefficient of variation of zero in all six models with a 2-bit
-membrane, over the $3$ to $28\,\%$ of neurons that fire often enough within
-eight steps for an interval to be measured. The temporal metric of the
-explanation does not register this change.
+regular: the coefficient of variation measured within an image is zero for
+every neuron of every image, in all six models with a 2-bit membrane, over the
+$20$ to $53\,\%$ of neuron-image pairs that produce the two intervals a
+coefficient needs. The three full-precision parents, measured the same way,
+return $0.153$ to $0.188$. The temporal metric of the explanation does not
+register this change.
 
 The configuration with the changed explanation is also dominated on energy and
 memory, so in this network there is no trade-off to make. A joint 4-bit model
