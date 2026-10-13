@@ -188,7 +188,7 @@ def main():
                                     layer_index=layer_index, gamma=gamma,
                                     class_names=class_names, image_size=input_size)
     
-    plot_deletion_curves(results, class_names)
+    plot_deletion_curves(results, class_names, FRACTIONS, N_PER_CLASS)
 
 
 if __name__ == "__main__":
