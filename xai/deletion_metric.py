@@ -16,9 +16,66 @@ from xai.sam_metrics import samples_per_class
 from scripts.training_utils import direct_encode
 from scripts.dataloader import build_dataloaders
 
+from scripts.figure_style import (BLUE, BLUE_FILL, INK, MUTED,
+                                  FIG_DIR, clean_axes, frame, save,
+                                  use_thesis_style)
+
 MANIFEST = 'config/baseline_manifest.json'
 FRACTIONS = np.arange(0, 1.01, 0.05)
 N_PER_CLASS = 15
+
+use_thesis_style()
+
+
+def plot_deletion_curves(results, class_names, fractions, n_per_class,
+                         out_dir=FIG_DIR):
+    labels = sorted(results)
+    chance = 1.0 / len(class_names)
+
+    fig, axes = plt.subplots(1, len(labels), figsize=(3.3 * len(labels), 3.6),
+                             sharex=True, sharey=True)
+    axes = np.atleast_1d(axes)
+
+    for ax, label in zip(axes, labels):
+        sam = np.asarray(results[label]['sam'], dtype=float)
+        random_order = np.asarray(results[label]['random'], dtype=float)
+        delta = float(np.trapezoid(sam, fractions)
+                      - np.trapezoid(random_order, fractions))
+
+        # The metric is the area between the two curves, so the figure shades it
+        ax.fill_between(fractions, sam, random_order, color=BLUE_FILL,
+                        linewidth=0, zorder=2)
+        ax.plot(fractions, random_order, color=MUTED, linestyle=(0, (4, 2)),
+                linewidth=1.4, marker='s', markersize=3, zorder=3,
+                label='random order')
+        ax.plot(fractions, sam, color=BLUE, linewidth=1.6, marker='o',
+                markersize=3, zorder=4, label='SAM order')
+        ax.axhline(chance, color=INK, linestyle=(0, (1, 2)), linewidth=1,
+                   zorder=1)
+
+        ax.set_xlim(0, 1)
+        ax.set_ylim(0, 1.04)
+        clean_axes(ax)
+        # The sign carries the reading so it is printed
+        ax.set_title(f'{class_names[label].replace("_", " ")}\n'
+                     f'$\\Delta = {delta:+.3f}$', fontsize=8.4, pad=7,
+                     linespacing=1.5)
+
+    axes[0].set_ylabel('confidence in the predicted class', fontsize=8.5)
+    fig.supxlabel('fraction of pixels removed', fontsize=8.5, y=0.015)
+
+    handles, legend_labels = axes[0].get_legend_handles_labels()
+    fig.legend(handles, legend_labels, loc='upper right',
+               bbox_to_anchor=(0.995, 1 - 0.06 / fig.get_figheight()),
+               frameon=False, fontsize=8, ncol=2, handlelength=2.4)
+
+    frame(fig, 'Deletion metric, SAM order against random order',
+          note=f'{n_per_class} validation images per class, mean curve. '
+               f'$\\Delta$ is the area under the SAM curve minus the area under '
+               f'the random curve: negative means the map is faithful. '
+               f'Dotted line: chance for {len(class_names)} classes, '
+               f'{chance:.2f}.')
+    save(fig, 'deletion_metric', out_dir)
 
 
 def get_upsampled_sam_map(net, image, time_steps, device, layer_index, gamma, image_size):
@@ -111,22 +168,6 @@ def run_deletion_analysis(net, samples, time_steps, device, layer_index, gamma, 
               f"AUC-random={np.trapezoid(results[label]['random'], FRACTIONS):.4f}")
 
     return results
-
-def plot_deletion_curves(results, class_names):
-    fig, axes = plt.subplots(1, len(results), figsize=(5 * len(results), 4))
-
-    for idx, label in enumerate(sorted(results.keys())):
-        ax = axes[idx]
-        ax.plot(FRACTIONS, results[label]["sam"], marker="o", label="SAM (importance order)")
-        ax.plot(FRACTIONS, results[label]["random"], marker="s", linestyle="--", label="Random")
-        ax.set_title(class_names[label])
-        ax.set_xlabel("Fraction of removed pixels")
-        ax.set_ylabel("Confidence predicted class")
-        ax.legend(fontsize=8)
-
-    fig.suptitle(f"Deletion metric - SAM vs random baseline (N={N_PER_CLASS}/class)")
-    plt.savefig("deletion_metric.png", dpi=150, bbox_inches="tight")
-    plt.show()
 
 
 def main():
