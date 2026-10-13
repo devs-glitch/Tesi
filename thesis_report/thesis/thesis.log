@@ -894,4 +894,114 @@ LaTeX Font Info:    Trying to load font information for U+lasy on input line 16.
  (C:\Users\devam\AppData\Local\Programs\MiKTeX\tex/latex/base\ulasy.fd
 File: ulasy.fd 1998/08/17 v2.2e LaTeX symbol font definitions
 ))
-pdfTeX warning (ext4): destination with the same identifier (name{page.1}) has been already used, 
+pdfTeX warning (ext4): destination with the same identifier (name{page.1}) has been already used, duplicate ignored
+<to be read again> 
+                   \relax 
+l.52 \include{content/abstract}
+                                [1
+
+
+]
+\openout2 = `contents.aux'.
+
+ (contents.tex (thesis.toc
+pdfTeX warning (ext4): destination with the same identifier (name{page.2}) has been already used, duplicate ignored
+<to be read again> 
+                   \relax 
+l.62 ...the deletion metric}{28}{subsection.3.7.2}
+                                                  % [2
+
+
+
+
+] [3])
+\tf@toc=\write6
+\openout6 = `thesis.toc'.
+
+) [4]
+\openout2 = `content/introduction.aux'.
+
+ (content/introduction.tex
+Chapter 1.
+LaTeX Font Info:    Font shape `T1/FiraSans-OsF/b/n' in size <24.88> not available
+(Font)              Font shape `T1/FiraSans-OsF/bold/n' tried instead on input line 1.
+LaTeX Font Info:    Font shape `T1/FiraSans-OsF/bold/n' will be
+(Font)              scaled to size 24.88pt on input line 1.
+LaTeX Font Info:    Font shape `T1/FiraSans-OsF/sb/n' in size <14.4> not available
+(Font)              Font shape `T1/FiraSans-OsF/semibold/n' tried instead on input line 4.
+LaTeX Font Info:    Font shape `T1/FiraSans-OsF/semibold/n' will be
+(Font)              scaled to size 14.4pt on input line 4.
+[5
+
+
+
+
+] [6] [7]) [8]
+\openout2 = `content/state_of_the_art.aux'.
+
+ (content/state_of_the_art.tex
+Chapter 2.
+<figures/lif_neuron_models.png, id=581, 505.4082pt x 292.4526pt>
+File: figures/lif_neuron_models.png Graphic file (type png)
+<use figures/lif_neuron_models.png>
+Package pdftex.def Info: figures/lif_neuron_models.png  used on input line 37.
+(pdftex.def)             Requested size: 398.3386pt x 230.49506pt.
+[9
+
+
+
+
+] [10 <./figures/lif_neuron_models.png>] [11] [12] [13] [14] [15] [16] [17]) [18]
+\openout2 = `content/methodology.aux'.
+
+ (content/methodology.tex
+Chapter 3.
+<figures/label_counts.png, id=759, 722.7pt x 433.62pt>
+File: figures/label_counts.png Graphic file (type png)
+<use figures/label_counts.png>
+Package pdftex.def Info: figures/label_counts.png  used on input line 41.
+(pdftex.def)             Requested size: 298.75394pt x 179.25421pt.
+<figures/spectrogram_examples.png, id=766, 1065.9825pt x 283.0575pt>
+File: figures/spectrogram_examples.png Graphic file (type png)
+<use figures/spectrogram_examples.png>
+Package pdftex.def Info: figures/spectrogram_examples.png  used on input line 67.
+(pdftex.def)             Requested size: 398.3386pt x 105.77052pt.
+[19
+
+
+
+
+]
+<figures/pairplot.png, id=778, 1144.275pt x 1031.052pt>
+File: figures/pairplot.png Graphic file (type png)
+<use figures/pairplot.png>
+Package pdftex.def Info: figures/pairplot.png  used on input line 90.
+(pdftex.def)             Requested size: 338.59023pt x 305.08592pt.
+<figures/umap.png, id=779, 1110.0672pt x 543.4704pt>
+File: figures/umap.png Graphic file (type png)
+<use figures/umap.png>
+Package pdftex.def Info: figures/umap.png  used on input line 99.
+(pdftex.def)             Requested size: 338.59023pt x 165.76236pt.
+<figures/correlation_matrix.png, id=781, 1110.0672pt x 543.4704pt>
+File: figures/correlation_matrix.png Graphic file (type png)
+<use figures/correlation_matrix.png>
+Package pdftex.def Info: figures/correlation_matrix.png  used on input line 126.
+(pdftex.def)             Requested size: 358.50229pt x 175.51456pt.
+ [20 <./figures/label_counts.png> <./figures/spectrogram_examples.png>] [21 <./figures/pairplot.png> <./figures/umap.png>] [22 <./figures/correlation_matrix.png>]
+Overfull \hbox (30.9832pt too wide) in paragraph at lines 244--258
+ [][] 
+ []
+
+<figures/network_architecture_112px.pdf, id=806, 534.79799pt x 368.57701pt>
+File: figures/network_architecture_112px.pdf Graphic file (type pdf)
+<use figures/network_architecture_112px.pdf>
+Package pdftex.def Info: figures/network_architecture_112px.pdf  used on input line 264.
+(pdftex.def)             Requested size: 398.3386pt x 274.53677pt.
+[23] [24 <./figures/network_architecture_112px.pdf>] [25] [26] [27]
+Package hyperref Info: bookmark level for unknown algorithm defaults to 0 on input line 524.
+ [28] [29]) [30]
+\openout2 = `content/quantization.aux'.
+
+ (content/quantization.tex
+Chapter 4.
+<figures/quantizat
