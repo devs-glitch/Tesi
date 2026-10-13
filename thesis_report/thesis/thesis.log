@@ -1004,4 +1004,200 @@ Package hyperref Info: bookmark level for unknown algorithm defaults to 0 on inp
 
  (content/quantization.tex
 Chapter 4.
-<figures/quantizat
+<figures/quantization_arms.pdf, id=1066, 520.34402pt x 310.761pt>
+File: figures/quantization_arms.pdf Graphic file (type pdf)
+<use figures/quantization_arms.pdf>
+Package pdftex.def Info: figures/quantization_arms.pdf  used on input line 41.
+(pdftex.def)             Requested size: 398.3386pt x 237.90683pt.
+[31
+
+
+
+
+] [32 <./figures/quantization_arms.pdf>] [33]
+<figures/weight_scale_granularity.pdf, id=1170, 520.34402pt x 216.81pt>
+File: figures/weight_scale_granularity.pdf Graphic file (type pdf)
+<use figures/weight_scale_granularity.pdf>
+Package pdftex.def Info: figures/weight_scale_granularity.pdf  used on input line 214.
+(pdftex.def)             Requested size: 398.3386pt x 165.9815pt.
+ [34 <./figures/weight_scale_granularity.pdf>]
+<figures/membrane_grid.pdf, id=1262, 520.34402pt x 209.58301pt>
+File: figures/membrane_grid.pdf Graphic file (type pdf)
+<use figures/membrane_grid.pdf>
+Package pdftex.def Info: figures/membrane_grid.pdf  used on input line 274.
+(pdftex.def)             Requested size: 398.3386pt x 160.44879pt.
+ [35 <./figures/membrane_grid.pdf>]
+LaTeX Font Info:    Trying to load font information for TS1+pplx on input line 328.
+ (C:\Users\devam\AppData\Local\Programs\MiKTeX\tex/latex/psnfss\ts1pplx.fd
+File: ts1pplx.fd 2004/09/06 font definitions for TS1/pplx.
+) [36] [37]) [38]
+\openout2 = `content/results.aux'.
+
+ (content/results.tex
+Chapter 5.
+[39
+
+
+
+
+]
+<figures/dead_neuron_sweep.pdf, id=1390, 534.79799pt x 281.85298pt>
+File: figures/dead_neuron_sweep.pdf Graphic file (type pdf)
+<use figures/dead_neuron_sweep.pdf>
+Package pdftex.def Info: figures/dead_neuron_sweep.pdf  used on input line 75.
+(pdftex.def)             Requested size: 398.3386pt x 209.93987pt.
+ [40 <./figures/dead_neuron_sweep.pdf>] [41]
+<figures/confusion_matrix.png, id=1491, 436.5108pt x 327.1422pt>
+File: figures/confusion_matrix.png Graphic file (type png)
+<use figures/confusion_matrix.png>
+Package pdftex.def Info: figures/confusion_matrix.png  used on input line 226.
+(pdftex.def)             Requested size: 239.00558pt x 179.12508pt.
+<figures/firing_rate_distributions.png, id=1494, 1176.5556pt x 295.8252pt>
+File: figures/firing_rate_distributions.png Graphic file (type png)
+<use figures/firing_rate_distributions.png>
+Package pdftex.def Info: figures/firing_rate_distributions.png  used on input line 251.
+(pdftex.def)             Requested size: 398.3386pt x 100.15492pt.
+ [42 <./figures/confusion_matrix.png>]
+<figures/cv_isi_distributions.png, id=1505, 1154.3928pt x 295.8252pt>
+File: figures/cv_isi_distributions.png Graphic file (type png)
+<use figures/cv_isi_distributions.png>
+Package pdftex.def Info: figures/cv_isi_distributions.png  used on input line 271.
+(pdftex.def)             Requested size: 398.3386pt x 102.07785pt.
+<figures/sam_visualization.png, id=1507, 1198.7184pt x 176.3388pt>
+File: figures/sam_visualization.png Graphic file (type png)
+<use figures/sam_visualization.png>
+Package pdftex.def Info: figures/sam_visualization.png  used on input line 287.
+(pdftex.def)             Requested size: 398.3386pt x 58.59827pt.
+ [43 <./figures/firing_rate_distributions.png> <./figures/cv_isi_distributions.png> <./figures/sam_visualization.png>]
+<figures/sam_class_stats.png, id=1519, 820.0236pt x 748.2354pt>
+File: figures/sam_class_stats.png Graphic file (type png)
+<use figures/sam_class_stats.png>
+Package pdftex.def Info: figures/sam_class_stats.png  used on input line 306.
+(pdftex.def)             Requested size: 358.50229pt x 327.12384pt.
+<figures/sam_layer_Blip.png, id=1522, 826.287pt x 493.845pt>
+File: figures/sam_layer_Blip.png Graphic file (type png)
+<use figures/sam_layer_Blip.png>
+Package pdftex.def Info: figures/sam_layer_Blip.png  used on input line 326.
+(pdftex.def)             Requested size: 195.1881pt x 116.65642pt.
+<figures/sam_layer_Extremely_Loud.png, id=1523, 826.287pt x 493.845pt>
+File: figures/sam_layer_Extremely_Loud.png Graphic file (type png)
+<use figures/sam_layer_Extremely_Loud.png>
+Package pdftex.def Info: figures/sam_layer_Extremely_Loud.png  used on input line 330.
+(pdftex.def)             Requested size: 195.1881pt x 116.65642pt.
+<figures/sam_layer_Scattered_Light.png, id=1524, 832.5504pt x 493.845pt>
+File: figures/sam_layer_Scattered_Light.png Graphic file (type png)
+<use figures/sam_layer_Scattered_Light.png>
+Package pdftex.def Info: figures/sam_layer_Scattered_Light.png  used on input line 335.
+(pdftex.def)             Requested size: 195.1881pt x 115.77477pt.
+<figures/sam_layer_Violin_Mode.png, id=1525, 832.5504pt x 493.845pt>
+File: figures/sam_layer_Violin_Mode.png Graphic file (type png)
+<use figures/sam_layer_Violin_Mode.png>
+Package pdftex.def Info: figures/sam_layer_Violin_Mode.png  used on input line 339.
+(pdftex.def)             Requested size: 195.1881pt x 115.77477pt.
+ [44 <./figures/sam_class_stats.png>] [45 <./figures/sam_layer_Blip.png> <./figures/sam_layer_Extremely_Loud.png> <./figures/sam_layer_Scattered_Light.png> <./figures/sam_layer_Violin_Mode.png>]
+<figures/gamma_Violin_Mode.png, id=1545, 1003.5894pt x 328.5876pt>
+File: figures/gamma_Violin_Mode.png Graphic file (type png)
+<use figures/gamma_Violin_Mode.png>
+Package pdftex.def Info: figures/gamma_Violin_Mode.png  used on input line 416.
+(pdftex.def)             Requested size: 398.3386pt x 130.4199pt.
+<figures/deletion_metric.png, id=1549, 1171.2558pt x 295.8252pt>
+File: figures/deletion_metric.png Graphic file (type png)
+<use figures/deletion_metric.png>
+Package pdftex.def Info: figures/deletion_metric.png  used on input line 460.
+(pdftex.def)             Requested size: 398.3386pt x 100.60631pt.
+ [46 <./figures/gamma_Violin_Mode.png>] [47 <./figures/deletion_metric.png>] [48] [49] [50] [51]
+<figures/grid_headline.pdf, id=1604, 520.34402pt x 187.902pt>
+File: figures/grid_headline.pdf Graphic file (type pdf)
+<use figures/grid_headline.pdf>
+Package pdftex.def Info: figures/grid_headline.pdf  used on input line 873.
+(pdftex.def)             Requested size: 398.3386pt x 143.85063pt.
+ [52 <./figures/grid_headline.pdf>] [53] [54] [55] [56] [57] [58]
+Overfull \hbox (52.30133pt too wide) in paragraph at lines 1355--1365
+ [][] 
+ []
+
+) [59]
+\openout2 = `content/conclusions.aux'.
+
+ (content/conclusions.tex
+Chapter 6.
+[60
+
+
+
+
+] [61] [62] [63]) [64]
+\openout2 = `backmatter.aux'.
+
+ (backmatter.tex (thesis.bbl (thesis.brf)
+\tf@brf=\write7
+\openout7 = `thesis.brf'.
+
+ [65
+
+
+
+
+
+] [66]
+Underfull \hbox (badness 1127) in paragraph at lines 269--269
+[]\T1/pplx/m/n/10 Ruokai Yin, Yuhang Li, Ab-hishek Moitra, and Priyadarshini Panda.  MINT:
+ []
+
+[67]) [68]
+Appendix A.
+<figures/gamma_Blip.png, id=1899, 1003.5894pt x 328.5876pt>
+File: figures/gamma_Blip.png Graphic file (type png)
+<use figures/gamma_Blip.png>
+Package pdftex.def Info: figures/gamma_Blip.png  used on input line 20.
+(pdftex.def)             Requested size: 398.3386pt x 130.4199pt.
+<figures/gamma_Extremely_Loud.png, id=1900, 1003.5894pt x 328.5876pt>
+File: figures/gamma_Extremely_Loud.png Graphic file (type png)
+<use figures/gamma_Extremely_Loud.png>
+Package pdftex.def Info: figures/gamma_Extremely_Loud.png  used on input line 21.
+(pdftex.def)             Requested size: 398.3386pt x 130.4199pt.
+<figures/gamma_Scattered_Light.png, id=1901, 1003.5894pt x 328.5876pt>
+File: figures/gamma_Scattered_Light.png Graphic file (type png)
+<use figures/gamma_Scattered_Light.png>
+Package pdftex.def Info: figures/gamma_Scattered_Light.png  used on input line 22.
+(pdftex.def)             Requested size: 398.3386pt x 130.4199pt.
+<figures/feature_boxplots.png, id=1904, 1399.629pt x 1110.0672pt>
+File: figures/feature_boxplots.png Graphic file (type png)
+<use figures/feature_boxplots.png>
+Package pdftex.def Info: figures/feature_boxplots.png  used on input line 30.
+(pdftex.def)             Requested size: 398.3386pt x 315.9151pt.
+[69
+
+ <./figures/gamma_Blip.png> <./figures/gamma_Extremely_Loud.png> <./figures/gamma_Scattered_Light.png>] [70 <./figures/feature_boxplots.png>]
+Appendix B.
+) [71
+
+] (thesis.aux (content/abstract.aux) (contents.aux) (content/introduction.aux) (content/state_of_the_art.aux) (content/methodology.aux) (content/quantization.aux) (content/results.aux) (content/conclusions.aux) (backmatter.aux))
+ ***********
+LaTeX2e <2025-11-01>
+L3 programming layer <2025-12-24>
+ ***********
+
+
+LaTeX Font Warning: Some font shapes were not available, defaults substituted.
+
+Package rerunfilecheck Info: File `thesis.out' has not changed.
+(rerunfilecheck)             Checksum: C05B082E5B10DAA6334467186DF71979;18782.
+Package rerunfilecheck Info: File `thesis.brf' has not changed.
+(rerunfilecheck)             Checksum: F1B9F73DB9A2D2474D13E7E9A94FB498;5351.
+ ) 
+Here is how much of TeX's memory you used:
+ 28261 strings out of 467871
+ 536523 string characters out of 5418376
+ 1062241 words of memory out of 5000000
+ 56107 multiletter control sequences out of 15000+600000
+ 836581 words of font info for 195 fonts, out of 8000000 for 9000
+ 1141 hyphenation exceptions out of 8191
+ 105i,13n,134p,755b,729s stack positions out of 10000i,1000n,20000p,200000b,200000s
+ <C:\Users\devam\AppData\Local\MiKTeX\fonts/pk/ljfour/jknappen/ec/dpi600\ectt0900.pk> <C:\Users\devam\AppData\Local\MiKTeX\fonts/pk/ljfour/jknappen/ec/dpi600\ectt1000.pk><C:/Users/devam/AppData/Local/Programs/MiKTeX/fonts/type1/public/fira/FiraSans-Regular.pfb><C:/Users/devam/AppData/Local/Programs/MiKTeX/fonts/type1/public/fira/FiraSans-SemiBold.pfb><C:/Users/devam/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmex10.pfb><C:/Users/devam/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmsy10.pfb><C:/Users/devam/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmsy7.pfb><C:/Users/devam/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/euler/euex10.pfb><C:/Users/devam/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/euler/eufm10.pfb><C:/Users/devam/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/euler/eufm7.pfb><C:/Users/devam/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/euler/eurm10.pfb><C:/Users/devam/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/euler/eurm7.pfb><C:/Users/devam/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/euler/eusm10.pfb><C:/Users/devam/AppData/Local/Programs/MiKTeX/fonts/type1/public/fpl/fplrc8a.pfb><C:/Users/devam/AppData/Local/Programs/MiKTeX/fonts/type1/urw/palatino/uplb8a.pfb><C:/Users/devam/AppData/Local/Programs/MiKTeX/fonts/type1/urw/palatino/uplr8a.pfb><C:/Users/devam/AppData/Local/Programs/MiKTeX/fonts/type1/urw/palatino/uplri8a.pfb>
+Output written on thesis.pdf (73 pages, 4912198 bytes).
+PDF statistics:
+ 2157 PDF objects out of 2487 (max. 8388607)
+ 371 named destinations out of 1000 (max. 500000)
+ 915 words of extra memory for PDF output out of 10000 (max. 10000000)
+
