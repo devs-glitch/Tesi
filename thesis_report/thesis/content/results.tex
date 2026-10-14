@@ -156,12 +156,12 @@ for long integration windows is mild.
 Holding resolution and partition fixed and moving from the unconstrained
 configuration ($\beta = 0.4148$, $T = 7$) to the adopted one ($\beta = 0.75$,
 $T = 8$), the layer-4 dead fraction is \emph{unchanged} at $23.6$\,\%. The decay
-constant does not affect the dead fraction; resolution does. This 
+constant does not affect the dead fraction, but resolution does. This 
 represents another point in favor to the
 reading of Section~\ref{sec:resolution}: the deep-layer problem is spatial
 redundancy, and not a dynamical pathology curable by a better decay constant.
 
-What the change does affect is saturation, by an order of magnitude and most
+What the change affects is saturation, by an order of magnitude and most
 where it matters. Neurons above $0.80$ fall from $9.3 / 3.5 / 2.7 / 1.8$\,\%
 across the four layers to $4.7 / 0.22 / 0.06 / 0.14$\,\%. The layer-2 figure 
 (where the SAM map is computed) is
@@ -213,11 +213,11 @@ depth to $0.022$ at layer 4, averaged over the three pairs. Section~\ref{sec:dis
 reads every quantized model against those figures. This is the observation that
 motivates Section~\ref{sec:calibration}.
 
-\section{Physical validation of the dynamics}
-\label{sec:physical}
+\section{Validation of the dynamics}
+\label{sec:validation}
 
 At the adopted configuration the confusion matrix diagonal reads
-$0.99 / 0.99 / 0.98 / 0.97$, consistent with Table~\ref{tab:fp32}; the only
+$0.994 / 0.986 / 0.984 / 0.970$, consistent with Table~\ref{tab:fp32}; the only
 non-negligible errors are on Violin\_Mode, the class that in the tabular domain
 partially overlaps both Blip and Scattered\_Light (Figure~\ref{fig:confusion}).
 
@@ -240,7 +240,7 @@ in the seed where it holds the most saturated ones. These figures reproduce to
 every digit the unclipped row of Table~\ref{tab:clipping}, which is produced by a
 different script from a separate forward pass, so both are verified at no cost.
 
-One feature deserves note: the layer-1 distribution is \textbf{bimodal}, with a
+A note worth mentioning is that the layer-1 distribution is \textbf{bimodal}, with a
 secondary population near a firing rate of $0.65$--$0.75$ that has no counterpart
 in the deeper layers. A high-activity subpopulation therefore exists in the first
 layer only, which may be related to its being the layer with the largest
@@ -257,12 +257,13 @@ validation, with the dead ($0.01$) and saturation ($0.80$) thresholds.}
 The coefficient of variation of inter-spike intervals, pooled over the partition,
 concentrates between $0.35$ and $0.43$ in all four layers. Firing is regular
 rather than Poisson-like, which is the expected outcome under constant direct
-encoding: since the input does not vary over time, any irregularity observed is
+encoding. The input indeed does not vary over time, and any irregularity observed is
 generated entirely by the membrane dynamics and by interaction between layers.
-This is evidence about internal dynamics, not a claim of biological realism. With
-$T = 8$ a neuron can produce at most seven intervals, so the five-interval
+This is an evidence about internal dynamics.
+
+With $T = 8$ a neuron can produce at most seven intervals, so the five-interval
 threshold used for the estimate is close to the ceiling, which is why the
-accumulation runs over the whole partition rather than a single image. Between
+accumulation runs over the whole partition and not on a single image. Between
 184 and 196 of the 200 sampled neurons per layer met the threshold
 (Figure~\ref{fig:cvisi}).
 
@@ -279,7 +280,7 @@ accumulated over the validation partition.}
 
 Figure~\ref{fig:sam-steps} shows the SAM sequence of a single Blip at the
 reference layer. The map is zero at $t = 0$ by definition and builds up over
-the first steps as spike histories accumulate; from the third step onward the
+the first steps as spike histories accumulate: it can be observed that from the third step onward the
 attended region is the vertical stroke of the glitch.
 
 \begin{figure}[htbp]
@@ -294,12 +295,12 @@ The class statistics (Figure~\ref{fig:sam-class}) show four recognizably
 different attention patterns, each matching the morphology of its class. For
 Blip the mean map concentrates on the narrow vertical stroke and so does the
 variability, which is the stroke shifting slightly between instances. For
-Extremely\_Loud the attended region is large and saturated, covering the lower
+Extremely\_Loud instead the attended region is large and saturated, and it covers the lower
 and central part of the spectrogram. For Scattered\_Light the attention lies on
 a horizontal band at low frequency. Violin\_Mode produces the weakest and most
 diffuse mean map, with variability concentrated in a few localized spots along
-the line structure; it is also the class with the lowest recall, and the one
-whose explanations prove most sensitive in every test below.
+the line structure; this attention pattern confirms it being the class with the lowest recall, 
+and the one whose explanations prove most sensitive in every test below.
 
 \begin{figure}[htbp]
 \centering
@@ -311,12 +312,12 @@ scale across classes.}
 \label{fig:sam-class}
 \end{figure}
 
-Across depth (Figure~\ref{fig:sam-layers}) the progression is the expected one,
+Across depth (Figure~\ref{fig:sam-layers}) the progression is the expected one:
 from fine localization in the early layers to coarse localization in the deep
 ones, with maps of side 56, 28, 14 and 7. At layer 4 a $7 \times 7$ map leaves
-only 49 positions, too few for a top-20\,\% overlap or a structural comparison
-to be meaningful, while layer 2 still resolves the morphology of every class.
-\textbf{Layer 2 is adopted as the reference layer} on that ground: it is the
+only 49 positions, which are too few for a top-20\,\% overlap or a structural comparison
+to be meaningful. Layer 2 instead resolves the morphology of every class, which is why
+\textbf{Layer 2 is adopted as the reference layer}. It is the
 deepest layer at which the metrics of Section~\ref{sec:metrics} remain
 well-defined and the class morphologies remain legible.
 
@@ -349,10 +350,8 @@ images per class, normalized by the channel count of each layer.}
 \subsection{Choice of the decay rate}
 \label{sec:gamma}
 
-SAM has one free parameter, and an explanation that changed qualitatively with an
-arbitrary choice of $\gamma$ would not be trustworthy.
-
-\textbf{$\gamma$ is the decay of a temporal kernel, so it must be evaluated on
+SAM has one free parameter, $\gamma$, which represents 
+\textbf{the decay of a temporal kernel, so it must be evaluated on
 the temporal axis.} Comparing maps averaged over time removes precisely the axis
 on which $\gamma$ acts, and a high spatial correlation is then close to
 guaranteed regardless of $\gamma$. Three quantities are therefore measured: the
@@ -360,13 +359,13 @@ spatial Pearson correlation between time-aggregated maps, retained for continuit
 with the literature; the \emph{temporal centre of mass} of the SAM energy; and
 the \emph{per-timestep correlation} against a reference $\gamma$.
 
-Before a null result could be trusted, the instrument was checked analytically:
+These metrics were checked analytically:
 on a fully firing spike train with $T = 8$ the centre of mass moves from $4.86$
 at $\gamma = 0.1$ to $4.02$ at $\gamma = 3.0$, so the metric does respond. A
-second check comes free from the definition: at $t = 1$ the score is
+second check comes free from the definition. At $t = 1$ the score is
 $e^{-\gamma} S_0$, so changing $\gamma$ multiplies the map by a constant, and
 Pearson correlation is affine-invariant. The measured per-timestep correlation at
-$t = 1$ is exactly $1.000$ for every $\gamma$, as it must be.
+$t = 1$ is exactly $1.000$ for every $\gamma$.
 
 \begin{table}[htbp]
 \centering
@@ -385,31 +384,30 @@ class.}
 \label{tab:gamma}
 \end{table}
 
-Two conclusions follow from Table~\ref{tab:gamma}, and neither is the one the
-naive analysis would reach.
-
-\textbf{The temporal shift is largely kernel arithmetic rather than explanation
-structure.} The measured shift of $0.83$--$0.93$ steps matches what a
-\emph{fully firing} spike train produces ($0.84$), whereas the layer-2 firing
-rate is approximately $0.19$ and simulated random trains at that density shift by
-only $0.28$ steps. SAM is therefore dominated by a minority of near-continuously
-firing neurons, for which the centre of mass follows the exponential kernel. The
-centre of mass against $\gamma$ is consequently \emph{not} a useful criterion for
+Two main conclusions follow from Table~\ref{tab:gamma}. 
+\textbf{The temporal shift is kernel arithmetic, and not explanation structure.} The
+measured shift of $0.83$--$0.93$ steps is what a \emph{fully firing} spike train
+produces, $0.84$. It is also what a random train produces at any density: $0.84$
+at a firing rate of $0.05$, $0.83$ at $0.19$, the rate measured in layer 2, and
+$0.84$ at $0.70$. The independence is exact because with
+Bernoulli trains at rate $p$ the expected SAM energy at step $t$ is
+$p^{2}$ times a function of $\gamma$ alone, and the $p^{2}$ cancels in the ratio
+that defines the centre of mass. Changing $\gamma$ therefore moves the centre of
+mass by an amount that carries no information about which neurons fired or when.
+For this reason the centre of mass against $\gamma$ is \emph{not} a criterion for
 selecting $\gamma$ --- though it remains valid as a divergence metric, where
-models are compared at fixed $\gamma$ and the trivial component cancels, and it
-now carries a reference scale.
+models are compared at fixed $\gamma$ and the trivial component cancels.
 
 \textbf{Sensitivity is strongly class-dependent.} In terms of $1 - \mathrm{PCC}$,
 Violin\_Mode is 57 times more sensitive than Extremely\_Loud. The ordering
 Violin\_Mode $>$ Scattered\_Light $>$ Blip $>$ Extremely\_Loud recurs under the
-weight perturbation of Section~\ref{sec:perturbation}, an intervention with
-nothing in common with a change of kernel.
+weight perturbation of Section~\ref{sec:perturbation}.
 
 Within $\gamma \in [0.3, 0.9]$ all per-timestep correlations remain above $0.98$
-even in the worst class; only $\gamma = 3.0$ diverges appreciably.
+even in the worst class, and only $\gamma = 3.0$ diverges appreciably.
 \textbf{$\gamma = 0.5$ is adopted}, the value of the original
-formulation~\cite{kim2021sam}, now supported by evidence on the axis $\gamma$
-actually governs (Figure~\ref{fig:gamma}).
+formulation~\cite{kim2021sam}, which is also supported by evidence on the axis $\gamma$
+ governs (Figure~\ref{fig:gamma}).
 
 \begin{figure}[htbp]
 \centering
@@ -423,19 +421,18 @@ in the proportions of Table~\ref{tab:gamma}.}
 \subsection{Faithfulness}
 \label{sec:faithfulness}
 
-Robustness to $\gamma$ is necessary but not sufficient: a stable explanation can
-be stably wrong. The deletion metric~\cite{petsiuk2018rise} removes pixels in
+Robustness to $\gamma$ is necessary but not sufficient, since a stable explanation could
+still be stably wrong. The deletion metric~\cite{petsiuk2018rise} removes pixels in
 decreasing order of SAM score and records the confidence assigned to the class
-predicted on the unmodified image, comparing against removal in random order.
+predicted on the unmodified image, and comparing against the removal of pixel in random order.
 
-Three implementation details govern interpretation. Deleted pixels are set to
-zero \emph{in normalized space}, corresponding to the dataset mean rather than to
-black, a neutral substrate that avoids injecting an artificial edge. The same map
-is used for both orderings. And the ordering is computed once per image and
+Deleted pixels are set to
+zero \emph{in normalized space}, corresponding to the dataset mean which
+functions as a neutral substrate. 
+The same map
+is used for both orderings, and the ordering is computed once per image and
 sliced progressively, so the masked sets are nested: what is removed at 50\,\%
-stays removed at 55\,\%. Regenerating a random permutation at each fraction would
-break nesting for the baseline while leaving it intact for SAM, making the two
-curves incomparable.
+stays removed at 55\,\%.
 
 \begin{table}[htbp]
 \centering
@@ -458,7 +455,7 @@ $\Delta$ is expected.}
 \begin{figure}[htbp]
 \centering
 \includegraphics[width=\linewidth]{deletion_metric.pdf}
-\caption{Deletion curves, SAM order against random order, 15 validation images
+\caption{Deletion curves, SAM order (blue) against random order (grey), 15 validation images
 per class.}
 \label{fig:deletion}
 \end{figure}
@@ -466,31 +463,29 @@ per class.}
 The metric separates SAM from the baseline on two classes and not on the other
 two, and the split is systematic (Table~\ref{tab:deletion},
 Figure~\ref{fig:deletion}). Blip and Extremely\_Loud show reductions of $35$ and
-$32$\,\% in area. Scattered\_Light and Violin\_Mode are nominally inverted, by
-$10.1$ and $5.4$\,\%, a third and a sixth of the magnitude of the two negative
-effects: on those classes SAM-guided deletion destroys confidence slightly more
-slowly than random deletion. Neither is read as a reversal; both are read as an
-absence of separation, with a drift in the unfavourable direction.
+$32$\,\% in area. On Scattered\_Light and Violin\_Mode deleting the
+pixels SAM ranks highest destroys confidence \emph{more slowly} than deleting
+pixels at random, by $10.1$ and $5.4$\,\% of area, which is roughly a third and a
+sixth of the $35$ and $32$\,\% by which it runs faster on the other two classes.
 
-The pattern follows the spatial geometry of the classes rather than any property
-of SAM. Blip is a compact vertical line and Extremely\_Loud a dominant saturated
+The pattern follows again the spatial geometry of the classes. 
+Blip is a compact vertical line and Extremely\_Loud a dominant saturated
 structure, so removing the high-scoring region removes the defining evidence.
-Scattered\_Light is an extended horizontal band and Violin\_Mode a set of thin
-distributed lines: random deletion fragments the pattern across the whole image,
+On the other hand
+Scattered\_Light is an extended horizontal band, and Violin\_Mode a set of thin
+distributed lines: the interpretation is that random deletion breaks 
+the pattern across the whole image,
 whereas SAM-guided deletion concentrates removal in one region and leaves the
-rest --- which still carries sufficient evidence --- intact. This is a known
-limitation of deletion-based tests, which penalize explanations of spatially
-extended features, and it is reported rather than suppressed.
+rest --- which still carries sufficient evidence --- intact.
 
 The random baseline of Extremely\_Loud, $0.8936$, is the highest of the four and
-is independent confirmation of that class's behaviour below: its evidence is
-distributed across the whole image, so no localized removal registers, whichever
-order the removal follows.
+is independent confirmation of that class's behaviour that its evidence is
+distributed across the whole image.
 
 \section{Calibrating the divergence metrics}
 \label{sec:calibration}
 
-The metrics used to compare two explanations return numbers between zero and one
+Since the metrics used to compare two explanations return numbers between zero and one
 whatever is fed to them. Three questions must be answered before any quantization
 result can be interpreted: what they report when nothing has changed, when
 something negligible has changed, and when everything has changed.
@@ -503,7 +498,7 @@ $\gamma = 0.5$, on the three checkpoints of Table~\ref{tab:fp32}.
 The verification comes from the control arm, whose selected checkpoint is
 bit-identical to its parent (Section~\ref{sec:grid-gates}): compared against that
 parent the metrics return $\mathrm{PCC} = 1$, $\mathrm{IoU} = 1$ and a
-centre-of-mass difference of $0$, in every class and every seed. Two models that
+centre-of-mass difference of $0$, in every class and every seed. This means that two models that
 are the same model therefore produce the same explanation under the full
 comparison pipeline, image sampling included, which is what the measurement
 assumes. The network is evaluated with gradients disabled and in inference mode,
@@ -533,27 +528,27 @@ the three seed pairs. Chance-level IoU at $k = 0.20$ is $0.111$.}
 validation sample in accuracy produce maps correlating at $0.153$ on
 Scattered\_Light, with a top-20\,\% overlap of $0.234$ against a chance level of
 $0.111$. For comparison, a thirtyfold change in $\gamma$ reduces the correlation
-only to $0.960$: initialization variance is 21 times larger than that effect.
+only to $0.960$: so initialization variance is 21 times larger than that effect.
 
 The collapse is also not uniform across pairs. On Blip the three seed pairs
 correlate at $0.34$, $0.72$ and $0.78$, so which two networks are compared
 matters more than which class is compared.
 
-The mechanism is not a defect of the metric. Networks trained from different
+These results do not mean that the mechanism is a defect of the metric. 
+Networks trained from different
 initializations learn functionally equivalent but \textbf{permuted}
-representations, so a pixel-wise comparison between them compares arbitrary
-assignments of channels to positions rather than information content. The same
+representations, so a pixel-wise comparison between them essentially compares arbitrary
+assignments of channels to positions. The same
 permutation explains why the class ordering of Section~\ref{sec:gamma} does not
 survive here: across seeds the most disturbed class is Scattered\_Light, ahead of
 Blip and then Violin\_Mode, whereas within a fixed network Violin\_Mode is always
 the most sensitive. A cross-seed comparison measures the relabelling, not the
-explanation. This is why the result is a bound on cross-model spatial claims
-rather than the threshold for the quantization grid, where the quantized model
-inherits its parent's weights and no permutation exists.
+explanation.
 
 \textbf{The temporal centre of mass survives.} The maximum difference across seed
-pairs is $0.115$ time steps, against the $0.93$ produced by a thirtyfold change
-in $\gamma$ in the worst class --- a factor of eight. Being an aggregate over the
+pairs is $0.115$ time steps, against again the $0.93$ produced by a thirtyfold change
+in $\gamma$ in the worst class --- a factor of eight. The interpretation here is that
+the metric being an aggregate over the
 whole map, it is insensitive to which neuron occupies which position, which is
 precisely what defeats the pixel-wise metrics.
 
@@ -562,7 +557,7 @@ precisely what defeats the pixel-wise metrics.
 
 The grid compares a quantized model with its own parent, so the operative
 threshold is what a perturbation far smaller than quantization already produces.
-Gaussian noise was added to the weight tensors of one checkpoint --- biases and
+For this scope, gaussian noise was added to the weight tensors of one checkpoint --- biases and
 LIF buffers excluded, since perturbing $\beta$ would confound membrane dynamics
 with weight quantization --- at magnitudes expressed as fractions of the measured
 8-bit step of those weights ($0.00168$, from a maximum absolute weight of
@@ -570,7 +565,7 @@ $0.214$).
 
 This is a graded form of the model randomization test of Adebayo et
 al.~\cite{adebayo2018sanity}: where they randomize weights to verify that a
-metric responds at all, this perturbs towards zero to find where it stops
+metric responds at all, this instead perturbs towards zero to find where it stops
 responding.
 
 \begin{table}[htbp]
@@ -591,42 +586,39 @@ shown.}
 \label{tab:perturbation}
 \end{table}
 
-\textbf{The spatial metrics are usable after all, for same-parent comparisons.}
+\textbf{The spatial metrics are usable for same-parent comparisons.}
 PCC remains above $0.975$ under a perturbation as large as the entire 8-bit step
-(Table~\ref{tab:perturbation}). The collapse of Table~\ref{tab:seeds} is a
-consequence of comparing different initializations, not a fragility of the
-metric; the two results answer different questions.
+(Table~\ref{tab:perturbation}). This further supports that the collapse of Table~\ref{tab:seeds} is a
+consequence of comparing different initializations, and not a fragility of the
+metric.
 
 \textbf{The metrics differ sharply in dynamic range.} Measuring the distance from
 perfect agreement, PCC starts $0.025$ away from $1$ and can reach $0.847$: 34
 times its own floor. IoU starts $0.296$ away and reaches $0.766$, a factor of
 only $2.6$, and is already at $0.704$ under a perturbation 85 times smaller than
-the 2-bit step. IoU should therefore be read as a sensitive early indicator that
-a change has occurred, and PCC as the graded measure of how large it is. The
+the 2-bit step. This is an indicatore that IoU should be read as a sensitive early indicator that
+a change has occurred, and coupled with PCC, which is instead the graded 
+measure of how large it is. The
 temporal centre of mass sits between them, with a factor of $3.9$ between its
 numerical floor ($0.029$ steps) and the seed level ($0.115$).
 
-\textbf{Extremely\_Loud does not respond.} Its PCC is $0.9997$ under the largest
+Extremely\_Loud does not respond. Its PCC is $0.9997$ under the largest
 perturbation and its worst per-timestep correlation is $0.996$. Combined with its
-behaviour under $\gamma$, this class cannot register an explanation change by any
-measure tested here. A flat grid result for Extremely\_Loud will not distinguish
-absence of effect from inability to detect one, and this is stated in advance.
+behaviour under $\gamma$, this class ha been found to not register an explanation change by any
+measure tested.
 
 \subsection{Fine-tuning alone}
 \label{sec:anchor}
 
 Every quantized model in the grid is its parent with bits removed \emph{and} then
-fine-tuned. Part of any divergence measured against that parent belongs to the
+fine-tuned, which means that part of any divergence measured against that parent belongs to the
 fine-tuning. The levels above cannot separate the two contributions: the
 numerical floor is a perturbed copy that was never trained, and the
 independent-solutions level is two networks grown from different
-initializations. What is missing is the model that went through the whole
-procedure with nothing removed.
+initializations. To answer the question model that went through the whole
+procedure with nothing removed is needed.
 
-The control arm supplies it, but not through the checkpoint the grid uses. That
-checkpoint is the parent (Section~\ref{sec:grid}) and returns $1.000$ on
-every class and every seed, which measures nothing. The weights after the last
-epoch are a different model: the parameter vector moves by an $L_2$ distance of
+The control arm serves this purpouse: the parameter vector moves by an $L_2$ distance of
 $0.395$, $0.736$ and $0.399$ over the three seeds, nine tenths of it in the last
 convolution and the linear readout.
 
@@ -653,13 +645,13 @@ Six to fourteen epochs with the learning rate scaled by $0.1$, and no bits
 removed, move the top-20\,\% overlap to $0.750$, with a seed range of $0.711$ to
 $0.792$ and a worst class of $0.671$ (Table~\ref{tab:finetuning-anchor}).
 Validation accuracy falls by $0.3$ points over the same runs, so the movement is
-not a model that degraded; it is a model that kept training.
+not a model that degraded, but rather a a model that kept training.
 
-Two details are worth recording. The seed whose weights moved furthest, $2345$ at
+An relevan consideration is that the seed whose weights moved furthest, $2345$ at
 $0.736$, is the seed whose explanation moved \emph{least}, at $0.792$: over three
-runs this is an observation rather than a result, but distance in parameter space
+runs this is an observation and not a result itself, but distance in parameter space
 does not predict distance in explanation space, which is the premise the grid
-rests on. And the Pearson correlation of this anchor is $0.987$ against an IoU of
+rests on. The Pearson correlation of this anchor is $0.987$ against an IoU of
 $0.750$ --- the metric disagreement that recurs throughout the grid appears here
 too, where there is no quantization to attribute it to.
 
@@ -681,31 +673,30 @@ Independent solutions & Two FP32 models, different seeds & 0.153 & 0.234 & 0.115
 validation. The floor, the $\gamma$ reference and the independent-solutions level
 are the worst class in each case; the fine-tuning level is the mean over classes
 and seeds, its worst class being $0.671$. The first, third and fourth use fifteen
-images per class, the fine-tuning level twenty, matching the grid it is read
-against.}
+images per class, the fine-tuning level twenty, matching the grid.}
 \label{tab:calibration}
 \end{table}
 
-Table~\ref{tab:calibration} collects the four. The \emph{numerical floor} marks
-measurement noise: a divergence below what a negligible weight perturbation
-already produces cannot be read at all. The operative threshold for the grid is
+Table~\ref{tab:calibration} collects the four calibrations. The \emph{numerical floor} marks
+measurement noise: it helps in assessing that a divergence below what a negligible weight perturbation
+already produces cannot be read. Therefore the operative threshold for the grid is
 the one above it. \emph{Fine-tuning alone} is what the procedure costs when
 nothing is quantized, so a configuration whose overlap with its parent stays
 above $0.750$ has not been moved by the removed bits in any way this experiment
-can establish --- it has been moved by the training that followed them. The
-\emph{$\gamma$ reference} gives an intuition: if quantization produced a PCC of
+can establish, but it has been moved by the training that followed them. The
+\emph{$\gamma$ reference} gives an intuition of the quantization effect, which if it
+ produced a PCC of
 $0.90$, it would be doing more than a thirtyfold change of the explainer itself.
 The \emph{independent-solutions} level is a pessimistic upper bound and a result
 in its own right.
 
 The class sensitivity ordering --- Violin\_Mode $>$ Scattered\_Light $>$ Blip $>$
 Extremely\_Loud --- recurs identically under the two interventions that act on a
-fixed network: changing the kernel and perturbing the weights. It does not
+fixed network: changing the kernel and perturbing the weights. Nonetheless, it does not
 survive a change of initialization, where Scattered\_Light is the most disturbed
-class and Violin\_Mode only the third, for the reason given above. Within a given
-network, explanation sensitivity is a property of the class morphology, and every
-grid result must be reported per class, since a pooled figure would average a
-class that responds strongly with one that does not respond at all.
+class and Violin\_Mode only the third. Within a given
+network, explanation sensitivity is a property of the class morphology, so every
+grid result should be analysed and reported per class.
 
 
 \section{Preparing the membrane arm}
@@ -1100,7 +1091,7 @@ Joint, 2 bit    & \textbf{0.235} & \textbf{0.213} & \textbf{0.256} \\
 \bottomrule
 \end{tabular}
 \caption{Coefficient of variation of the inter-spike intervals in layer 1,
-pooled over the validation partition as in Section~\ref{sec:physical}. Between
+pooled over the validation partition as in Section~\ref{sec:validation}. Between
 $98$ and $100$\,\% of the 200 sampled positions reach the five-interval threshold
 in every configuration, so the comparison is between the same population of
 neurons.}

@@ -141,8 +141,9 @@ def plot_confusion_matrix(truths, predictions, class_names, out_dir=FIG_DIR):
 
 def plot_firing_rates(rates, out_dir=FIG_DIR):
     layers = sorted(rates)
-    fig, axes = plt.subplots(2, 2, figsize=(5.5, 4.6), sharex=True, sharey=True)
-    axes = axes.flat
+    fig, axes = plt.subplots(1, len(layers), figsize=(3.3 * len(layers), 3.4),
+                             sharex=True)
+    axes = np.atleast_1d(axes)
 
     for ax, layer in zip(axes, layers):
         values = rates[layer].flatten()
@@ -190,8 +191,9 @@ def plot_cv_isi(isi_pools, out_dir=FIG_DIR):
     else:
         low, high = 0.0, 1.0
 
-    fig, axes = plt.subplots(2, 2, figsize=(5.5, 4.6), sharex=True, sharey=True)
-    axes = axes.flat
+    fig, axes = plt.subplots(1, len(layers), figsize=(3.3 * len(layers), 3.4),
+                             sharex=True, sharey=True)
+    axes = np.atleast_1d(axes)
 
     for ax, layer in zip(axes, layers):
         values = per_layer[layer]

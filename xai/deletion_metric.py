@@ -32,8 +32,9 @@ def plot_deletion_curves(results, class_names, fractions, n_per_class,
     labels = sorted(results)
     chance = 1.0 / len(class_names)
 
-    fig, axes = plt.subplots(2, 2, figsize=(5.5, 4.6), sharex=True, sharey=True)
-    axes = axes.flat
+    fig, axes = plt.subplots(1, len(labels), figsize=(3.3 * len(labels), 3.6),
+                             sharex=True, sharey=True)
+    axes = np.atleast_1d(axes)
 
     for ax, label in zip(axes, labels):
         sam = np.asarray(results[label]['sam'], dtype=float)
