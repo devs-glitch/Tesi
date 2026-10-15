@@ -134,10 +134,16 @@ exists, so a quantized model trained from a random initialization would be an
 independent solution, for which the relevant level is $0.153$ and almost no
 quantization effect would be distinguishable from initialization variance.
 
-\paragraph{Schedule.} The fine-tuning is short and at reduced learning rate,
-adapting the parent to its grid: Adam is set at one
-tenth of the reference learning rate ($1.047 \times 10^{-5}$), at most 20 epochs,
-early stopping occurs after 5 epochs without improvement of the validation loss.
+\paragraph{Schedule.}
+The fine-tuning adapts the parent to its grid. 
+Adam runs at one tenth of the reference learning rate
+($1.047 \times 10^{-5}$), for at most 20 epochs, with early stopping after 5
+epochs without improvement of the validation loss. The reduced learning rate follows from
+the constraint above: the floor of the calibration holds only while the
+quantized model remains a perturbed copy of its parent, and a step sized for
+training from scratch would let it leave that neighbourhood, moving the
+comparison toward the independent-solutions level. How far even this schedule
+moves a model with nothing quantized is measured in Section~\ref{sec:anchor}.
 
 Before the first epoch the model is evaluated with the quantizer attached and no
 training, which gives the \emph{post-training quantization} (PTQ) accuracy of the
