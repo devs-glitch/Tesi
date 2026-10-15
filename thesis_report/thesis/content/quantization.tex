@@ -296,6 +296,11 @@ above it. Figure~\ref{fig:membrane-grid} draws the three grids on one axis: the
 behind the observation of Smith et al.~\cite{smith2026} that membrane
 quantization needs at least four bits, and the grid tests it directly.
 
+behind the observation of Smith et al.~\cite{smith2026} that membrane
+quantization needs at least four bits. They suggest a different cause, the
+propagation of a membrane error through the recurrent update at every step,
+which they do not test: the grid tests the step-size account.
+
 The unsigned grid follows from the clipping study. While potentials do go negative:
 the median of \texttt{lif1} sits at $-0.08$ and its first percentile at $-6.6$,
 clipping them away changes nothing the classifier uses. The symmetric range

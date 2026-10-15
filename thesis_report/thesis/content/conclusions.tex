@@ -35,25 +35,29 @@ permutation rather than any defect of the metric. Also, the disagreement is unif
 across samples so not driven by outliers.
 
 \paragraph{They can compare a model with its own parent.} Under a perturbation 85
-times smaller than the 2-bit quantization step, PCC remains above $0.975$. The
-two results answer different questions, and the distinction must be made
-explicitly whenever such a number is reported. In this thesis it decided the
-design of the grid: every quantized model is fine-tuned from its own parent.
+times smaller than the 2-bit quantization step, PCC remains above $0.975$,
+meaning that the metric is stable. 
+As a result a divergence beyond that floor is a change in the explanation, not noise
+of the instrument. The two results answer different questions, and the
+distinction should be made explicitly, which is why every quantized model is fine-tuned
+from its own parent.
 
-\paragraph{Published figures are not interpretable without these floors.} Values
+\paragraph{Resulting figures are not interpretable without these floors.} Values
 around $0.85$ are presented in the literature as evidence of preserved
-explanations. For this architecture that value falls between the numerical floor
+explanations, and for this architecture that value falls between the numerical floor
 and the independent-solutions level, so it cannot be read without knowing which
 comparison produced it. Establishing the floors requires no training runs beyond
 a multi-seed baseline that is good practice regardless.
 
-A fourth observation cuts across all of them: the class sensitivity ordering is
-identical under three unrelated interventions. Explanation sensitivity is a
-property of the class morphology, not of the perturbation applied, and
+\paragraph{The class sensitivity ordering is
+identical under three unrelated interventions.} Explanation sensitivity is
+shown to not a property of the perturbation applied but to the specific
+property of the class morphology, and
 Extremely\_Loud --- saturated and spatially extensive --- registers no change
 under any measure tested.
 
-The preparation of the membrane arm added a result of its own: the network makes
+The preparation of the membrane arm added another 
+notable result of its own, that is that the network makes
 no use of negative membrane potentials. Clipping the hidden state to $[0, 2]$,
 which removes up to 47 thresholds of negative range, costs one validation sample
 and leaves the dynamics unchanged, so the membrane can be stored on an unsigned
@@ -61,146 +65,147 @@ grid at one bit less than a symmetric one would need.
 
 \section{Quantization and explanation fidelity}
 
-\paragraph{Accuracy is not a sufficient criterion for spiking networks either.}
+\paragraph{Accuracy is not a sufficient criterion for spiking networks.}
 The finding of Rabbi et al.~\cite{rabbi2026} on convolutional networks carries
-over, in a sharper form. Two configurations of this network classify equally
+over, and in a sharper form. Two configurations of this network classify equally
 well, a 4-bit weight model and a 2-bit membrane model, and their explanations
-differ by a factor of almost two in agreement with the original. Anyone selecting
-a configuration on accuracy alone could have chosen the second and deployed a
-model that reaches the right labels while showing a different part of the
+differ by a factor of almost two in agreement with the original. If the case was
+to solely select a configuration based on accuracy, then the second would be deployed.
+The caveat is that it is a model that reaches the right labels while showing a different part of the
 spectrogram. In the detector-characterization setting of
 Chapter~\ref{ch:introduction}, that is the scenario that matters: the label is
 correct, the diagnostic cue is not the one the original model would have given.
 
-\paragraph{The divergence is real but bounded.} The changed explanations are
-still faithful: deleting the pixels they highlight degrades the model's
+\paragraph{The divergence is present but bounded.} The changed explanations are
+still faithful: indeed deleting the pixels they highlight degrades the model's
 confidence almost as much as deleting the parent's highlights does, and the
 quantized model can be explained with its parent's maps as well as with its own.
-The quantized network has not stopped using spectrogram evidence; among
+Moreover, the quantized network has not stopped using spectrogram evidence, but among
 several redundant sets of evidence it now highlights a different one. A
-faithfulness test alone would have declared the explanation intact; an overlap
-test alone would have suggested it was lost. Both are needed to say what
-happened.
+faithfulness test alone would have declared the explanation intact, while an overlap
+test alone would have suggested it was lost, which is exaclty the symptom of two 
+valid metrics that explain different dimentions of the same problem.
 
 \paragraph{The hypothesis was wrong in its form and right in its mechanism.}
 The prediction that the membrane would move the temporal axis of the explanation
 before the weights moved its spatial axis is not supported: both arms first
 register at 4 bits, and at 2 bits the membrane changes where the explanation
 points more than when. What the membrane does change first is the temporal
-dynamics of the network itself: at 2 bits, with a single representable level
+dynamics of the network itself: at 2 bits, so with a single representable level
 between rest and threshold, the first layer fires with perfectly regular
-intervals. The temporal centre of mass, built to capture the time axis of the
-explanation, is blind to this, because it measures where the spike mass falls,
-not how it is spaced. A temporal explanation metric for spiking networks needs
-to see regularity as well as timing, and the present instrument does not.
+intervals. The temporal centre of mass, which built to capture the time axis of the
+explanation, is blind to this, because it measures where the spike mass falls and
+not how it is spaced. A temporal explanation metric for spiking networks should
+see regularity as well as timing, and the present instrument does not.
 
 \paragraph{The comparison with Smith et al.\ inverts.} Smith et
 al.~\cite{smith2026} report that the membrane needs at least four bits while
-learned weights survive two. The weight result agrees with theirs: uniform ternary weights fail, where they
+learned weights survive two. The weight result agrees with theirs: 
+uniform ternary weights fail, where they
 needed a learned quantizer to keep two bits. The membrane result does not: with
 a grid fitted to the measured range, a 2-bit membrane keeps accuracy at parity,
 where they lose $4$--$8\,\%$.
 
-\paragraph{Weak events are not where the explanation fails.} The expectation that
+\paragraph{Weak events are not where the explanation fails.} The 
+expected behavior was that
 quantization would disturb spike decisions mostly in weak events, whose
-potentials sit near threshold, finds no consistent support: the gradient with
+potentials sit near threshold. However this finds no consistent support: the gradient with
 event strength changes sign across seeds. The only consistent effect is
 reversed: the most saturated Extremely\_Loud events lose their explanation most,
 because their evidence is spread over the whole image and the highlighted region
 is least constrained.
 
-\paragraph{Efficiency and explainability do not trade off here.} The
+\paragraph{Efficiency and explainability do not come to a trade off.} The
 configuration that changes the explanation at constant accuracy is the
-2-bit membrane, and it is the one that saves no energy: with weights in full
+2-bit membrane, but it is the one that saves no energy: with weights in full
 precision the per-operation cost stays the same while firing rates rise. The
-deployable configuration, joint 4-bit, keeps accuracy at parity and the
+deployable configuration, joint 4-bit, on the other hand,
+keeps accuracy at parity and the
 explanation at the numerical floor, at about one sixtieth of the estimated
 energy and one eighth of the memory. The divergence between the three curves of
-Figure~\ref{fig:headline} exists, but it occurs at a point no one would choose
+Figure~\ref{fig:headline} exists, but it occurs at a point not optimal
 for efficiency.
 
 \paragraph{Seed variance is the dominant source of variation.} Three
 full-precision networks of equal accuracy differ by a factor of 2.6 in the
 firing rate of their first layer, by more than half in estimated energy, and in
-which classes SAM can explain faithfully at all. The 2-bit membrane IoU ranges
-from $0.26$ to $0.62$ across seeds. Every comparison in this thesis was made
-within a seed, and a single-seed study of the same question could have reached
-any conclusion from ``the explanation is preserved'' to ``it is lost''.
+which classes SAM can explain faithfully at all (e.g. he 2-bit membrane IoU ranges
+from $0.26$ to $0.62$ across seeds).
 
 \section{Limitations}
 
 \paragraph{Generalization of the thresholds.} The three calibration levels are
 specific to this architecture, this dataset and this explainer. The
 \emph{mechanism} behind the collapse, representational permutation between
-independently trained networks, is general and well documented; the
-\emph{magnitude} is not, and a different architecture could place the floors
-elsewhere. What generalizes is the claim that the floors must be measured, not
+independently trained networks, is general and well documented, but the
+\emph{magnitude} is not and a different architecture could place the floors
+at different levels. What generalizes is the claim that the floors must be measured, not
 the values measured here.
 
 \paragraph{Labels are model output.} Accuracy is agreement with the Gravity Spy
-convolutional classifier rather than with physical ground truth. A model that
+convolutional classifier, as the dataset labels are its output, and not
+the physical ground truth. This means that a model that
 reproduced that classifier's systematic errors would score well here. The
 per-class confidences are available and would permit stratifying accuracy by the
-reference classifier's own certainty, which was not done.
-
-\paragraph{The partition is random with respect to time.} If glitches of the same
-class are correlated within observing periods, a random test set overestimates
-generalization to new periods. A block split by observing run would be the more
-conservative validation; the timestamps were dropped during feature selection for
-the reasons given in Chapter~\ref{ch:methodology} and would have to be recovered.
+reference classifier's own certainty, which was not done, but could indeed be
+a valueable contribution.
 
 \paragraph{$T$ sits at the imposed ceiling.} The search was forbidden from
 exploring more than eight time steps, so it is not known whether it would have
-preferred a longer integration window. An unconstrained search selected seven,
-which bounds the likely cost but does not eliminate the question.
+preferred a longer integration window. Nonetheless, an unconstrained search selected seven,
+which bounds the likely cost but does not completely eliminate the question.
 
-\paragraph{The deletion metric fails on two classes.} The geometric explanation
-offered in Section~\ref{sec:faithfulness} --- that deletion-based tests penalize
-spatially extended evidence --- is an interpretation, not a demonstration. An
-insertion curve, which rewards rather than penalizes distributed evidence, would
-test it directly.
+\paragraph{The deletion metric does not separate SAM from random on two
+classes.} The geometric explanation offered in Section~\ref{sec:faithfulness}
+--- that with extended, redundant evidence the region SAM ranks highest is
+and interpretation and it is not
+necessary, because the rest of the pattern still suffices.
+Deletion tests whether the highlighted
+pixels are necessary; the insertion curve of the same
+work~\cite{petsiuk2018rise}, which starts from the mean image and restores pixels
+in order of attributed importance, tests whether they are sufficient. If the
+interpretation holds, indeed, insertion should separate SAM from random order on
+Scattered\_Light and Violin\_Mode where the deletion does not.
 
-\paragraph{The explanation is class-agnostic.} SAM does not use labels, so the
+\paragraph{The explanation is class-agnostic.} Since SAM, as originally
+formulated and accurately implemented, does not use labels, so the
 deletion metric measures faithfulness to the model's \emph{predicted} class. This
-is the correct reading of the metric and matches its original formulation, but it
+is the correct reading of the metric, but it
 means misclassified examples are informative and should be inspected separately
 rather than pooled.
 
 \paragraph{The temporal metric is partly kernel arithmetic.} The $\gamma$
-analysis showed that the centre of mass of the SAM energy is dominated by a
+analysis showed that the centre of mass of the SAM energy is dominated by the
 minority of near-continuously firing neurons. Between models compared at the same
 $\gamma$ this component cancels, but it means that the CoM is most sensitive to
-changes in that minority and may under-report changes elsewhere.
+changes in that minority.
 
 \paragraph{Quantization is simulated.} Fake quantization reproduces the values an
-integer implementation would hold, not its arithmetic: the membrane is quantized
-as a stored state after each spike decision, while on integer hardware the
-comparison with threshold would itself be performed on integers. The energy
+integer implementation would hold, but not its arithmetic: the membrane is 
+indeed quantized as a stored state after each spike decision, 
+while on integer hardware the
+comparison with threshold would itself be performed on integers. Moreover, the energy
 figures are analytical, at a 45\,nm reference node, and below eight bits they
 rest on an extrapolation of the per-operation costs.
 
 \paragraph{Sample sizes of the explanation analyses.} Divergence is measured on
 twenty validation images per class, faithfulness on ten, stratification on
 fifteen per class and tercile, and the membrane range on a single checkpoint.
-These are sufficient for the effects reported here, which are large, but limit
-the resolution with which small differences between configurations can be
-ranked; the faithfulness analysis covers only the 2-bit membrane arm.
-
-\paragraph{One grid, one fitting procedure.} Each bit-width was fitted once per
-seed, with one fine-tuning schedule and one membrane range. The collapse of the
-2-bit weight arm and the survival of the 2-bit membrane are properties of these
-quantizers; a different weight quantizer (learned scales, a wider grid for the
-readout) could move the weight arm's breaking point.
+These resultes to be sufficient for the effects reported in this thesis, 
+which are large, but limit the resolution with which 
+small differences between configurations can be
+ranked.
 
 \paragraph{The control does not isolate the fine-tuning.} Fine-tuning without a
 quantizer never improved the parent's validation accuracy, so the selected
 control checkpoint is the parent itself. The control therefore shows that the
-pipeline is inert, but not what the extra epochs alone would do to a model that
-does change; the quantized checkpoints combine both effects.
+pipeline is inert, but not directly what the extra epochs alone would do to a model that
+does change, but the quantized checkpoints combine both the effects.
 
-\paragraph{Checkpoints are selected on the validation partition} on which they
-are then analyzed. With selection by accuracy and analysis of explanations, the
-dependence is weak, but the test-set evaluation is the only fully independent
+\paragraph{Checkpoints are selected on the validation partition on which they
+are then analyzed.} Even if the dependence is weak, With selection by 
+accuracy and analysis of explanations, the
+the test-set evaluation remains the only fully independent
 estimate.
 
 \paragraph{The saving factor rests on an assumption.} Costing the analog first
@@ -210,37 +215,46 @@ configurations do not depend on it.
 
 \section{Future work}
 
-\paragraph{Deployment.} Hardware deployment was deliberately left out of scope.
-The natural continuation is to export the selected integer configuration to a
-neuromorphic platform or a microcontroller, and to measure on it the latency,
+\paragraph{Deployment.} Hardware deployment was left out of scope, but could be
+the natural continuation, exporting the selected integer configuration to a
+neuromorphic platform or a microcontroller, and measuring on it the latency,
 energy and memory that are estimated analytically here.
 
 \paragraph{Normalization.} The baseline contains no batch normalization, because
 quantizing its parameters is a problem distinct from quantizing weights and
-potentials. Deeper spiking networks need it, and both approximating it with shifts
-and removing it altogether through progressive training are available; repeating
+potentials. Nonetheless, deeper spiking networks need it, 
+and both approximating it with shifts
+and removing it altogether through progressive training are available. So repeating
 the study on a normalized architecture would test whether the conclusions survive.
 
 \paragraph{The temporal axis of the input.} Under direct encoding every temporal
-structure is generated by the network. Feeding the spectrogram column by column,
+structure is generated by the network, so feeding the spectrogram column by column,
 so that time in the input corresponds to time in the signal, would give the
-temporal explanation a physical meaning and make the temporal metrics measure
-something a detector scientist can read.
+temporal explanation a further physical meaning.
 
 \paragraph{Wider benchmark.} Extending the four classes to the full Gravity Spy
-taxonomy, with a split by observing run, would make the classification results
+taxonomy, adding also a split by observing run, would make the classification results
 comparable with the published benchmark.
 
 \section{Closing remark}
 
 Compressed models are increasingly deployed where their explanations are acted
-upon. This thesis asked whether a quantized spiking network still decides for
-the same reasons as the network it came from, and found that the question has
-two prerequisites: knowing what the comparison metrics report when nothing has
-changed, and comparing every model with its own parent. With both in place, the
+upon. This thesis asked whether a quantized spiking network preserves
+the internal dynamics and reasoning as the network it came from, 
+and found that the question first has
+two prerequisites: calibrating the comparison metrics against the values they
+report in the absence of any real change, and comparing every model with its own
+parent. With both assessed, the
 answer for this network is that it mostly does --- down to four bits, in every
-arm --- and that the one configuration that does not is invisible to accuracy,
-partly invisible to correlation and to faithfulness, and visible to a metric
-that asks which pixels a reader is shown. That is the configuration a
-deployment chosen on accuracy could have picked, and the reason the question was
-worth asking.
+arm --- and that the one configuration that does not, the 2-bit membrane, shows no
+sign of it in accuracy, which does not degrade accordingly. 
+
+Correlation and the deletion test
+register the change only weakly: a PCC of $0.923$ would still read as a
+preserved explanation, and the quantized model's own maps keep a median $94\,\%$
+of the parent's deletion gap. The plain and detectable change is only in the IoU, 
+which is the metrics that studies 
+which pixels a reader is actually shown: $0.438$, against a floor of $0.704$.
+
+Ultimately, s deployment chosen on accuracy alone could have picked this configuration, and
+that is why the question was worth asking.

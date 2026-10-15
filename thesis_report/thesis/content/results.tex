@@ -954,10 +954,11 @@ quantization but cannot recover a ternary network in weights: a 2-bit membrane, 
 single level between rest and threshold, is enough to classify; while ternary weights
 are not.
 
-The asymmetry \textbf{inverts the prediction derived from Smith et
-al.~\cite{smith2026} in Section~\ref{sec:membrane-quantizer}}, that the membrane
-would need at least four bits while weights would survive two. In this network
-and with this grid, it is the other way round.
+The asymmetry \textbf{inverts, for accuracy, the prediction derived from Smith
+et al.~\cite{smith2026} in Section~\ref{sec:membrane-quantizer}}, that the
+membrane would need at least four bits while weights would survive two. In this
+network and with this grid it is the other way round. Whether the dynamics
+survive is a separate question, assessed below.
 
 \subsection{Explanation divergence}
 
