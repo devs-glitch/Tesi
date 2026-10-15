@@ -4,33 +4,35 @@
 \section{The instrument}
 
 This thesis set out to measure whether a quantized spiking neural network
-reasons like its full-precision parent, and found that the measurement could not
+reasons like its full-precision parent, but first found that the measurement could not
 be interpreted until the instrument was calibrated.
 
 A four-block convolutional spiking network classifies four families of transient
-noise in LIGO data at $0.9833 \pm 0.0014$ validation accuracy over three seeds,
-under constraints --- shift-implementable membrane decay, at most eight time
-steps, 112-pixel input --- that keep the configuration deployable by
-construction rather than by subsequent rounding. Each of those constraints was
+noise (\textit{glitches} in LIGO data at $0.9833 \pm 0.0014$ 
+validation accuracy over three seeds,
+under constraints that keep the configuration deployable by
+construction: a shift-implementable membrane decay, at most eight time
+steps, and a 112-pixel input. Each of those constraints was
 shown to cost nothing measurable in accuracy, and the resolution choice improved
 the health of the deepest layer by 12.7 percentage points of dead fraction.
 
 The Spike Activation Map was implemented, its summation range corrected, and its
-free parameter fixed on the temporal axis it governs rather than on
+free parameter fixed on the temporal axis it governs instead of the
 time-aggregated maps that cannot see it. Its faithfulness was tested
 quantitatively and found to hold on two classes of four, with a geometric
 explanation for the other two.
 
-The calibration established three levels: the divergence produced by weight noise
+The calibration of the instruments 
+established three levels of divergence: the one produced by weight noise
 as large as an entire 8-bit quantization step (PCC $0.975$), by a thirtyfold
 change in the explainer (PCC $0.960$), and by initialization alone (PCC $0.153$).
-The third is far larger than expected, and it carries three consequences.
+The latter is far larger than expected, and imposed a few consequences.
 
-\paragraph{Spatial metrics cannot compare independently trained models.} Two
-networks that agree to within one validation sample in accuracy produce
-explanations correlating at $0.153$. The mechanism is representational
-permutation rather than any defect of the metric, and the disagreement is uniform
-across samples rather than driven by outliers.
+\paragraph{Spatial metrics cannot compare independently trained models.}
+Two networks that agree to within one validation sample in accuracy, indeed, produce
+explanations correlating at $0.153$. The mechanism under this effect is a representational
+permutation rather than any defect of the metric. Also, the disagreement is uniform
+across samples so not driven by outliers.
 
 \paragraph{They can compare a model with its own parent.} Under a perturbation 85
 times smaller than the 2-bit quantization step, PCC remains above $0.975$. The

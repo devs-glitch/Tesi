@@ -1199,15 +1199,13 @@ and they answer different questions.
 The deletion metric rewards any map that points at evidence the model
 uses, and when the evidence is redundant --- like in a Blip where stroke covers many
 positions--- several disjoint sets of pixels
-satisfy it. The IoU says which of those sets a reader is shown. A commissioner
-looking at the quantized model's map would be sent to a region that does carry
-evidence, but not to the one the original model would have shown.
+satisfy it. The IoU instead says which of those sets a reader is shown.
 
 \textbf{Which classes SAM can explain at all depends on the seed.} Only seven of
 the twelve class-and-seed cells have a baseline signal: Extremely\_Loud in all
 three parents, Blip in two, Scattered\_Light and Violin\_Mode in one each. Even
 Blip's baseline gap ranges from $0.029$ to $0.171$ across networks of equal
-accuracy. The set of classes on which faithfulness can be assessed is a property
+accuracy. Therefore the set of classes on which faithfulness can be assessed is a property
 of the individual network, not of the class.
 
 \subsection{Stratification by event strength}
@@ -1235,7 +1233,7 @@ cell. A positive value means that weak events lose their explanation more.}
 \label{tab:stratified}
 \end{table}
 
-\textbf{The data do not support the hypothesis that degradation concentrates on
+\textbf{The data obtained do not support the hypothesis that degradation concentrates on
 weak glitches.} The mean gradient over Blip, Scattered\_Light and Violin\_Mode is
 $+0.233$, $-0.007$ and $+0.059$ in the three seeds at 2 bits
 (Table~\ref{tab:stratified}): positive on average, but the spread between seeds
@@ -1244,37 +1242,39 @@ $0.369$, is of the same size as the largest within-seed gradient, $0.443$ on
 Scattered\_Light, so which network is measured matters as much as how strong the
 event is.
 
-One effect is consistent, and of opposite sign. On Extremely\_Loud the gradient
+It can be seen that in Extremely\_Loud the gradient
 is negative in all six measurements: the \emph{strongest} events lose their
 explanation most. These are the events that saturate the spectrogram, so that
 most of the image carries evidence and the top-20\,\% region is least
-constrained; a small change of the network is enough to move it.
+constrained, so a small change of the network is enough to move it.
 
 \subsection{Firing-rate distance and the disagreement subset}
 \label{sec:disagreement}
 
-Two measurements read the grid on the network's own terms rather than on the
-explanation's, and both are read against the seed-to-seed reference of
-Section~\ref{sec:hyperparameters}.
+The two measurements read the grid on the network's own terms 
+(against the seed-to-seed reference of
+Section~\ref{sec:hyperparameters}) rather than on the explanation's.
 
 The Wasserstein-1 distance between the per-neuron firing-rate distributions of a
 quantized model and its parent is below $0.015$ everywhere at 8 bits and reaches
-$0.030$ at 4 bits, in both cases under the $0.022$ to $0.160$ that separates two
+$0.030$ at 4 bits. In both cases the values are under $0.022$ to $0.160$ 
+that separates two
 full-precision models differing only in seed. The 2-bit membrane arm reaches
-$0.045$ at layer 3, still inside that band; the 2-bit weight arms reach $0.148$
+$0.045$ at layer 3, which is still inside that band, while
+ the 2-bit weight arms reach $0.148$
 and $0.161$. Quantization down to 4 bits therefore moves the firing regime less
 than a change of initialization does, which is the comparison Smith et
 al.~\cite{smith2026} draw and the one in which the present grid looks
 conservative.
 
-The disagreement subset says the same of the decisions. The Jaccard overlap
+The disagreement subset says the same of the decisions,as the Jaccard overlap
 between the error sets of a quantized model and its parent is $0.78$--$0.80$ at
 8 bits in the single-target arms and $0.63$--$0.70$ at 4 bits and at the 2-bit
-membrane, against $0.03$ in the collapsed arms. Of the $1\,435$ validation
+membrane, against the $0.03$ in the collapsed arms. Of the $1\,435$ validation
 images, between three and five are correct in the parent and wrong after
 quantization at 8 and 4 bits, and six at the 2-bit membrane --- against $671$ in
 the 2-bit weight arms. \textbf{The 2-bit membrane model makes the same decisions
-as its parent, including the same mistakes, while explaining them with different
+as its parent, including the same errors, however explaining them with different
 pixels.}
 
 \subsection{Energy and memory}
@@ -1308,44 +1308,45 @@ per-operation costs. Memory is weights plus membrane state.}
 \label{tab:energy-grid}
 \end{table}
 
-\textbf{The membrane arm does not save energy; it costs more.} Its weights stay
-in full precision, so the cost of each operation never falls, while the
+\textbf{The membrane arm does not save energy, infact it costs more.} Its weights stay
+in full precision, so the cost of each operation never falls, and the
 quantized membrane raises the firing rates and with them the number of
 operations: $+1.5\,\%$ at 8 bits, $+4.4\,\%$ at 4, $+15.3\,\%$ at 2. The energy
 follows, at $1.011$, $1.031$ and $1.108$ times the parent
-(Table~\ref{tab:energy-grid}). What it does save is state memory, 344\,KiB at
+(Table~\ref{tab:energy-grid}). What it does save is the state memory, 344\,KiB at
 2 bits, almost a quarter of the total footprint.
 
 Quantization raises the operation count in every arm, mildly at 8 and 4 bits
 (1--8\,\%) and sharply at 2 bits, where it grows by half with quantized weights:
-the collapsed networks fire more, not less. In the weight and joint arms the
+the collapsed networks, indeed, fire more. In the weight and joint arms the
 saving still comes entirely from the cheaper operations.
 
-\textbf{There is no trade-off between efficiency and explainability in this
-grid.} The configuration that changes the explanation at constant accuracy, the
+\textbf{This grid did not find a trade-off between efficiency and explainability.} 
+The configuration that changes the explanation at constant accuracy, the
 2-bit membrane, is dominated on every axis by the 4-bit weight model: same
 accuracy, IoU $0.739$ against $0.438$, energy $0.016$ against $1.108$ times the
 parent, memory $512$ against $1\,176$\,KiB. The configuration to deploy is the
-\textbf{joint 4-bit model}: accuracy at parity ($0.9835$), an explanation that
+\textbf{joint 4-bit model}, as it features: accuracy at parity ($0.9835$), 
+an explanation that
 moves no further than continued training alone would move it (IoU $0.714$ against
 a floor of $0.704$ and a fine-tuning level of $0.750$), estimated energy about
 $1/60$ of the parent, and one eighth of its memory ($190$\,KiB).
 
-\paragraph{One assumption decides the size of the saving.} The first
+One assumption determines the size of the saving. The first
 convolution receives the analog image, and Table~\ref{tab:energy-grid} costs it
 at the weight bit-width, which assumes the input is quantized to the same
-width. At 4 bits that layer is 19\,\% of the joint model's energy. If it is
+width. At 4 bits that layer is 19\,\% of the joint model's energy, while if it is
 instead costed in floating point, the joint 4-bit saving factor falls from 62 to
 3.5. The operation counts and the memory column do not depend on the assumption,
-and neither does the conclusion that the membrane arm is dominated; the factor
-by which the deployable model is cheaper does.
+and neither does the conclusion that the membrane arm is dominated, but the factor
+by which the deployable model is cheaper.
 
 \section{Test-set evaluation}
 \label{sec:test}
 
 The test partition was opened once, after every decision in this thesis had been
 taken on validation, and all thirty-three models of the grid were evaluated on it
-in a single pass. Accuracy was computed twice by independent routes, from the
+in a single pass. The test accuracy was computed twice by independent routes: from the
 aggregated evaluation loop and from the per-sample predictions, and the two agree
 to within $10^{-6}$ for every model.
 
@@ -1366,11 +1367,12 @@ three seeds. The interval is computed on the mean.}
 \end{table}
 
 \textbf{Neither quantized configuration costs measurable accuracy on held-out
-data} (Table~\ref{tab:test}). Both sit marginally above the full-precision
+data} (Table~\ref{tab:test}), as both sit marginally above the full-precision
 reference, by $1.6$ and $3.0$ samples out of $1\,436$, inside a between-seed
 spread of $0.9714$ to $0.9770$ in the reference itself. The drop from validation
-to test is $0.9$ points for the reference, $0.8$ for the joint 4-bit model and
-$0.6$ for the 2-bit membrane: the generalization gap of the architecture, not a
+to test is of $0.9$ points for the reference, $0.8$ for the joint 4-bit model and
+$0.6$ for the 2-bit membrane, a drop interpreted as the
+ generalization gap of the architecture, and not a
 cost of quantization.
 
 \begin{table}[htbp]
@@ -1390,9 +1392,9 @@ number of test images of each class.}
 \end{table}
 
 Per-class recall holds the ordering of validation (Table~\ref{tab:test-recall}):
-Violin\_Mode remains the weakest class in all three configurations, and no class
+Violin\_Mode remains indeed the weakest class in all three configurations, and no class
 moves by more than half a percentage point between the reference and either
 quantized model. The ranking of the classes by difficulty therefore survives the
-quantization that changes the explanations, which is the asymmetry this chapter
-has measured throughout: what the network decides is stable, what it is seen to
-look at is not.
+quantization that changes the explanations, which essentially is the
+asymmetry measured throughout this chapter: what the network 
+decides is stable but what it looks at is not.
