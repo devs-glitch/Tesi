@@ -21,8 +21,9 @@ RUNS_DIR = Path('runs')
 # Horowitz 45 nm
 FP32_MAC_PJ = 4.6
 FP32_AC_PJ = 0.9
-INT8_MAC_PJ = 0.2
+INT8_MULT_PJ = 0.2
 INT8_AC_PJ = 0.03
+INT8_MAC_PJ = INT8_MULT_PJ + INT8_AC_PJ     # 0.23
 
 # Which hidden layer's firing rate gates which weight layer
 GATED_BY = {'conv2': 'layer1', 'conv3': 'layer2', 'conv4': 'layer3',
@@ -40,12 +41,13 @@ def ac_energy_pj(bits):
 
 
 def mac_energy_pj(bits):
-    # MAC Multiply-accumulate energy - exact at 32 and 8 bits
+    # Multiply-accumulate energy - exact at 32 and 8 bits
+    # below 8 bits the multiplication scales quadratically with the width and the addition linearly
     if bits is None or bits >= 32:
         return FP32_MAC_PJ, False
     if bits == 8:
         return INT8_MAC_PJ, False
-    return INT8_MAC_PJ * (bits / 8) ** 2, True
+    return INT8_MULT_PJ * (bits / 8) ** 2 + ac_energy_pj(bits)[0], True
 
 # architecture
 

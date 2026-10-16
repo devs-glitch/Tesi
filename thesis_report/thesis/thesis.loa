@@ -1,0 +1,7 @@
+\contentsline {algorithm}{\numberline {1}{\ignorespaces Spike Activation Map of one image at one layer}}{28}{algorithm.1}%
+\contentsline {algorithm}{\numberline {2}{\ignorespaces Deletion metric for one image}}{29}{algorithm.2}%
+\contentsline {algorithm}{\numberline {3}{\ignorespaces Quantization-aware fine-tuning and checkpoint selection}}{35}{algorithm.3}%
+\contentsline {algorithm}{\numberline {4}{\ignorespaces Explanation divergence between a quantized model and its parent}}{82}{algorithm.4}%
+\contentsline {algorithm}{\numberline {5}{\ignorespaces Numerical floor by weight perturbation}}{83}{algorithm.5}%
+\contentsline {algorithm}{\numberline {6}{\ignorespaces Coefficient of variation of the inter-spike intervals}}{83}{algorithm.6}%
+\contentsline {algorithm}{\numberline {7}{\ignorespaces Energy and memory of one operating point}}{83}{algorithm.7}%

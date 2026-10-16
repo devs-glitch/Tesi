@@ -60,7 +60,7 @@
   "horowitz_pj": {
     "fp32_mac": 4.6,
     "fp32_ac": 0.9,
-    "int8_mac": 0.2,
+    "int8_mac": 0.23,
     "int8_ac": 0.03
   },
   "results": {
@@ -260,7 +260,7 @@
           "operations": 3763200,
           "kind": "MAC",
           "gated_by": null,
-          "energy_pj": 47040.0
+          "energy_pj": 75264.0
         },
         "conv2": {
           "operations": 14097447.12688167,
@@ -293,11 +293,11 @@
       },
       "total_sops": 65002416.73477589,
       "total_macs": 3763200,
-      "total_energy_pj": 534558.1255108191,
+      "total_energy_pj": 562782.1255108191,
       "weight_bytes": 73772.0,
       "membrane_bytes": 23520.0,
       "ac_pj": 0.0075,
-      "mac_pj": 0.0125,
+      "mac_pj": 0.02,
       "extrapolated": true
     },
     "qat_w2u2_112px_seed2345": {
@@ -319,7 +319,7 @@
           "operations": 3763200,
           "kind": "MAC",
           "gated_by": null,
-          "energy_pj": 47040.0
+          "energy_pj": 75264.0
         },
         "conv2": {
           "operations": 34924259.02629573,
@@ -352,11 +352,11 @@
       },
       "total_sops": 93082697.29248092,
       "total_macs": 3763200,
-      "total_energy_pj": 745160.2296936068,
+      "total_energy_pj": 773384.2296936068,
       "weight_bytes": 73772.0,
       "membrane_bytes": 23520.0,
       "ac_pj": 0.0075,
-      "mac_pj": 0.0125,
+      "mac_pj": 0.02,
       "extrapolated": true
     },
     "qat_w2u2_112px_seed3456": {
@@ -378,7 +378,7 @@
           "operations": 3763200,
           "kind": "MAC",
           "gated_by": null,
-          "energy_pj": 47040.0
+          "energy_pj": 75264.0
         },
         "conv2": {
           "operations": 22259477.457602896,
@@ -411,11 +411,11 @@
       },
       "total_sops": 76686239.33182745,
       "total_macs": 3763200,
-      "total_energy_pj": 622186.7949887059,
+      "total_energy_pj": 650410.7949887059,
       "weight_bytes": 73772.0,
       "membrane_bytes": 23520.0,
       "ac_pj": 0.0075,
-      "mac_pj": 0.0125,
+      "mac_pj": 0.02,
       "extrapolated": true
     },
     "qat_w2ux_112px_seed1234": {
@@ -437,7 +437,7 @@
           "operations": 3763200,
           "kind": "MAC",
           "gated_by": null,
-          "energy_pj": 47040.0
+          "energy_pj": 75264.0
         },
         "conv2": {
           "operations": 15420868.285656441,
@@ -470,11 +470,11 @@
       },
       "total_sops": 66512613.86542895,
       "total_macs": 3763200,
-      "total_energy_pj": 545884.6039907171,
+      "total_energy_pj": 574108.6039907171,
       "weight_bytes": 73772.0,
       "membrane_bytes": 376320.0,
       "ac_pj": 0.0075,
-      "mac_pj": 0.0125,
+      "mac_pj": 0.02,
       "extrapolated": true
     },
     "qat_w2ux_112px_seed2345": {
@@ -496,7 +496,7 @@
           "operations": 3763200,
           "kind": "MAC",
           "gated_by": null,
-          "energy_pj": 47040.0
+          "energy_pj": 75264.0
         },
         "conv2": {
           "operations": 35423619.162061736,
@@ -529,11 +529,11 @@
       },
       "total_sops": 88421543.7101695,
       "total_macs": 3763200,
-      "total_energy_pj": 710201.5778262712,
+      "total_energy_pj": 738425.5778262712,
       "weight_bytes": 73772.0,
       "membrane_bytes": 376320.0,
       "ac_pj": 0.0075,
-      "mac_pj": 0.0125,
+      "mac_pj": 0.02,
       "extrapolated": true
     },
     "qat_w2ux_112px_seed3456": {
@@ -555,7 +555,7 @@
           "operations": 3763200,
           "kind": "MAC",
           "gated_by": null,
-          "energy_pj": 47040.0
+          "energy_pj": 75264.0
         },
         "conv2": {
           "operations": 23092363.97270389,
@@ -588,11 +588,11 @@
       },
       "total_sops": 73169141.72502531,
       "total_macs": 3763200,
-      "total_energy_pj": 595808.5629376898,
+      "total_energy_pj": 624032.5629376898,
       "weight_bytes": 73772.0,
       "membrane_bytes": 376320.0,
       "ac_pj": 0.0075,
-      "mac_pj": 0.0125,
+      "mac_pj": 0.02,
       "extrapolated": true
     },
     "qat_w4u4_112px_seed1234": {
@@ -614,7 +614,7 @@
           "operations": 3763200,
           "kind": "MAC",
           "gated_by": null,
-          "energy_pj": 188160.0
+          "energy_pj": 244608.0
         },
         "conv2": {
           "operations": 12682981.991353849,
@@ -647,11 +647,11 @@
       },
       "total_sops": 41470445.58009122,
       "total_macs": 3763200,
-      "total_energy_pj": 810216.6837013684,
+      "total_energy_pj": 866664.6837013684,
       "weight_bytes": 147544.0,
       "membrane_bytes": 47040.0,
       "ac_pj": 0.015,
-      "mac_pj": 0.05,
+      "mac_pj": 0.065,
       "extrapolated": true
     },
     "qat_w4u4_112px_seed2345": {
@@ -673,7 +673,7 @@
           "operations": 3763200,
           "kind": "MAC",
           "gated_by": null,
-          "energy_pj": 188160.0
+          "energy_pj": 244608.0
         },
         "conv2": {
           "operations": 32526333.635908917,
@@ -706,11 +706,11 @@
       },
       "total_sops": 74870974.10519335,
       "total_macs": 3763200,
-      "total_energy_pj": 1311224.6115779001,
+      "total_energy_pj": 1367672.6115779001,
       "weight_bytes": 147544.0,
       "membrane_bytes": 47040.0,
       "ac_pj": 0.015,
-      "mac_pj": 0.05,
+      "mac_pj": 0.065,
       "extrapolated": true
     },
     "qat_w4u4_112px_seed3456": {
@@ -732,7 +732,7 @@
           "operations": 3763200,
           "kind": "MAC",
           "gated_by": null,
-          "energy_pj": 188160.0
+          "energy_pj": 244608.0
         },
         "conv2": {
           "operations": 19877387.84322599,
@@ -765,11 +765,11 @@
       },
       "total_sops": 53461841.43221912,
       "total_macs": 3763200,
-      "total_energy_pj": 990087.6214832867,
+      "total_energy_pj": 1046535.6214832867,
       "weight_bytes": 147544.0,
       "membrane_bytes": 47040.0,
       "ac_pj": 0.015,
-      "mac_pj": 0.05,
+      "mac_pj": 0.065,
       "extrapolated": true
     },
     "qat_w4ux_112px_seed1234": {
@@ -791,7 +791,7 @@
           "operations": 3763200,
           "kind": "MAC",
           "gated_by": null,
-          "energy_pj": 188160.0
+          "energy_pj": 244608.0
         },
         "conv2": {
           "operations": 12407477.410977993,
@@ -824,11 +824,11 @@
       },
       "total_sops": 39938068.28380857,
       "total_macs": 3763200,
-      "total_energy_pj": 787231.0242571285,
+      "total_energy_pj": 843679.0242571285,
       "weight_bytes": 147544.0,
       "membrane_bytes": 376320.0,
       "ac_pj": 0.015,
-      "mac_pj": 0.05,
+      "mac_pj": 0.065,
       "extrapolated": true
     },
     "qat_w4ux_112px_seed2345": {
@@ -850,7 +850,7 @@
           "operations": 3763200,
           "kind": "MAC",
           "gated_by": null,
-          "energy_pj": 188160.0
+          "energy_pj": 244608.0
         },
         "conv2": {
           "operations": 32282697.685546875,
@@ -883,11 +883,11 @@
       },
       "total_sops": 74007787.96857941,
       "total_macs": 3763200,
-      "total_energy_pj": 1298276.819528691,
+      "total_energy_pj": 1354724.819528691,
       "weight_bytes": 147544.0,
       "membrane_bytes": 376320.0,
       "ac_pj": 0.015,
-      "mac_pj": 0.05,
+      "mac_pj": 0.065,
       "extrapolated": true
     },
     "qat_w4ux_112px_seed3456": {
@@ -909,7 +909,7 @@
           "operations": 3763200,
           "kind": "MAC",
           "gated_by": null,
-          "energy_pj": 188160.0
+          "energy_pj": 244608.0
         },
         "conv2": {
           "operations": 19568681.057307545,
@@ -942,11 +942,11 @@
       },
       "total_sops": 50704716.473757856,
       "total_macs": 3763200,
-      "total_energy_pj": 948730.7471063678,
+      "total_energy_pj": 1005178.7471063678,
       "weight_bytes": 147544.0,
       "membrane_bytes": 376320.0,
       "ac_pj": 0.015,
-      "mac_pj": 0.05,
+      "mac_pj": 0.065,
       "extrapolated": true
     },
     "qat_w8u8_112px_seed1234": {
@@ -968,7 +968,7 @@
           "operations": 3763200,
           "kind": "MAC",
           "gated_by": null,
-          "energy_pj": 752640.0
+          "energy_pj": 865536.0
         },
         "conv2": {
           "operations": 12293771.811225705,
@@ -1001,11 +1001,11 @@
       },
       "total_sops": 38646540.126412146,
       "total_macs": 3763200,
-      "total_energy_pj": 1912036.2037923643,
+      "total_energy_pj": 2024932.2037923643,
       "weight_bytes": 295088.0,
       "membrane_bytes": 94080.0,
       "ac_pj": 0.03,
-      "mac_pj": 0.2,
+      "mac_pj": 0.23,
       "extrapolated": false
     },
     "qat_w8u8_112px_seed2345": {
@@ -1027,7 +1027,7 @@
           "operations": 3763200,
           "kind": "MAC",
           "gated_by": null,
-          "energy_pj": 752640.0
+          "energy_pj": 865536.0
         },
         "conv2": {
           "operations": 31585115.04144436,
@@ -1060,11 +1060,11 @@
       },
       "total_sops": 71254294.39057826,
       "total_macs": 3763200,
-      "total_energy_pj": 2890268.8317173477,
+      "total_energy_pj": 3003164.8317173477,
       "weight_bytes": 295088.0,
       "membrane_bytes": 94080.0,
       "ac_pj": 0.03,
-      "mac_pj": 0.2,
+      "mac_pj": 0.23,
       "extrapolated": false
     },
     "qat_w8u8_112px_seed3456": {
@@ -1086,7 +1086,7 @@
           "operations": 3763200,
           "kind": "MAC",
           "gated_by": null,
-          "energy_pj": 752640.0
+          "energy_pj": 865536.0
         },
         "conv2": {
           "operations": 19268202.022437118,
@@ -1119,11 +1119,11 @@
       },
       "total_sops": 50330397.01639434,
       "total_macs": 3763200,
-      "total_energy_pj": 2262551.91049183,
+      "total_energy_pj": 2375447.91049183,
       "weight_bytes": 295088.0,
       "membrane_bytes": 94080.0,
       "ac_pj": 0.03,
-      "mac_pj": 0.2,
+      "mac_pj": 0.23,
       "extrapolated": false
     },
     "qat_w8ux_112px_seed1234": {
@@ -1145,7 +1145,7 @@
           "operations": 3763200,
           "kind": "MAC",
           "gated_by": null,
-          "energy_pj": 752640.0
+          "energy_pj": 865536.0
         },
         "conv2": {
           "operations": 12260516.566310976,
@@ -1178,11 +1178,11 @@
       },
       "total_sops": 38367157.40765858,
       "total_macs": 3763200,
-      "total_energy_pj": 1903654.722229757,
+      "total_energy_pj": 2016550.722229757,
       "weight_bytes": 295088.0,
       "membrane_bytes": 376320.0,
       "ac_pj": 0.03,
-      "mac_pj": 0.2,
+      "mac_pj": 0.23,
       "extrapolated": false
     },
     "qat_w8ux_112px_seed2345": {
@@ -1204,7 +1204,7 @@
           "operations": 3763200,
           "kind": "MAC",
           "gated_by": null,
-          "energy_pj": 752640.0
+          "energy_pj": 865536.0
         },
         "conv2": {
           "operations": 31604823.774533156,
@@ -1237,11 +1237,11 @@
       },
       "total_sops": 71641842.00892244,
       "total_macs": 3763200,
-      "total_energy_pj": 2901895.2602676735,
+      "total_energy_pj": 3014791.2602676735,
       "weight_bytes": 295088.0,
       "membrane_bytes": 376320.0,
       "ac_pj": 0.03,
-      "mac_pj": 0.2,
+      "mac_pj": 0.23,
       "extrapolated": false
     },
     "qat_w8ux_112px_seed3456": {
@@ -1263,7 +1263,7 @@
           "operations": 3763200,
           "kind": "MAC",
           "gated_by": null,
-          "energy_pj": 752640.0
+          "energy_pj": 865536.0
         },
         "conv2": {
           "operations": 19176407.6256431,
@@ -1296,11 +1296,11 @@
       },
       "total_sops": 49521508.33499711,
       "total_macs": 3763200,
-      "total_energy_pj": 2238285.2500499133,
+      "total_energy_pj": 2351181.2500499133,
       "weight_bytes": 295088.0,
       "membrane_bytes": 376320.0,
       "ac_pj": 0.03,
-      "mac_pj": 0.2,
+      "mac_pj": 0.23,
       "extrapolated": false
     },
     "qat_wxu2_112px_seed1234": {

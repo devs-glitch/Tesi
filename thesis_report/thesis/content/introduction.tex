@@ -159,19 +159,22 @@ The core contributions are therefore:
 The central result is a configuration that the accuracy criterion alone cannot discriminate
 from its neighbours. Quantizing the membrane potential to 2 bits leaves
 accuracy at parity, $0.982$, yet the region its explanations highlight overlaps
-the full-precision one by $0.44$, well below the numerical floor of $0.70$; a
-4-bit weight model of the same accuracy keeps an overlap of $0.74$. The change
+the full-precision one by $0.44$, below the numerical floor of every class
+($0.70$ to $0.84$); a 4-bit weight model of the same accuracy keeps an overlap of
+$0.74$.
+
+The change
 is real but bounded, as for the classes on which SAM is faithful, the
 deletion metric shows that the new explanations still point at evidence the
 model uses, but not at the evidence the original model pointed and looked at.
 
-The hypothesis stated above is ultimately not supported. Read
-against the floor of each class, the two effects it orders appear at the same
-bit-width: at 4 bits the membrane arm moves the temporal centre of mass above
-its floor, and the weight arm lowers the spatial correlation below its floor in
-all four classes, while moving the centre of mass by a similar amount in the
-opposite direction.  At 2 bits the membrane modifies \emph{where} the explanation points more than
-\emph{when}. The mechanism behind the hypothesis is supported, as the same
+The hypothesis stated above is ultimately not supported. Read against the floor
+and the fine-tuning level of each class, the two effects it orders appear at the
+same bit-width: at 4 bits the membrane arm moves the temporal centre of mass
+beyond both levels in every class, and the weight arm lowers the spatial
+correlation beyond both, while moving the centre of mass in the opposite
+direction, the one in which fine-tuning alone already moves it. At 2 bits the
+membrane modifies \emph{where} the explanation points more than \emph{when}.. The mechanism behind the hypothesis is supported, as the same
 quantization makes the inter-spike intervals of the first layer exactly
 regular: the coefficient of variation measured within an image is zero for
 every neuron of every image, in all six models with a 2-bit membrane, over the
@@ -182,10 +185,10 @@ register this change.
 
 The configuration with the changed explanation is also dominated on energy and
 memory, so in this network there is no trade-off to make. A joint 4-bit model
-keeps accuracy at parity and its explanation at the numerical floor, with one
-eighth of the memory and about $1/60$ of the estimated energy if the input image
-is quantized to the same width as the weights; if the first layer stays in
-floating point, the factor is $1/2.8$.
+keeps accuracy at parity and an explanation that moves only slightly beyond what
+continued training alone produces, with one eighth of the memory and about
+$1/60$ of the estimated energy if the input image is quantized to the same width
+as the weights; if the first layer stays in floating point, the factor is $1/3.5$.
 
 \section{Application domain}
 

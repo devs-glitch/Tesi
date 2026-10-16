@@ -154,6 +154,46 @@ every subsequent measurement --- accuracy, explanations, firing statistics,
 energy --- is taken. The 30 runs took 13 hours on the same 6\,GB consumer GPU
 used for every training run in this thesis.
 
+
+\begin{algorithm}[htbp]
+\caption{Quantization-aware fine-tuning and checkpoint selection}
+\label{alg:qat}
+\begin{algorithmic}[1]
+\REQUIRE parent checkpoint $\theta_s$ of seed $s$, bit-widths $b_w$ and $b_u$
+         (either may be absent; both absent for the control), learning rate
+         $\eta = 0.1\,\eta_{\mathrm{ref}}$, at most $E = 20$ epochs, patience $P = 5$
+\ENSURE  selected checkpoint $\theta^{\star}$, state after the last epoch $\theta_{\mathrm{fin}}$
+\STATE load $\theta_s$ and seed every generator with $s$
+\IF{$b_w$ given}
+  \STATE parametrize every convolutional and linear weight with the per-channel quantizer
+\ENDIF
+\IF{$b_u$ given}
+  \STATE hook \texttt{lif1}--\texttt{lif4}: replace the returned membrane by its
+         $b_u$-bit image on $[0, 2]$
+\ENDIF
+\STATE $a^{\star} \gets$ validation accuracy \COMMENT{PTQ accuracy, no training}
+\STATE $\theta^{\star} \gets \mathrm{fold}(\theta)$;\quad $L^{\star} \gets \infty$;\quad $p \gets 0$
+\FOR{$e = 1$ \TO $E$}
+  \STATE one epoch of Adam, rounding passed through by the straight-through estimator
+  \STATE $(L, a) \gets$ validation loss and accuracy
+  \IF{$a > a^{\star}$}
+    \STATE $a^{\star} \gets a$;\quad $\theta^{\star} \gets \mathrm{fold}(\theta)$
+           \COMMENT{strict improvement only}
+  \ENDIF
+  \IF{$L < L^{\star}$}
+    \STATE $L^{\star} \gets L$;\quad $p \gets 0$
+  \ELSE
+    \STATE $p \gets p + 1$
+  \ENDIF
+  \IF{$p \geq P$}
+    \STATE \textbf{stop}
+  \ENDIF
+\ENDFOR
+\STATE $\theta_{\mathrm{fin}} \gets \mathrm{fold}(\theta)$
+\RETURN $\theta^{\star}$, $\theta_{\mathrm{fin}}$
+\end{algorithmic}
+\end{algorithm}
+
 \paragraph{Gates before the grid.} Two checks were run before any fine-tuning
 to validate the quantizer and then to validate the PTQ gate.
 The first verifies the quantizer itself: attaching and removing it restores the
@@ -226,7 +266,11 @@ a scale derived from the tensor maximum and from the channel's own.}
 The global 8-bit step used in the calibration ($0.00168$, from the largest
 absolute weight of the network, $0.214$) is therefore an upper bound on the
 per-channel steps actually applied, whose mean is between $0.0005$ (conv4) and
-$0.0013$ (readout) at 8 bits.
+$0.0013$ (readout) at 8 bits. On the same global grid the 4-bit and 2-bit steps
+are $18$ and $128$ times that unit. The per-channel steps average $0.009$ to
+$0.024$ at 4 bits and $0.061$ to $0.171$ at 2 bits, between $5$ and $15$ and
+between $37$ and $102$ times the unit, and the weakest channel of conv4 still
+has a 2-bit step $26$ times larger.
 
 \section{Membrane quantizer}
 \label{sec:membrane-quantizer}
@@ -289,23 +333,20 @@ by construction, its first level being zero.
 
 Table~\ref{tab:membrane-grid} contains a quantitative prediction. The step is
 $0.8\,\%$ of the threshold at 8 bits, $13.3\,\%$ at 4 bits and $66.7\,\%$ at 2
-bits, where it is of the same order as the threshold itself, and where a
-neuron's state can encode only whether it is at rest, part-way to threshold, or
-above it. Figure~\ref{fig:membrane-grid} draws the three grids on one axis: the
-8-bit row reads as a ruler, the 2-bit row as four states. This is the mechanism
-behind the observation of Smith et al.~\cite{smith2026} that membrane
-quantization needs at least four bits, and the grid tests it directly.
+bits, where it is of the same order as the threshold itself and a neuron's state
+can encode only whether it is at rest, part-way to threshold, or above it.
+Figure~\ref{fig:membrane-grid} draws the three grids on one axis: the 8-bit row
+reads as a ruler, the 2-bit row as four states. Smith et al.~\cite{smith2026}
+observe that membrane quantization needs at least four bits and attribute it,
+without testing it, to the propagation of a membrane error through the recurrent
+update at every step. The step size is a second account, and the grid tests it
+directly.
 
-behind the observation of Smith et al.~\cite{smith2026} that membrane
-quantization needs at least four bits. They suggest a different cause, the
-propagation of a membrane error through the recurrent update at every step,
-which they do not test: the grid tests the step-size account.
-
-The unsigned grid follows from the clipping study. While potentials do go negative:
-the median of \texttt{lif1} sits at $-0.08$ and its first percentile at $-6.6$,
-clipping them away changes nothing the classifier uses. The symmetric range
-$[-2, +2]$ and the unsigned range $[0, +2]$ return the same accuracy to the last
-digit, $0.9826$, one validation sample below the unclipped network, so a
+The unsigned grid follows from the clipping study. Potentials do go negative ---
+the median of \texttt{lif1} sits at $-0.08$ and its first percentile at $-6.6$
+--- yet clipping them away changes nothing the classifier uses. The symmetric
+range $[-2, +2]$ and the unsigned range $[0, +2]$ return the same accuracy to the
+last digit, $0.9826$, one validation sample below the unclipped network, so a
 signed grid would spend half of its levels below zero, where no decision is
 made. At 8 and 4 bits that costs a factor of two in resolution, one bit. At 2
 bits it costs a factor of three: the step grows from $2/3$ to the full $2$, and
@@ -353,7 +394,8 @@ mass (absolute and signed shift), and the per-timestep correlation curve.
 \end{itemize}
 
 
-The CV-ISI follows the protocol of Section~\ref{sec:physical} --- 200
+The CV-ISI follows the protocol of Section~\ref{sec:diagnostics}, applied to the
+reference in Section~\ref{sec:validation} --- 200
 positions per layer, seed 42, a coefficient computed only where at least five
 intervals are available.
 
@@ -362,17 +404,20 @@ run, aid in the reading of those numbers.
 
 \begin{enumerate}
   \item \textbf{Below the numerical floor is noise.} A divergence smaller than
-        the one produced by weight noise of one 8-bit step ($\mathrm{PCC}$ $0.975$,
-        IoU $0.704$, CoM difference $0.029$ steps, worst class) can not be 
-        deemed a result. The threshold that decides whether a result belongs
-        to the removed bits sits above it, at the fine-tuning level of
-        Section~\ref{sec:anchor}.
+        the one produced by weight noise of one 8-bit step cannot be deemed a
+        result. The floor is measured per class, and every grid result is read
+        against the floor of its own class; the worst-class values
+        ($\mathrm{PCC}$ $0.975$, IoU $0.704$, CoM difference $0.029$ steps) are
+        a summary of the calibration, not a threshold for a mean over classes.
+        A result belongs to the removed bits only where it also exceeds the
+        fine-tuning level of its class (Section~\ref{sec:anchor}).
   \item \textbf{IoU is an early indicator, and PCC a graded measure.} IoU has a
         dynamic range of $2.6\times$ its floor and saturates early, while PCC has
         $34\times$.
   \item \textbf{Everything is reported per class and per seed.} The sensitivity
         ordering Violin\_Mode $>$ Scattered\_Light $>$ Blip $>$ Extremely\_Loud
-        recurs under every intervention tested, that is why a pooled figure would average
+        recurs under both interventions that act on a fixed network, changing
+        the kernel and perturbing the weights, so a pooled figure would average
         a class that responds strongly with one that does not.
   \item \textbf{A flat result on Extremely\_Loud is uninformative.} The
         calibration moved that class by nothing: PCC $0.9997$ under the largest
@@ -458,13 +503,16 @@ times: it is a standard implementation of constant encoding that avoids recomput
 that layer at every step, which would make the spiking network
 more expensive than its convolutional equivalent (Section~\ref{sec:energy-fp32}).
 
-\textbf{Per-operation costs.} Full-precision configurations, the membrane arm
-included, use $4.6$\,pJ per MAC and $0.9$\,pJ per accumulate; configurations with
-quantized weights use the 8-bit integer figures, $0.2$ and $0.03$\,pJ. Narrower
-integer operations are not tabulated, so at 4 and 2 bits the costs are
-extrapolated: a multiplication scales quadratically with the operand width and
-an accumulate linearly, giving $0.05$ and $0.015$\,pJ at 4 bits and $0.0125$ and
-$0.0075$\,pJ at 2 bits. These two rows are estimates.
+\textbf{Per-operation costs.} A multiply-accumulate is costed as one
+multiplication plus one addition at every precision, the convention of the
+$4.6$\,pJ floating-point figure ($3.7 + 0.9$). Full-precision configurations,
+the membrane arm included, use $4.6$\,pJ per MAC and $0.9$\,pJ per accumulate;
+configurations with quantized weights use the 8-bit integer figures, $0.23$\,pJ
+per MAC ($0.2 + 0.03$) and $0.03$\,pJ per accumulate. Narrower integer
+operations are not tabulated, so at 4 and 2 bits the costs are extrapolated: a
+multiplication scales quadratically with the operand width and an addition
+linearly, giving $0.065$ and $0.015$\,pJ at 4 bits and $0.020$ and $0.0075$\,pJ
+at 2 bits. These two rows are estimates.
 
 The first convolution is costed at the weight
 bit-width, which assumes that the input image is quantized to the same width;

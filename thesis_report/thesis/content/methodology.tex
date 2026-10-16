@@ -381,12 +381,11 @@ hyperparameters chosen because they govern three distinct axes: learning rate
 \textbf{Two deployment constraints are imposed inside the search space.} The
 first restricts $\beta$ to $\{0.25, 0.5, 0.75, 0.875\}$, values whose decay is
 realizable as a bit shift, the set spanning both families ($\beta = 2^{-k}$ and
-$\beta = 1 - 2^{-k}$). The second caps $T$ at 8. Constraining the search
-guarantees that whatever it returns is deployable by construction, and
-Section~\ref{sec:hyperparameters} shows that this is not equal to rounding an
-unconstrained optimum afterwards: the free search selects $\beta = 0.4148$,
-whose admissible neighbours are $0.25$ and $0.5$, while the constrained search
-selects $0.75$.
+$\beta = 1 - 2^{-k}$). The second caps $T$ at 8. Constraining the search guarantees that whatever it returns is deployable by
+construction, and Section~\ref{sec:hyperparameters} shows that this is not equal
+to rounding an unconstrained optimum afterwards: the free search, run at
+224\,px, selects $\beta = 0.4148$, whose admissible neighbours are $0.25$ and
+$0.5$, while the constrained search selects $0.75$.
  
 The lower bound of the learning rate was moved from $10^{-4}$ to $10^{-5}$,
 because the v4 optimum ($1.036 \times 10^{-4}$) sat on the boundary of the
@@ -477,6 +476,23 @@ N_{t+1} = e^{-\gamma}\left(N_{t} + S_{t}\right), \qquad N_0 = 0,
 algebraically identical to Equation~\ref{eq:ncs} but $O(T)$ rather than
 $O(T^2)$. A reference implementation computing the explicit sum is retained and
 the two are asserted equal at run time.
+
+
+\begin{algorithm}[htbp]
+\caption{Spike Activation Map of one image at one layer}
+\label{alg:sam}
+\begin{algorithmic}[1]
+\REQUIRE spike train $S \in \{0,1\}^{T \times C \times H \times W}$ of layer $\ell$,
+         decay $\gamma$
+\ENSURE  maps $M_0, \dots, M_{T-1} \in \mathbb{R}^{H \times W}$
+\STATE $N \gets 0$ \COMMENT{$[C, H, W]$, neuronal contribution score}
+\FOR{$t = 0$ \TO $T-1$}
+  \STATE $M_t \gets \sum_{k} N^{k} \odot S^{k}_{t}$ \COMMENT{Eq.~\ref{eq:sam}; $M_0 = 0$}
+  \STATE $N \gets e^{-\gamma}\,(N + S_t)$ \COMMENT{Eq.~\ref{eq:ncs}, steps $t' < t+1$ only}
+\ENDFOR
+\RETURN $M$
+\end{algorithmic}
+\end{algorithm}
  
 Visualizations overlay every time step on the denormalized input under a
 \emph{shared colour scale} to assure that a change in intensity across time is genuine
@@ -614,6 +630,8 @@ and only at its top, as it asks whether the two models highlight the same region
 not whether they assign it the same intensity. Two independent rankings select
 $kHW$ positions each and share $k^{2}HW$ of them in expectation, over a union
 of $2kHW - k^{2}HW$, so the chance level is $k/(2-k) = 0.111$.
+Every overlap reported in this thesis is read at this value of $k$;
+Figure~\ref{fig:topk-sweep} shows, on one model, how the reading changes with it.
 
 The threshold is
 a strict inequality against an empirical quantile, so the selected set holds
