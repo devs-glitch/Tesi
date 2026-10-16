@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.28 (MiKTeX 25.12) (preloaded format=pdflatex 2026.7.22)  16 OCT 2026 02:05
+This is pdfTeX, Version 3.141592653-2.6-1.40.28 (MiKTeX 25.12) (preloaded format=pdflatex 2026.7.22)  16 OCT 2026 02:54
 entering extended mode
  restricted \write18 enabled.
  file:line:error style messages enabled.
@@ -874,23 +874,23 @@ LaTeX Font Info:    Font shape `T1/FiraSans-OsF/sb/n' in size <24.88> not availa
 (Font)              Font shape `T1/FiraSans-OsF/semibold/n' tried instead on input line 1.
 LaTeX Font Info:    Font shape `T1/FiraSans-OsF/semibold/n' will be
 (Font)              scaled to size 24.88pt on input line 1.
-LaTeX Font Info:    Trying to load font information for U+zeur on input line 11.
+LaTeX Font Info:    Trying to load font information for U+zeur on input line 13.
  (C:\Users\devam\AppData\Local\Programs\MiKTeX\tex/latex/eulervm\uzeur.fd
 File: uzeur.fd 2005/01/11 v4.0 (WaS)
 )
-LaTeX Font Info:    Trying to load font information for U+zeus on input line 11.
+LaTeX Font Info:    Trying to load font information for U+zeus on input line 13.
  (C:\Users\devam\AppData\Local\Programs\MiKTeX\tex/latex/eulervm\uzeus.fd
 File: uzeus.fd 2005/01/11 v4.0 (WaS)
 )
-LaTeX Font Info:    Trying to load font information for U+zeuex on input line 11.
+LaTeX Font Info:    Trying to load font information for U+zeuex on input line 13.
  (C:\Users\devam\AppData\Local\Programs\MiKTeX\tex/latex/eulervm\uzeuex.fd
 File: uzeuex.fd 2005/01/11 v4.0 (WaS)
 )
-LaTeX Font Info:    Trying to load font information for OT1+zplm on input line 11.
+LaTeX Font Info:    Trying to load font information for OT1+zplm on input line 13.
  (C:\Users\devam\AppData\Local\Programs\MiKTeX\tex/latex/psnfss\ot1zplm.fd
 File: ot1zplm.fd 2002/09/08 Fontinst v1.914 font definitions for OT1/zplm.
 )
-LaTeX Font Info:    Trying to load font information for U+lasy on input line 11.
+LaTeX Font Info:    Trying to load font information for U+lasy on input line 13.
  (C:\Users\devam\AppData\Local\Programs\MiKTeX\tex/latex/base\ulasy.fd
 File: ulasy.fd 1998/08/17 v2.2e LaTeX symbol font definitions
 ))
@@ -1221,144 +1221,146 @@ Package pdftex.def Info: figures/app_summary_bits.png  used on input line 88.
 
  <./figures/feature_boxplots.png>] [77 <./figures/gamma_Blip.png> <./figures/gamma_Extremely_Loud.png> <./figures/gamma_Scattered_Light.png>] [78 <./figures/app_sam_comparison_seed1234.png>] [79 <./figures/app_divergence_per_class.png> <./figures/app_faithfulness_per_class.png> <./figures/app_stratification_per_class.png>] [80 <./figures/app_summary_bits.png>]
 Appendix B.
-[81
 
-] (thesis.loa)
+Package hyperref Warning: The anchor of a bookmark and its parent's must not
+(hyperref)                be the same. Added a new anchor on input line 102.
+
+(thesis.loa)
 \tf@loa=\write8
 \openout8 = `thesis.loa'.
 
 
-Overfull \hbox (29.0092pt too wide) in paragraph at lines 102--107
+Overfull \hbox (29.0092pt too wide) in paragraph at lines 108--113
 []\T1/pplx/m/n/10 The pro-ce-dures of Al-go-rithms [][]4[][]--[][]7[][] are the ones im-ple-mented in \T1/cmtt/m/n/10 xai/divergence_metrics.py\T1/pplx/m/n/10 ,
  []
 
-[82
+[81
 
-] [83]
+] [82]
 Appendix C.
 
-Underfull \hbox (badness 1546) in paragraph at lines 261--261
+Underfull \hbox (badness 1546) in paragraph at lines 267--267
 []\T1/pplx/m/n/8 Class and fea-ture se-lec-tion,
  []
 
 
-Overfull \hbox (23.24243pt too wide) in paragraph at lines 262--263
+Overfull \hbox (23.24243pt too wide) in paragraph at lines 268--269
 []\T1/cmtt/m/n/8 data/processed/selected_dataset.csv\T1/pplx/m/n/8 ,
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 266--267
+Underfull \hbox (badness 10000) in paragraph at lines 272--273
 []\T1/cmtt/m/n/8 runs/resolution_study.csv\T1/pplx/m/n/8 ,
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 267--267
+Underfull \hbox (badness 10000) in paragraph at lines 273--273
 []\T1/cmtt/m/n/8 scripts.dead_neurons_check
  []
 
 
-Underfull \hbox (badness 2088) in paragraph at lines 268--268
+Underfull \hbox (badness 2088) in paragraph at lines 274--274
 []\T1/pplx/m/n/8 Hyperparameter search (v4,
  []
 
 
-Overfull \hbox (27.4914pt too wide) in paragraph at lines 270--271
+Overfull \hbox (27.4914pt too wide) in paragraph at lines 276--277
 []\T1/cmtt/m/n/8 results/tables/dead_neuron_sweep.csv\T1/pplx/m/n/8 ,
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 274--274
+Underfull \hbox (badness 10000) in paragraph at lines 280--280
 []\T1/cmtt/m/n/8 xai.sam_class_comparison\T1/pplx/m/n/8 ,
  []
 
 
-Overfull \hbox (1.99762pt too wide) in paragraph at lines 276--277
+Overfull \hbox (1.99762pt too wide) in paragraph at lines 282--283
 []\T1/cmtt/m/n/8 results/gamma_sensitivity.json\T1/pplx/m/n/8 ,
  []
 
 
-Overfull \hbox (4.24658pt too wide) in paragraph at lines 279--280
+Overfull \hbox (4.24658pt too wide) in paragraph at lines 285--286
 []\T1/cmtt/m/n/8 results/perturbation_floor.json| 
  []
 
 
-Overfull \hbox (4.13823pt too wide) in paragraph at lines 256--285
+Overfull \hbox (4.13823pt too wide) in paragraph at lines 262--291
  [][] 
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 300--300
+Underfull \hbox (badness 10000) in paragraph at lines 306--306
 []\T1/cmtt/m/n/8 scripts.grid_runner \T1/pplx/m/n/8 (calls
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 301--302
+Underfull \hbox (badness 10000) in paragraph at lines 307--308
 []\T1/cmtt/m/n/8 runs/qat_*\T1/pplx/m/n/8 ,
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 303--304
+Underfull \hbox (badness 10000) in paragraph at lines 309--310
 []\T1/cmtt/m/n/8 results/grid/<tag>.json\T1/pplx/m/n/8 ,
  []
 
 
-Overfull \hbox (4.24658pt too wide) in paragraph at lines 306--307
+Overfull \hbox (4.24658pt too wide) in paragraph at lines 312--313
 []\T1/cmtt/m/n/8 results/cross_faithfulness.json| 
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 312--312
+Underfull \hbox (badness 10000) in paragraph at lines 318--318
 []\T1/cmtt/m/n/8 xai.energy --rates
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 312--312
+Underfull \hbox (badness 10000) in paragraph at lines 318--318
 \T1/cmtt/m/n/8 final --baseline
  []
 
 
-Overfull \hbox (13.01227pt too wide) in paragraph at lines 312--312
+Overfull \hbox (13.01227pt too wide) in paragraph at lines 318--318
 \T1/cmtt/m/n/8 qat_wxux_{input_size}px_seed{seed}
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 314--314
+Underfull \hbox (badness 10000) in paragraph at lines 320--320
 []\T1/cmtt/m/n/8 xai.sam_qat_comparison --run
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 318--318
+Underfull \hbox (badness 10000) in paragraph at lines 324--324
 []\T1/cmtt/m/n/8 scripts.architecture_figure\T1/pplx/m/n/8 ,
  []
 
 
-Overfull \hbox (21.5102pt too wide) in paragraph at lines 320--320
+Overfull \hbox (21.5102pt too wide) in paragraph at lines 326--326
 []\T1/cmtt/m/n/8 scripts.figures.grid_headline_figure| 
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 322--323
+Underfull \hbox (badness 10000) in paragraph at lines 328--329
 []\T1/cmtt/m/n/8 results/test/\T1/pplx/m/n/8 ,
  []
 
 
-Overfull \hbox (4.13823pt too wide) in paragraph at lines 292--328
+Overfull \hbox (4.13823pt too wide) in paragraph at lines 298--334
  [][] 
  []
 
 
-Underfull \hbox (badness 4752) in paragraph at lines 328--328
+Underfull \hbox (badness 4752) in paragraph at lines 334--334
 []\T1/pplx/m/n/10 Table C.2: |Re-pro-ducibil-ity, quan-ti-za-tion study. The test par-ti-tion was opened
  []
 
 
-Underfull \hbox (badness 1642) in paragraph at lines 328--328
+Underfull \hbox (badness 1642) in paragraph at lines 334--334
 \T1/pplx/m/n/10 once, on 7 Oc-to-ber 2026, for all thirty-three mod-els; the open-ing is logged in
  []
 
-) [84
+) [83
 
-] [85] (thesis.aux (content/abstract.aux) (contents.aux) (content/introduction.aux) (content/state_of_the_art.aux) (content/methodology.aux) (content/quantization.aux) (content/results.aux) (content/conclusions.aux) (backmatter.aux))
+] [84] (thesis.aux (content/abstract.aux) (contents.aux) (content/introduction.aux) (content/state_of_the_art.aux) (content/methodology.aux) (content/quantization.aux) (content/results.aux) (content/conclusions.aux) (backmatter.aux))
  ***********
 LaTeX2e <2025-11-01>
 L3 programming layer <2025-12-24>
@@ -1368,22 +1370,22 @@ L3 programming layer <2025-12-24>
 LaTeX Font Warning: Some font shapes were not available, defaults substituted.
 
 Package rerunfilecheck Info: File `thesis.out' has not changed.
-(rerunfilecheck)             Checksum: BD68A0EF2DA2E5DBED685A07EBCEEB45;19845.
+(rerunfilecheck)             Checksum: F2BB143269D2BC6BB10178BFE994C5EF;19844.
 Package rerunfilecheck Info: File `thesis.brf' has not changed.
-(rerunfilecheck)             Checksum: E8119C517E29BE78AD2FACDE6FA75B1B;5506.
+(rerunfilecheck)             Checksum: F9888826E4D72D2E611FC6F684A987D6;5506.
  ) 
 Here is how much of TeX's memory you used:
  28521 strings out of 467871
- 542250 string characters out of 5418376
+ 542253 string characters out of 5418376
  1065240 words of memory out of 5000000
  56238 multiletter control sequences out of 15000+600000
  842469 words of font info for 215 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
  105i,13n,134p,1042b,810s stack positions out of 10000i,1000n,20000p,200000b,200000s
  <C:\Users\devam\AppData\Local\MiKTeX\fonts/pk/ljfour/jknappen/ec/dpi600\ectt0800.pk> <C:\Users\devam\AppData\Local\MiKTeX\fonts/pk/ljfour/jknappen/ec/dpi600\ectt0900.pk> <C:\Users\devam\AppData\Local\MiKTeX\fonts/pk/ljfour/jknappen/ec/dpi600\ectt1000.pk><C:/Users/devam/AppData/Local/Programs/MiKTeX/fonts/type1/public/fira/FiraSans-Regular.pfb><C:/Users/devam/AppData/Local/Programs/MiKTeX/fonts/type1/public/fira/FiraSans-SemiBold.pfb><C:/Users/devam/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmex10.pfb><C:/Users/devam/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmmi7.pfb><C:/Users/devam/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmsy10.pfb><C:/Users/devam/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmsy7.pfb><C:/Users/devam/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/euler/euex10.pfb><C:/Users/devam/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/euler/eufm10.pfb><C:/Users/devam/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/euler/eufm7.pfb><C:/Users/devam/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/euler/eurm10.pfb><C:/Users/devam/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/euler/eurm7.pfb><C:/Users/devam/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/euler/eusm10.pfb><C:/Users/devam/AppData/Local/Programs/MiKTeX/fonts/type1/public/mathpazo/fplmbb.pfb><C:/Users/devam/AppData/Local/Programs/MiKTeX/fonts/type1/public/fpl/fplrc8a.pfb><C:/Users/devam/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/symbols/msam10.pfb><C:/Users/devam/AppData/Local/Programs/MiKTeX/fonts/type1/urw/palatino/uplb8a.pfb><C:/Users/devam/AppData/Local/Programs/MiKTeX/fonts/type1/urw/palatino/uplr8a.pfb><C:/Users/devam/AppData/Local/Programs/MiKTeX/fonts/type1/urw/palatino/uplri8a.pfb>
-Output written on thesis.pdf (87 pages, 6395616 bytes).
+Output written on thesis.pdf (86 pages, 6395709 bytes).
 PDF statistics:
- 2832 PDF objects out of 2984 (max. 8388607)
+ 2829 PDF objects out of 2984 (max. 8388607)
  487 named destinations out of 1000 (max. 500000)
  1016 words of extra memory for PDF output out of 10000 (max. 10000000)
 

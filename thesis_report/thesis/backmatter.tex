@@ -96,8 +96,14 @@ estimated energy relative to the parent (bottom), mean over three seeds.}
 \chapter{Algorithms}
 \label{app:algorithms}
 
-\listofalgorithms
+\makeatletter
+\begingroup
+\renewcommand*{\float@listhead}[1]{\section*{#1}}%
 \addcontentsline{toc}{section}{List of Algorithms}
+\listofalgorithms
+\bigskip
+\endgroup
+\makeatother
 
 The procedures of Algorithms~\ref{alg:divergence}--\ref{alg:energy} are the ones
 implemented in \texttt{xai/divergence\_metrics.py},

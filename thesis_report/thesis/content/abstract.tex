@@ -1,25 +1,41 @@
 \chapter*{Abstract}
 \addcontentsline{toc}{chapter}{Abstract}
 
-This thesis asks whether a quantized spiking neural network (SNN) bases
-its decisions on the same evidence as its full-precision parent.
-The network is endowed with a second
-quantization target,
-the membrane potential, and explanations with a time axis.
-A four-block convolutional spiking network with a shift-implementable decay and
-eight time steps classifies four Gravity Spy gravitational-wave glitch classes at
-$0.9833 \pm 0.0014$ validation accuracy over three seeds, and its decisions are explained by
-the gradient-free Spike Activation Map (SAM). The comparison metrics are calibrated
-first: two models differing only in seed produce maps correlating at $0.153$,
-against $0.975$ under weight noise of one 8-bit step, so every quantized model
-is fine-tuned from, and compared with the parent of its own seed. Weights,
-membrane and both are quantized at 8, 4 and 2 bits. Down to 4 bits accuracy
-holds, and explanations move about as far as fine-tuning alone. At 2
-bits ternary weights collapse the classifier to $0.518$, while a 2-bit membrane
-keeps $0.982$ and lowers the top-20\,\% overlap with the parent's explanation to
-$0.438$, against a floor of $0.704$. The
-predicted ordering, temporal before spatial, is not observed, yet within each
-image the first-layer spike trains of every 2-bit-membrane model become exactly
-periodic. The 2-bit membrane saves no energy, while a joint 4-bit model keeps both
-at about $1/60$ of the estimated energy and one eighth of the
-memory.
+Gravitational-wave detectors record a constant stream of short noise transients,
+the glitches, which can mimic or mask astrophysical signals and impair results. 
+Gravity Spy sorts
+them by their time--frequency morphology, which is the first step towards tracing each
+class of glitch to its instrumental cause.
+
+This thesis builds a spiking neural network (SNN) for the classification 
+task, with a membrane
+decay realizable as a bit shift, and which classifies four Gravity Spy classes at
+$0.9833 \pm 0.0014$ validation accuracy over three seeds. Deploying it
+efficiently requires quantization, the core instrument of the thesis and its research question:
+ whether a quantized SNN
+bases its decisions on the same evidence as its full-precision counterpart, and
+at what energy cost. In convolutional networks accuracy has been shown to survive
+quantization while explanations instead do not: an SNN adds the membrane potential as a
+second novel quantization target, whose explanations unfold in time.
+The working
+hypothesis is that quantizing the membrane disrupts the timing of an explanation
+before quantizing the weights disrupts its spatial layout.
+
+Explanations are computed with the Spike Activation Map (SAM), which is 
+a gradient-free method
+that reads the spike trains directly. The divergence metrics implemented
+are first calibrated: maps of networks differing only in their seed correlate at $0.153$, so
+each quantized model is compared only with the full-precision parent it is
+fine-tuned from. Weights, membrane and both arms are quantized at 8, 4 and 2 bits each.
+
+Results show that down to 4 bits accuracy and explanations hold. 
+At 2 bits weights accuracy collapses to about $0.52$, 
+while a 2-bit membrane keeps $0.982$ but
+shares a top-20\,\% overlap of only $0.438$ with its parent, below the noise
+floor of every class, on maps that remain faithful by the deletion metric. The
+latter configuration saves no energy, while a joint 4-bit model keeps accuracy at about one
+sixtieth of the estimated energy and one eighth of the memory.
+
+Fundamentally, the predicted order is not observed, as the temporal metric of the explanation does
+not move before the spatial ones. A relevant result instead is that the membrane acts on timing in the dynamics, 
+making the first-layer spike trains exactly periodic within each image.
