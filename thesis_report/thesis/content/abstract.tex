@@ -33,9 +33,11 @@ At 2 bits weights accuracy collapses to about $0.52$,
 while a 2-bit membrane keeps $0.982$ but
 shares a top-20\,\% overlap of only $0.438$ with its parent, below the noise
 floor of every class, on maps that remain faithful by the deletion metric. The
-latter configuration saves no energy, while a joint 4-bit model keeps accuracy at about one
-sixtieth of the estimated energy and one eighth of the memory.
+latter configuration saves no energy, while a joint 4-bit model keeps accuracy
+with one eighth of the memory and an estimated energy between one sixtieth and
+about one third of the parent's.
 
-Fundamentally, the predicted order is not observed, as the temporal metric of the explanation does
-not move before the spatial ones. A relevant result instead is that the membrane acts on timing in the dynamics, 
-making the first-layer spike trains exactly periodic within each image.
+The predicted order is not observed, as the temporal metric of the explanation does
+not move before the spatial ones. The membrane does act on timing,
+in the dynamics: at 2 bits every first-layer neuron that fires at least
+three times within an image does so at exactly regural intervals.

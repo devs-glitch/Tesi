@@ -78,7 +78,7 @@ $\beta = 0.75$, which is already shift-implementable, having been constrained in
 hyperparameter search (Section~\ref{sec:constrained-search}) and is not
 re-quantized. Secondly, the biases are kept
 in full precision: there are 244 of them, under $0.1\,\%$ of the parameters,
-and on integer hardware they are added once to a wide accumulator.
+and each enters a neuron's input once per step.
 
 The two arms respond differently to the resolution choice. $270\,240$ of the
 $295\,332$ parameters are convolutional and therefore resolution-independent, so
@@ -129,10 +129,11 @@ the clipping study.
 checkpoint of the same seed.} This is the constraint that guarantees
 that the quantization effect is distinct from initialization variance.
 The numerical floor of the calibration ($\mathrm{PCC} = 0.975$) holds
-for comparisons between a model and its own parent, where no channel permutation
-exists, so a quantized model trained from a random initialization would be an
-independent solution, for which the relevant level is $0.153$ and almost no
-quantization effect would be distinguishable from initialization variance.
+for comparisons between a model and its own parent, which attends to the same
+regions of the input. A quantized model trained from a random initialization
+would be an independent solution, free to attend to different regions, for which
+the relevant level is $0.153$, and almost no quantization effect would be
+distinguishable from initialization variance.
 
 \paragraph{Schedule.}
 The fine-tuning adapts the parent to its grid. 
@@ -208,8 +209,7 @@ left the spatial correlation at $0.975$ in the calibration, so an appreciable
 loss of accuracy there would effectively indicate a defect of the implementation.
 Both gates passed (Section~\ref{sec:grid-gates}).
 
-\paragraph{ } All 8-bit configurations were run first, then
-4-bit, then 2-bit.
+All 8-bit configurations were run first, then 4-bit, then 2-bit.
 
 \section{Weight quantizer}
 \label{sec:weight-quantizer}
@@ -251,7 +251,7 @@ linear & 0.214 & 0.146 & 1.47 & 0.55 \\
 \end{tabular}
 \caption{Weight ranges of the reference checkpoint (seed 1234). ``Bits lost''
 is $\log_2$ of the tensor maximum divided by the weakest channel's maximum: the
-resolution that channel ceases under a single per-tensor scale.}
+resolution that channel loses under a single per-tensor scale.}
 \label{tab:weight-ranges}
 \end{table}
 
@@ -445,11 +445,14 @@ that in every comparison the 8-bit weight arm, the smallest
 intervention in the grid, must keep a spatial correlation above $0.98$ with its
 parent in every seed.
 
-\paragraph{The test of the hypothesis.} As discussed, the hypothesis predicts an
-\emph{ordering}: the membrane arm should displace the temporal centre of mass
-beyond its floor at a higher bit-width than the one at which the weight arm
-lowers the spatial correlation beyond its floor. The reverse order, or a 
-simultaneous change falsifies it.
+\paragraph{The test of the hypothesis.} The hypothesis predicts an
+\emph{ordering}: the membrane arm should displace the temporal centre of mass at
+a higher bit-width than the one at which the weight arm lowers the spatial
+correlation. A displacement or a decrease is relevant only where it goes beyond both
+the numerical floor and the fine-tuning level of its class (principle 1 above),
+read on the mean over seeds and, as a check, cell by cell against the
+fine-tuning level of the same seed. Both a reverse order or a simultaneous change
+falsify the hypothesis.
 
 \section{Stratified analysis}
 \label{sec:stratified-method}
@@ -509,15 +512,21 @@ $4.6$\,pJ floating-point figure ($3.7 + 0.9$). Full-precision configurations,
 the membrane arm included, use $4.6$\,pJ per MAC and $0.9$\,pJ per accumulate;
 configurations with quantized weights use the 8-bit integer figures, $0.23$\,pJ
 per MAC ($0.2 + 0.03$) and $0.03$\,pJ per accumulate. Narrower integer
-operations are not tabulated, so at 4 and 2 bits the costs are extrapolated: a
-multiplication scales quadratically with the operand width and an addition
-linearly, giving $0.065$ and $0.015$\,pJ at 4 bits and $0.020$ and $0.0075$\,pJ
-at 2 bits. These two rows are estimates.
+operations are not tabulated, so at 4 and 2 bits the costs are extrapolated,
+the multiplication scaling quadratically with the operand width and the addition
+linearly: a MAC costs $0.065$\,pJ and an accumulate $0.015$\,pJ at 4 bits,
+$0.020$ and $0.0075$\,pJ at 2 bits.
 
-The first convolution is costed at the weight
-bit-width, which assumes that the input image is quantized to the same width;
-Section~\ref{sec:energy-grid} shows how much the conclusion depends on that
-assumption.
+Two further assumptions are built into these figures. The first convolution is
+costed at the weight bit-width, which assumes that the input image is quantized
+to the same width. Every accumulate is costed at the weight bit-width as well,
+which assumes an adder as narrow as the weights. The sum it builds is wider: a
+neuron of conv4 adds up to $1\,600$ weighted inputs per step ($64 \times 5
+\times 5$), about eleven bits beyond those of a single weight, and in the
+weight-only arm the membrane that receives the sum stays in floating point.
+Section~\ref{sec:energy-grid} shows how much the conclusions depend on each
+assumption, using the 16- and 32-bit integer additions of the same table
+($0.05$ and $0.1$\,pJ).
 
 Memory is the number of bits needed to store the $295\,088$ weights plus those
 needed to store the membrane state of the $94\,080$ hidden neurons at the

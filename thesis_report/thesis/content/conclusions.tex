@@ -31,8 +31,10 @@ study.
 
 \paragraph{Spatial metrics cannot compare independently trained models.} Two
 networks that agree to within one validation sample in accuracy produce
-explanations correlating at $0.153$. The mechanism is a representational
-permutation rather than a defect of the metric.
+explanations correlating at $0.153$. The metric is not at fault: SAM sums over
+channels, so a mere reordering of features would leave the map unchanged, and the
+low correlation means that the two networks concentrate their activity on
+different regions of the same input.
 
 \paragraph{They can compare a model with its own parent.} Weight noise as large
 as an entire 8-bit step, at least 26 times smaller than the 2-bit step of any
@@ -41,11 +43,13 @@ floor of its class is therefore a change in the explanation, not noise of the
 instrument. The two results answer different questions, which is why every
 quantized model is fine-tuned from, and compared with, its own parent.
 
-\paragraph{Resulting figures are not interpretable without these levels.} Values
-around $0.85$ are presented in the literature as evidence of preserved
-explanations; for this architecture that value falls between the numerical floor
-and the independent-solutions level, so it cannot be read without knowing which
-comparison produced it. The floor and the independent-solutions level need no
+\paragraph{Resulting figures are not interpretable without these levels.} Rabbi
+et al.~\cite{rabbi2026} describe models whose explanations correlate with the
+full-precision ones at $0.86$ to $0.99$ (Grad-CAM) and $0.81$ to $0.97$ (LIME) as
+performing well at INT8. For this architecture a correlation of
+$0.85$ falls between the numerical floor and the independent-solutions level, so
+it cannot be read without knowing which comparison produced it.
+The floor and the independent-solutions level need no
 training beyond a multi-seed baseline, which is good practice regardless; the
 fine-tuning level needs one run per seed with the quantizer left out.
 
@@ -90,19 +94,23 @@ highlights a partly different one. A faithfulness test alone would have declared
 the explanation intact and an overlap test alone would have suggested it was
 lost: two valid metrics measuring different properties of the same map.
 
-\paragraph{The hypothesis was wrong in its form and right in its mechanism.}
-The prediction that the membrane would move the temporal axis of the explanation
-before the weights moved its spatial axis is not supported: both arms first
-cross the floor and the fine-tuning level of every class at 4 bits, and at 2
-bits the membrane changes where the explanation points more than when. What the
-membrane does change first is the temporal dynamics of the network itself. At 2
-bits, with a single representable level between rest and threshold, every
-first-layer neuron that fires at least three times within an image does so at
-exactly regular intervals, in all six models with a 2-bit membrane. The temporal
-centre of mass, built to capture the time axis of the explanation, is blind to
-this, because it measures where the spike mass falls and not how it is spaced. A
-temporal explanation metric for spiking networks should see regularity as well
-as timing, and the present instrument does not.
+\paragraph{The hypothesis is not supported; its mechanism shows only in the
+dynamics.} The prediction that the membrane would move the temporal axis of the
+explanation before the weights moved its spatial axis is not supported: both
+arms first cross the floor and the fine-tuning level of every class at 4 bits,
+the membrane arm in nine of the twelve class-and-seed cells and the weight arm in
+ten, and at 2 bits the membrane
+changes where the explanation points more than when. The membrane does reach the
+timing of the network itself, at 2 bits. With a single representable level
+between rest and threshold, every first-layer neuron that fires at least three
+times within an image does so at exactly regular intervals, in all six models
+with a 2-bit membrane, against about half of such neurons in the full-precision
+parents. At 4 bits the pooled regularity of layer 1 stays within $0.01$ of the
+parent, so the dynamics do not change before the spatial explanation does. The
+temporal centre of mass, built to capture the time axis of the explanation, is
+blind to the change, because it measures where the spike mass falls and not how
+it is spaced. A temporal explanation metric for spiking networks should see
+regularity as well as timing, and the present instrument does not.
 
 \paragraph{The comparison with Smith et al.\ inverts for the membrane.} Smith et
 al.~\cite{smith2026} report that the membrane needs at least four bits, losing
@@ -128,8 +136,10 @@ configuration that changes the explanation at constant accuracy is the
 precision the per-operation cost stays the same while firing rates rise, at 2
 bits by $11\,\%$ beyond what fine-tuning alone adds. The deployable
 configuration, joint 4-bit, keeps accuracy at parity and an explanation that
-moves only slightly beyond what continued training alone produces, at about one
-sixtieth of the estimated energy and one eighth of the memory.
+moves only slightly beyond what continued training alone produces, with one
+eighth of the memory and an estimated energy of about one sixtieth of the
+parent's when the input and the accumulators are quantized with the weights,
+about one third when they are not.
 
 \paragraph{Seed variance is the dominant source of variation.} Three
 full-precision networks of equal accuracy differ by a factor of $2.6$ in the
@@ -141,12 +151,12 @@ as any effect measured within a seed.
 \section{Limitations}
 
 \paragraph{Generalization of the levels.} The four calibration levels are
-specific to this architecture, this dataset and this explainer. The
-\emph{mechanism} behind the collapse between independently trained networks,
-representational permutation, is general and well documented; its
-\emph{magnitude} is not, and a different architecture could place the levels
-elsewhere. What generalizes is the claim that the levels must be measured, not
-the values measured here.
+specific to this architecture, this dataset and this explainer. That
+independently trained networks of equal accuracy can attend to different regions
+of the same input is unsurprising; the size of the gap measured here is not
+general, and a different architecture could place the levels elsewhere. What
+generalizes is the claim that the levels must be measured, not the values
+measured here.
 
 \paragraph{Labels are model output.} Accuracy is agreement with the Gravity Spy
 convolutional classifier, whose output the labels are, and not with a physical
@@ -219,11 +229,14 @@ analyzed.} Selection uses accuracy and the analysis uses explanations, so the
 dependence is weak, but it exists; the test-set evaluation remains the only
 fully independent estimate.
 
-\paragraph{The saving factor rests on an assumption.} Costing the analog first
-convolution at the weight bit-width gives a joint 4-bit saving of $59$; costing
-it in floating point gives $3.5$, between $2.8$ and $4.2$ across seeds. The
-operation counts, the memory and the ranking of configurations do not depend on
-it.
+\paragraph{The saving factor rests on two assumptions.} The analog first
+convolution and every accumulate are costed at the weight bit-width, which gives
+a joint 4-bit saving of $59$. Costing the first convolution in floating point
+gives $2.8$ to $4.2$ across seeds; costing the accumulates with 16- or 32-bit
+integer additions gives $20$ to $23$ or $10$ to $12$; both changes together give
+$2.4$ to $3.2$. Under wider accumulators the 2-bit models, which fire more, cost
+more than the 4-bit ones. The operation counts, the memory and the dominance of
+the membrane arm do not depend on either assumption.
 
 \section{Future work}
 

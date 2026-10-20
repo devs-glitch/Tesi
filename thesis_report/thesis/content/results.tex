@@ -126,11 +126,14 @@ read-only.
 The decisive argument against 64\,px is the spatial resolution of the
 explanations themselves. SAM maps are computed on layer activations, whose side
 lengths are 56, 28, 14 and 7 at 112\,px but 32, 16, 8 and 4 at 64\,px. A
-$4 \times 4$ map contains sixteen values, on which centre-of-mass, top-$K$
-intersection-over-union and structural similarity are all meaningless. Given that the
-contribution of this thesis is the fidelity of explanations, 
-a configuration in which the measured object is degenerate in one
-layer cannot be accepted, whatever it saves in compute.
+top-20\,\% overlap needs enough positions for its selected set to describe a
+region: at 112\,px the second layer offers $784$ positions, a selected set of
+about $157$, and the third $196$; at 64\,px the second layer offers $256$, a set
+of about $51$, and the third $64$, a set of about thirteen. The temporal centre of mass sums
+over positions and is unaffected; the spatial metrics are not. Since the
+contribution of this thesis is the fidelity of explanations, the resolution that
+keeps a usable spatial map deeper in the network is preferred, whatever the
+lower one saves in compute.
 
 \section{Hyperparameters and the full-precision reference}
 \label{sec:hyperparameters}
@@ -139,7 +142,7 @@ The constrained search selected \textbf{$\beta = 0.75$, $T = 8$, learning rate
 $1.047 \times 10^{-4}$} at a best validation accuracy of $0.9847$ within the
 15-epoch budget.
 
-textbf{The constraint on $\beta$ is not equivalent to rounding.} The
+\textbf{The constraint on $\beta$ is not equivalent to rounding.} The
 unconstrained search, run at 224\,px, selects $\beta = 0.4148$, whose admissible
 neighbours are $0.25$ and $0.5$. The constrained search at the working resolution
 selects $0.75$, a value that rounding would never have reached. Rounding the
@@ -475,8 +478,8 @@ Class & AUC-SAM & AUC-random & $\Delta$ & Relative & Reading \\
 \midrule
 Blip & 0.3119 & 0.4826 & $-0.1706$ & $-35.4$\,\% & faithful \\
 Extremely\_Loud & 0.6121 & 0.8936 & $-0.2815$ & $-31.5$\,\% & faithful \\
-Scattered\_Light & 0.3835 & 0.3484 & $+0.0351$ & $+10.1$\,\% & not separable \\
-Violin\_Mode & 0.4528 & 0.4297 & $+0.0231$ & $+5.4$\,\% & not separable \\
+Scattered\_Light & 0.3835 & 0.3484 & $+0.0351$ & $+10.1$\,\% & not faithful \\
+Violin\_Mode & 0.4528 & 0.4297 & $+0.0231$ & $+5.4$\,\% & not faithful \\
 \bottomrule
 \end{tabular}
 \caption{Deletion metric by class on the reference checkpoint, 15 validation
@@ -500,6 +503,9 @@ $32$\,\% in area. On Scattered\_Light and Violin\_Mode deleting the
 pixels SAM ranks highest destroys confidence \emph{more slowly} than deleting
 pixels at random, by $10.1$ and $5.4$\,\% of area, which is roughly a third and a
 sixth of the $35$ and $32$\,\% by which it runs faster on the other two classes.
+Fifteen images per class and no interval on the areas do not support a stronger
+reading: on these two classes SAM is not shown to be faithful, which is not the
+same as being shown to point away from the evidence.
 
 The pattern follows again the spatial geometry of the classes. 
 Blip is a compact vertical line and Extremely\_Loud a dominant saturated
@@ -534,9 +540,10 @@ parent the metrics return $\mathrm{PCC} = 1$, $\mathrm{IoU} = 1$ and a
 centre-of-mass difference of $0$, in every class and every seed. This means that two models that
 are the same model therefore produce the same explanation under the full
 comparison pipeline, image sampling included, which is what the measurement
-assumes. The network is evaluated with gradients disabled and in inference mode,
-and the image sampler is seeded, so the cross-model differences below cannot be
-run-to-run noise.
+assumes. The network is evaluated with gradients disabled, the images are the
+first of each class in the fixed order of the validation loader, identical for
+every model, and under direct encoding the forward pass involves no sampling, so
+the cross-model differences below cannot be run-to-run noise.
 
 \subsection{Two independent solutions}
 
@@ -567,23 +574,28 @@ The collapse is also not uniform across pairs. On Blip the three seed pairs
 correlate at $0.34$, $0.72$ and $0.78$, so which two networks are compared
 matters more than which class is compared.
 
-These results do not mean that the mechanism is a defect of the metric. 
-Networks trained from different
-initializations learn functionally equivalent but \textbf{permuted}
-representations, so a pixel-wise comparison between them essentially compares arbitrary
-assignments of channels to positions. The same
-permutation explains why the class ordering of Section~\ref{sec:gamma} does not
-survive here: across seeds the most disturbed class is Scattered\_Light, ahead of
+The collapse is not a relabelling of channels. SAM sums the contribution scores
+over the channel axis (Equation~\ref{eq:sam}), so two networks whose layer-2
+channels were the same features in a different order would produce identical
+maps. Positions, unlike channels, cannot be permuted: they are tied to the input
+image. A low correlation between seeds therefore means that the two networks
+\textbf{concentrate their layer-2 activity on different regions of the same
+spectrogram}. Three models of equal accuracy are not three copies of one
+solution: the firing rate of their first layer differs by a factor of $2.6$
+(Section~\ref{sec:hyperparameters}), and their spatial explanations differ as
+well. The class ordering of Section~\ref{sec:gamma} does not survive the change of
+seed either: across seeds the most disturbed class is Scattered\_Light, ahead of
 Blip and then Violin\_Mode, whereas within a fixed network Violin\_Mode is always
-the most sensitive. A cross-seed comparison measures the relabelling, not the
-explanation.
+the most sensitive. A cross-seed comparison measures the distance between two
+solutions, which is not the effect of an intervention on one of them.
 
 \textbf{The temporal centre of mass survives.} The maximum difference across seed
-pairs is $0.115$ time steps, against again the $0.93$ produced by a thirtyfold change
-in $\gamma$ in the worst class --- a factor of eight. The interpretation here is that
-the metric being an aggregate over the
-whole map, it is insensitive to which neuron occupies which position, which is
-precisely what defeats the pixel-wise metrics.
+pairs is $0.115$ time steps, against the $0.93$ produced by a thirtyfold change in
+$\gamma$ in the worst class, a factor of eight. The metric sums the map over every
+position before reading its time axis, so it is blind to where the activity
+sits, which is precisely the property on which the two solutions differ.
+Independently trained networks place their activity in different regions of the
+input but accumulate it over the eight steps on nearly the same schedule.
 
 \subsection{A negligible perturbation}
 \label{sec:perturbation}
@@ -639,8 +651,8 @@ numerical floor ($0.029$ steps) and the seed level ($0.115$).
 
 Extremely\_Loud does not respond. Its PCC is $0.9997$ under the largest
 perturbation and its worst per-timestep correlation is $0.996$. Combined with its
-behaviour under $\gamma$, this class ha been found to not register an explanation change by any
-measure tested.
+behaviour under $\gamma$, this class registers no explanation change under any
+calibration measure tested.
 
 \subsection{Fine-tuning alone}
 \label{sec:anchor}
@@ -685,7 +697,7 @@ Six to fourteen epochs with the learning rate scaled by $0.1$, and no bits
 removed, move the top-20\,\% overlap to $0.750$, with a seed range of $0.711$ to
 $0.792$ and a worst class of $0.671$ (Table~\ref{tab:finetuning-anchor}).
 Validation accuracy falls by $0.3$ points over the same runs, so the movement is
-not a model that degraded, but rather a a model that kept training.
+not a model that degraded, but rather a model that kept training.
 
 A relevant consideration is that the seed whose weights moved furthest, $2345$ at
 $0.736$, is the seed whose explanation moved \emph{least}, at $0.792$: over three
@@ -923,7 +935,7 @@ $2.5$ times less. The gap comes
 from the price of each operation, not from their number.
 
 The saving depends primarily on the
-treatment of the first layer, as it is the only layer that multiplie.
+treatment of the first layer, as it is the only layer that multiplies.
 Recomputing its constant current at every step
 would cost $183.9\,\mu$J, more than the convolutional equivalent, and the two
 readings differ by a factor of $2.9$. Even computed once, the first convolution
@@ -1016,26 +1028,30 @@ seeds. $\Delta$ is the difference from the FP32 reference
 \end{table}
 
 \textbf{At 8 and 4 bits accuracy is indistinguishable from full precision in
-every arm} (Table~\ref{tab:grid-accuracy}); on average, every difference is below one
-validation sample. Fine-tuning, however, matters at 4 bits: post-training
+every arm} (Table~\ref{tab:grid-accuracy}); on average no arm differs from the
+reference by more than $1.3$ validation samples, inside the four-sample spread of
+the reference itself. Fine-tuning, however, matters at 4 bits: post-training
 quantization of the weights costs about 40 samples, and fine-tuning recovers all
 of them.
 
 \textbf{At 2 bits the arms separate completely.} The membrane arm keeps the parity,
 $0.9823$, within three samples of its parent in every seed. The weight and
 joint arms collapse to $0.518$, and the collapse is not uniform across classes:
-noone of the 2-bit weight models ever predict Scattered\_Light, and two of the three
+none of the 2-bit weight models ever predicts Scattered\_Light, and two of the three
 never predict Violin\_Mode either, assigning therefore every image to Blip or
 Extremely\_Loud. Fine-tuning recovers 16 points over post-training
 quantization but cannot recover a ternary network in weights: a 2-bit membrane, with a
 single level between rest and threshold, is enough to classify; while ternary weights
 are not.
 
-The asymmetry \textbf{inverts, for accuracy, the prediction derived from Smith
-et al.~\cite{smith2026} in Section~\ref{sec:membrane-quantizer}}, that the
-membrane would need at least four bits while weights would survive two. In this
-network and with this grid it is the other way round. Whether the dynamics
-survive is a separate question, assessed below.
+\textbf{For the membrane, the result inverts the finding of Smith
+et al.~\cite{smith2026}} recalled in Section~\ref{sec:membrane-quantizer}, that
+membrane quantization needs at least four bits: here a 2-bit membrane keeps
+accuracy at parity. For the weights the two studies do not conflict. The weights
+that Smith et al.\ find viable at two bits are trained with a learned quantizer;
+the grid used here is uniform and scaled to the largest weight of each channel,
+the kind of quantizer that collapses in their CIFAR-100 experiments as well.
+Whether the dynamics survive is a separate question, assessed below.
 
 \subsection{Explanation divergence}
 
@@ -1164,8 +1180,8 @@ the explanation by about $0.08$ steps relative to the control.
 \paragraph{At 2 bits the weight and joint arms explain a different classifier.}
 Their IoU falls to $0.34$ and $0.27$ and their centre of mass shifts by more
 than the independent-solutions level. Since those models no longer classify, the
-divergence of their explanations is a consequence of the collapse, and not a pure
-indicator of a measurement of explanation fidelity .
+divergence of their explanations is a consequence of the collapse, and not a
+measurement of explanation fidelity.
 
 \paragraph{The membrane arm at 2 bits is exactly the result the grid was built to find.}
 While accuracy is at parity, the IoU with the parent's explanation is $0.438$,
@@ -1202,8 +1218,9 @@ its parent, with an IoU of $0.739$; the second reaches only $0.438$. Selected on
 accuracy, the two are interchangeable; their explanations are not.
 
 \textbf{The spatial correlation alone would have given a different answer.} The
-2-bit membrane model scores a PCC of $0.923$, a value that, read against those
-commonly presented as preserved explanations, would be reported as a surviving
+2-bit membrane model scores a PCC of $0.923$, inside the range of $0.86$ to
+$0.99$ that Rabbi et al.~\cite{rabbi2026} report for convolutional models
+performing well at INT8, and would be read as a surviving
 explanation; it is below the floor of every class, by an amount that understates
 what changed. Pearson correlation weighs every position by its value and is
 dominated by the broad structure that every map of a class shares; the top-$k$
@@ -1248,19 +1265,30 @@ values divided by chance. The reported $k = 0.20$ is marked.}
 The hypothesis predicted an ordering: the membrane arm displaces the temporal
 centre of mass at a higher bit-width than the one at which the weight arm lowers
 the spatial correlation. The grid does not show that ordering. Both effects first
-appear at the same bit-width, 4 bits, and in every class
+appear at the same bit-width, 4 bits, and in every class on the mean over seeds
 (Table~\ref{tab:grid-perclass}): the weight arm lowers the PCC below both the
 floor and the fine-tuning level, and the membrane arm moves the centre of mass
 beyond both. At 8 bits neither arm crosses the fine-tuning level of any class on
-either metric. At 2 bits, where the arms do separate, the visible effect of
-membrane quantization on the explanation is \emph{spatial} --- which pixels are
+either metric.
+
+Read cell by cell, against the floor of the class and the fine-tuning level of
+the same seed, the reading does not change. At 8 bits the two quantities the
+hypothesis orders cross both levels in none of the twelve class-and-seed cells.
+At 4 bits the membrane arm moves the centre of mass beyond both in nine of
+twelve, the exceptions being Scattered\_Light and Violin\_Mode on seed 1234 and
+Extremely\_Loud on seed 3456; the weight arm lowers the PCC below both in ten of
+twelve, the exceptions being Violin\_Mode on seeds 2345 and 3456, where it stays
+above the floor of that class. The two effects remain simultaneous.
+
+At 2 bits, where the arms do separate, the visible effect of membrane
+quantization on the explanation is \emph{spatial} --- which pixels are
 highlighted --- while its centre-of-mass shift ($0.068$) stays below the
 independent-solutions level. \textbf{As formulated in terms of SAM metrics, the
 hypothesis is not supported.}
 
-Its mechanism, however, is visible elsewhere: the per-model validation pass
-measures the regularity of firing, and there the membrane arm at 2 bits differs
-from other configurations.
+The per-model validation pass measures a second temporal property, the
+regularity of firing, and there the 2-bit membrane differs from every other
+configuration.
 
 \begin{table}[htbp]
 \centering
@@ -1283,34 +1311,40 @@ neurons.}
 \label{tab:cv-isi-grid}
 \end{table}
 
-\textbf{A 2-bit membrane makes the firing of layer 1 periodic.} The first
+\textbf{A 2-bit membrane makes the firing of layer 1 regular.} The first
 evidence is the coefficient of variation of the inter-spike intervals, pooled
-over the partition (Table~\ref{tab:cv-isi-grid}), that in the three parents it lies
-between $0.35$ and $0.39$. With a 2-bit membrane it falls by about a third, to
-$0.24$--$0.25$ in the membrane-only arm and $0.21$--$0.26$ in the joint arm. A
-4-bit membrane leaves it within $0.01$ of the parent, and ternary weights (2-bit) alone lower
-it as well, but by less than half as much.
+over the partition (Table~\ref{tab:cv-isi-grid}), which in the three parents
+lies between $0.35$ and $0.39$. With a 2-bit membrane it falls by about a third,
+to $0.24$--$0.25$ in the membrane-only arm and $0.21$--$0.26$ in the joint arm. A
+4-bit membrane leaves it within $0.01$ of the parent, and ternary (2-bit) weights
+alone lower it as well, but by less than half as much.
 
-The pooled value mixes intervals from different neurons and different images, for this
-reason a measurement inside each image is needed. This is performed over 
-the neurons that emit at least three spikes in
-the eight steps, and here the resulting coefficient is \emph{exactly zero}:
-meaning that in all six models with a
-2-bit membrane, every such neuron fires at perfectly regular intervals in every
-image. The parents give $0.153$ to $0.188$ under the same protocol. The two sets
-of neurons are comparable in size: $20$ to $53$\,\% of neuron-image pairs reach
-three spikes in the quantized models, $18$ to $51$\,\% in the parents.
+The pooled value mixes intervals from different neurons and different images,
+so the coefficient is also computed inside each image, over the neurons that
+emit at least three spikes in the eight steps. In all six models with a 2-bit
+membrane it is \emph{exactly zero} for every such neuron in every image: each
+one fires at perfectly regular intervals. Exact regularity is not rare at $T = 8$
+even in full precision: in the parents $42$ to $53\,\%$ of the same
+neuron-image pairs are exactly regular, and the mean coefficient is $0.153$ to
+$0.188$. The 2-bit membrane takes that fraction to $100\,\%$. The two sets of
+neurons are comparable in size: $20$ to $53\,\%$ of neuron-image pairs reach
+three spikes in the quantized models, $18$ to $51\,\%$ in the parents.
 
-The cause is in the grid of Table~\ref{tab:membrane-grid}: since at 2 bits a single
-level lies between rest and threshold, between two spikes the state of a
-neuron can take only one intermediate value. Under direct encoding layer 1
-receives the same input current at every step, the number of steps from reset to
-threshold is therefore fixed, and the firing becomes periodic.
+The cause is in the grid of Table~\ref{tab:membrane-grid}. At 2 bits the stored
+state takes one of four values, and under direct encoding layer 1 receives the
+same input current at every step, so the next stored state is a function of the
+current one alone. Every trajectory therefore falls into a cycle within a few
+steps, and the spike train repeats with it. Deeper layers receive spike trains
+that vary from step to step and are not constrained in the same way.
 
-Membrane quantization does act first on the temporal dynamics, as the hypothesis
-argued; what it changes is the \emph{regularity} of the spike trains. The
-temporal centre of mass measures where in time the SAM energy falls, not how
-regularly the spikes arrive, and cannot detect the change.
+Membrane quantization does act on the temporal dynamics, as the hypothesis
+argued, but not before the spatial explanation changes: the regularity appears
+at 2 bits, where the overlap of the explanation also collapses, and not at 4
+bits, where the pooled coefficient stays within $0.01$ of the parent. The
+per-image coefficient was not measured at 4 bits. What a 2-bit membrane changes
+is the \emph{regularity} of the spike trains. The temporal centre of mass
+measures where in time the SAM energy falls, not how regularly the spikes
+arrive, and cannot detect the change.
 
 The firing statistics separate the two arms (Figure~\ref{fig:spike-stats}). In
 the membrane-only arm the 2-bit membrane raises the firing rate of every layer,
@@ -1465,13 +1499,16 @@ deep layers.
 
 The disagreement subset says the same of the decisions. The Jaccard overlap
 between the error sets of a quantized model and its parent is $0.78$--$0.80$ at
-8 bits in the single-target arms and $0.63$--$0.70$ at 4 bits and at the 2-bit
+8 bits in the single-target arms and $0.62$--$0.70$ at 4 bits and at the 2-bit
 membrane, against $0.49$ between full-precision models of different seed and
 $0.03$ in the collapsed arms. Of the $1\,435$ validation images, three to six on
 average are correct in the parent and wrong after quantization at 8 and 4 bits,
 six at the 2-bit membrane, against $671$ in the 2-bit weight arms. \textbf{The
-2-bit membrane model makes the same decisions as its parent, including the same
-errors, and explains them with different pixels.} Figure~\ref{fig:behaviour} places every model on both axes: the 2-bit membrane
+2-bit membrane model keeps most of its parent's decisions and explains them with
+different pixels}: about six images go from correct to wrong and five the other
+way, and its error set overlaps the parent's with a Jaccard index of $0.58$ to
+$0.69$ across seeds, so roughly a third of the errors of the two models are not
+shared. Figure~\ref{fig:behaviour} places every model on both axes: the 2-bit membrane
 models keep the decision overlap of the 4-bit models and lose most of the
 explanation overlap.
 
@@ -1501,8 +1538,9 @@ Joint    & 2 & 76.06 & 0.65\rlap{$^*$}  & 0.010 & 95.0 \\
 \end{tabular}
 \caption{Synaptic operations, estimated energy and memory per inference, mean
 over three seeds, from the firing rates of each selected checkpoint. ``$\times$
-FP32'' is the mean of the per-seed ratios to the parent. $^*$Extrapolated
-per-operation costs. Memory is weights plus membrane state.}
+FP32'' is the mean of the per-seed ratios to the parent. The first convolution
+and every accumulate are costed at the weight bit-width. $^*$Extrapolated per-operation costs. Memory
+is weights plus membrane state.}
 \label{tab:energy-grid}
 \end{table}
 
@@ -1536,18 +1574,28 @@ The configuration to deploy is the \textbf{joint 4-bit model}: accuracy at parit
 ($0.9835$), an explanation that moves slightly beyond what continued training
 alone produces (IoU $0.714$ against $0.750$, below the fine-tuning level of every
 class by at most $0.05$ and of every seed by $0.02$ to $0.06$, against $0.438$
-for the 2-bit membrane), estimated energy about $1/60$ of the parent, and one
-eighth of its memory ($190$\,KiB).
+for the 2-bit membrane), estimated energy about $1/60$ of the parent under the
+costing of Table~\ref{tab:energy-grid}, and one eighth of its memory
+($190$\,KiB).
 
-One assumption determines the size of the saving. The first convolution receives
-the analog image, and Table~\ref{tab:energy-grid} costs it at the weight
-bit-width, which assumes the input is quantized to the same width. At 4 bits that
-layer is $24\,\%$ of the joint model's energy. Costed in floating point instead,
-it lowers the joint 4-bit saving factor from $59$ to $3.5$, a mean over seeds
-whose firing regimes give $2.8$, $4.2$ and $3.3$. The operation counts and the
-memory column do not depend on the assumption, and neither does the conclusion
-that the membrane arm is dominated; the factor by which the deployable model is
-cheaper does.
+A few assumptions of Section~\ref{sec:energy-method} determine the size of the
+saving. The first convolution receives the analog image, and
+Table~\ref{tab:energy-grid} costs it at the weight bit-width, which assumes the
+input is quantized to the same width. At 4 bits that layer is $24\,\%$ of the
+joint model's energy. Instead, costed in floating point, it lowers the joint 4-bit
+saving factor from $59$ to $2.8$, $4.2$ and $3.3$ on the three seeds, whose
+firing regimes differ. The accumulates are costed at the weight width too. With
+16-bit integer additions the joint 4-bit factor becomes $20$ to $23$ across
+seeds, with 32-bit additions $10$ to $12$, and with the floating-point first
+layer and 32-bit additions together $2.4$ to $3.2$. Under 16-bit additions the
+2-bit models, which fire more, are no longer the cheapest: the joint 2-bit factor
+falls to $16$, below the $21$ of the joint 4-bit model.
+
+The operation counts and the memory column depend on neither assumption, and
+neither does the conclusion that the membrane arm is dominated, since its
+weights and accumulates stay in floating point under every costing. The factor
+by which the deployable model is cheaper does depend on them, by more than an
+order of magnitude.
 
 \section{Test-set evaluation}
 \label{sec:test}
@@ -1579,9 +1627,11 @@ data} (Table~\ref{tab:test}), as both sit marginally above the full-precision
 reference, by $1.6$ and $3.0$ samples out of $1\,436$, inside a between-seed
 spread of $0.9714$ to $0.9770$ in the reference itself. The drop from validation
 to test is of $0.9$ points for the reference, $0.8$ for the joint 4-bit model and
-$0.6$ for the 2-bit membrane, a drop interpreted as the
- generalization gap of the architecture, and not a
-cost of quantization.
+$0.6$ for the 2-bit membrane. It is of the same size in all three, so it is not a
+cost of quantization. Part of it is expected from the protocol: the
+hyperparameters, the stopping epoch and the selected checkpoint of every model
+were all chosen on the validation partition, whose accuracy is therefore an
+optimistic estimate, and the test partition is the only unbiased one.
 
 \begin{table}[htbp]
 \centering

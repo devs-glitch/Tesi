@@ -127,8 +127,9 @@ The core contributions are therefore:
         of 112\,px was chosen based on network health,
         measured as dead and saturated neuron
         fractions, and on the resolution of the explanation maps, not on
-        accuracy: at 64\,px the last feature map shrinks to $4\times4$, too
-        coarse for spatial metrics. The membrane decay was also searched only among
+        accuracy: at 64\,px the maps of the second and third layers shrink to
+        $16\times16$ and $8\times8$, too coarse for spatial metrics beyond the
+        first layers. The membrane decay was also searched only among
         values realizable with a shift, alone or followed by a subtraction, and the search
         returned a value of $\beta = 0.75$. Over three seeds the reference reaches
         $0.9833 \pm 0.0014$ validation accuracy.
@@ -168,27 +169,36 @@ is real but bounded, as for the classes on which SAM is faithful, the
 deletion metric shows that the new explanations still point at evidence the
 model uses, but not at the evidence the original model pointed and looked at.
 
-The hypothesis stated above is ultimately not supported. Read against the floor
-and the fine-tuning level of each class, the two effects it orders appear at the
-same bit-width: at 4 bits the membrane arm moves the temporal centre of mass
-beyond both levels in every class, and the weight arm lowers the spatial
-correlation beyond both, while moving the centre of mass in the opposite
-direction, the one in which fine-tuning alone already moves it. At 2 bits the
-membrane modifies \emph{where} the explanation points more than \emph{when}.. The mechanism behind the hypothesis is supported, as the same
-quantization makes the inter-spike intervals of the first layer exactly
-regular: the coefficient of variation measured within an image is zero for
-every neuron of every image, in all six models with a 2-bit membrane, over the
-$20$ to $53\,\%$ of neuron-image pairs that produce the two intervals a
-coefficient needs. The three full-precision parents, measured the same way,
-return $0.153$ to $0.188$. The temporal metric of the explanation does not
-register this change.
+The hypothesis stated above is not supported. Read against the floor and the
+fine-tuning level of each class, the two effects it orders appear at the same
+bit-width. At 8 bits neither crosses both levels in any class-and-seed cell. At
+4 bits the membrane arm moves the temporal centre of mass beyond both levels in
+every class, and in nine of the twelve cells, while the weight arm lowers the spatial
+correlation beyond both in every class, and in ten of the twelve cells, while
+moving the centre of mass in the direction in which fine-tuning alone already
+moves it. At 2 bits the membrane modifies \emph{where} the explanation points
+more than \emph{when}.
+
+The membrane does reach the timing of the network's own dynamics, at 2 bits. In
+all six models with a 2-bit membrane, every first-layer neuron that fires at
+least three times within an image does so at exactly regular intervals: the
+coefficient of variation measured within the image is zero on all of the $20$ to
+$53\,\%$ of neuron-image pairs that reach three spikes. In the three
+full-precision parents, measured the same way, $42$ to $53\,\%$ of those pairs
+are exactly regular and the mean coefficient is $0.153$ to $0.188$. At 4 bits
+the regularity of layer 1, pooled over the partition, stays within $0.01$ of the
+parent, so the dynamics do not change before the spatial explanation does. The
+temporal metric of the explanation does not register the change at 2 bits
+either.
 
 The configuration with the changed explanation is also dominated on energy and
 memory, so in this network there is no trade-off to make. A joint 4-bit model
 keeps accuracy at parity and an explanation that moves only slightly beyond what
 continued training alone produces, with one eighth of the memory and about
-$1/60$ of the estimated energy if the input image is quantized to the same width
-as the weights; if the first layer stays in floating point, the factor is $1/3.5$.
+$1/60$ of the estimated energy if the input image and the accumulators are
+quantized to the width of the weights. With the first layer in floating point
+and 32-bit integer accumulators the factor is between $1/2.4$ and $1/3.2$ across
+seeds.
 
 \section{Application domain}
 

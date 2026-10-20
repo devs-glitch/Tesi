@@ -12,3 +12,4 @@ umap-learn>=0.5
 seaborn>=0.13
 pillow>=10.0
 requests>=2.32
+scikit-image>=0.24
