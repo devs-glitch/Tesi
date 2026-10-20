@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.28 (MiKTeX 25.12) (preloaded format=pdflatex 2026.7.22)  20 OCT 2026 14:54
+This is pdfTeX, Version 3.141592653-2.6-1.40.28 (MiKTeX 25.12) (preloaded format=pdflatex 2026.7.22)  20 OCT 2026 15:00
 entering extended mode
  restricted \write18 enabled.
  file:line:error style messages enabled.
@@ -661,43 +661,78 @@ File: lstlang1.sty 2025/11/14 1.11b listings language file
 File: lstlang1.sty 2025/11/14 1.11b listings language file
 ) (C:\Users\devam\AppData\Local\Programs\MiKTeX\tex/latex/listings\lstmisc.sty
 File: lstmisc.sty 2025/11/14 1.11b (Carsten Heinz)
-)) (C:\Users\devam\AppData\Local\Programs\MiKTeX\tex/latex/tools\array.sty
+)) (C:\Users\devam\AppData\Local\Programs\MiKTeX\tex/latex/caption\subcaption.sty
+Package: subcaption 2023/07/28 v1.6b Sub-captions (AR)
+ (C:\Users\devam\AppData\Local\Programs\MiKTeX\tex/latex/caption\caption.sty
+Package: caption 2023/08/05 v3.6o Customizing captions (AR)
+ (C:\Users\devam\AppData\Local\Programs\MiKTeX\tex/latex/caption\caption3.sty
+Package: caption3 2023/07/31 v2.4d caption3 kernel (AR)
+\caption@tempdima=\dimen300
+\captionmargin=\dimen301
+\caption@leftmargin=\dimen302
+\caption@rightmargin=\dimen303
+\caption@width=\dimen304
+\caption@indent=\dimen305
+\caption@parindent=\dimen306
+\caption@hangindent=\dimen307
+Package caption Info: Unknown document class (or package),
+(caption)             standard defaults will be used.
+Package caption Info: \@makecaption = macro:#1#2->\vskip \abovecaptionskip \sbox \@tempboxa {\captionfonts \textbf {#1:} #2}\ifdim \wd \@tempboxa >\hsize {\captionfonts \textbf {#1:} #2\par } \else \hbox to\hsize {\hfil \box \@tempboxa \hfil }\fi \vskip \belowcaptionskip  on input line 1175.
+)
+
+Package caption Warning: Unknown document class (or package),
+(caption)                standard defaults will be used.
+See the caption package documentation for explanation.
+
+\c@caption@flags=\count355
+\c@continuedfloat=\count356
+Package caption Info: float package is loaded.
+Package caption Info: hyperref package is loaded.
+Package caption Info: hypcap package is loaded.
+Package caption Info: listings package is loaded.
+Package caption Info: rotating package is loaded.
+)
+Package caption Info: New subtype `subfigure' on input line 238.
+\c@subfigure=\count357
+Package caption Info: New subtype `subtable' on input line 238.
+\c@subtable=\count358
+) (C:\Users\devam\AppData\Local\Programs\MiKTeX\tex/latex/tools\array.sty
 Package: array 2025/09/25 v2.6n Tabular extension package (FMi)
-\col@sep=\dimen300
+\col@sep=\dimen308
 \ar@mcellbox=\box73
-\extrarowheight=\dimen301
+\extrarowheight=\dimen309
 \NC@list=\toks55
 \extratabsurround=\skip80
 \backup@length=\skip81
 \ar@cellbox=\box74
 )
-LaTeX Font Info:    Trying to load font information for T1+pplx on input line 47.
+LaTeX Font Info:    Trying to load font information for T1+pplx on input line 48.
  (C:\Users\devam\AppData\Local\Programs\MiKTeX\tex/latex/psnfss\t1pplx.fd
 File: t1pplx.fd 2004/09/06 font definitions for T1/pplx.
 ) (C:\Users\devam\AppData\Local\Programs\MiKTeX\tex/latex/l3backend\l3backend-pdftex.def
 File: l3backend-pdftex.def 2025-10-09 L3 backend support: PDF output (pdfTeX)
-\l__color_backend_stack_int=\count355
+\l__color_backend_stack_int=\count359
 ) (thesis.aux (content/abstract.aux) (contents.aux) (content/introduction.aux) (content/state_of_the_art.aux) (content/methodology.aux) (content/quantization.aux) (content/results.aux) (content/conclusions.aux) (backmatter.aux))
 \openout1 = `thesis.aux'.
 
-LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 47.
-LaTeX Font Info:    ... okay on input line 47.
-LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 47.
-LaTeX Font Info:    ... okay on input line 47.
-LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 47.
-LaTeX Font Info:    ... okay on input line 47.
-LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 47.
-LaTeX Font Info:    ... okay on input line 47.
-LaTeX Font Info:    Checking defaults for TS1/cmr/m/n on input line 47.
-LaTeX Font Info:    ... okay on input line 47.
-LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 47.
-LaTeX Font Info:    ... okay on input line 47.
-LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 47.
-LaTeX Font Info:    ... okay on input line 47.
-LaTeX Font Info:    Checking defaults for PD1/pdf/m/n on input line 47.
-LaTeX Font Info:    ... okay on input line 47.
-LaTeX Font Info:    Checking defaults for PU/pdf/m/n on input line 47.
-LaTeX Font Info:    ... okay on input line 47.
+LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 48.
+LaTeX Font Info:    ... okay on input line 48.
+LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 48.
+LaTeX Font Info:    ... okay on input line 48.
+LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 48.
+LaTeX Font Info:    ... okay on input line 48.
+LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 48.
+LaTeX Font Info:    ... okay on input line 48.
+LaTeX Font Info:    Checking defaults for TS1/cmr/m/n on input line 48.
+LaTeX Font Info:    ... okay on input line 48.
+LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 48.
+LaTeX Font Info:    ... okay on input line 48.
+LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 48.
+LaTeX Font Info:    ... okay on input line 48.
+LaTeX Font Info:    Checking defaults for PD1/pdf/m/n on input line 48.
+LaTeX Font Info:    ... okay on input line 48.
+LaTeX Font Info:    Checking defaults for PU/pdf/m/n on input line 48.
+LaTeX Font Info:    ... okay on input line 48.
 
 *geometry* driver: auto-detecting
 *geometry* detected driver: pdftex
@@ -733,20 +768,20 @@ LaTeX Font Info:    ... okay on input line 47.
 * \@reversemargintrue
 * (1in=72.27pt=25.4mm, 1cm=28.453pt)
 
-\c@mv@tabular=\count356
-\c@mv@boldtabular=\count357
+\c@mv@tabular=\count360
+\c@mv@boldtabular=\count361
 (C:\Users\devam\AppData\Local\Programs\MiKTeX\tex/context/base/mkii\supp-pdf.mkii
 [Loading MPS to PDF converter (version 2006.09.02).]
-\scratchcounter=\count358
-\scratchdimen=\dimen302
+\scratchcounter=\count362
+\scratchdimen=\dimen310
 \scratchbox=\box75
-\nofMPsegments=\count359
-\nofMParguments=\count360
+\nofMPsegments=\count363
+\nofMParguments=\count364
 \everyMPshowfont=\toks56
-\MPscratchCnt=\count361
-\MPscratchDim=\dimen303
-\MPnumerator=\count362
-\makeMPintoPDFobject=\count363
+\MPscratchCnt=\count365
+\MPscratchDim=\dimen311
+\MPnumerator=\count366
+\makeMPintoPDFobject=\count367
 \everyMPtoPDFconversion=\toks57
 ) (C:\Users\devam\AppData\Local\Programs\MiKTeX\tex/latex/epstopdf-pkg\epstopdf-base.sty
 Package: epstopdf-base 2020-01-24 v2.11 Base part for package epstopdf
@@ -754,87 +789,89 @@ Package epstopdf-base Info: Redefining graphics rule for `.eps' on input line 48
  (C:\Users\devam\AppData\Local\Programs\MiKTeX\tex/latex/00miktex\epstopdf-sys.cfg
 File: epstopdf-sys.cfg 2021/03/18 v2.0 Configuration of epstopdf for MiKTeX
 ))
-\c@lstlisting=\count364
-Package hyperref Info: Link coloring ON on input line 47.
+\c@lstlisting=\count368
+Package hyperref Info: Link coloring ON on input line 48.
  (thesis.out) (thesis.out)
 \@outlinefile=\write5
 \openout5 = `thesis.out'.
 
-LaTeX Font Info:    Trying to load font information for T1+pplj on input line 52.
+Package caption Info: Begin \AtBeginDocument code.
+Package caption Info: End \AtBeginDocument code.
+LaTeX Font Info:    Trying to load font information for T1+pplj on input line 53.
  (C:\Users\devam\AppData\Local\Programs\MiKTeX\tex/latex/psnfss\t1pplj.fd
 File: t1pplj.fd 2004/09/06 font definitions for T1/pplj.
 )
 <logo/unimi.png, id=410, 770.88pt x 770.88pt>
 File: logo/unimi.png Graphic file (type png)
 <use logo/unimi.png>
-Package pdftex.def Info: logo/unimi.png  used on input line 52.
+Package pdftex.def Info: logo/unimi.png  used on input line 53.
 (pdftex.def)             Requested size: 113.81102pt x 113.80379pt.
 <logo/unimib.jpg, id=412, 99.7326pt x 106.7187pt>
 File: logo/unimib.jpg Graphic file (type jpg)
 <use logo/unimib.jpg>
-Package pdftex.def Info: logo/unimib.jpg  used on input line 52.
+Package pdftex.def Info: logo/unimib.jpg  used on input line 53.
 (pdftex.def)             Requested size: 113.81102pt x 121.78922pt.
 <logo/unipv.pdf, id=413, 501.875pt x 618.33511pt>
 File: logo/unipv.pdf Graphic file (type pdf)
 <use logo/unipv.pdf>
-Package pdftex.def Info: logo/unipv.pdf  used on input line 52.
+Package pdftex.def Info: logo/unipv.pdf  used on input line 53.
 (pdftex.def)             Requested size: 113.81102pt x 140.21385pt.
  [1
 
 {C:/Users/devam/AppData/Local/MiKTeX/fonts/map/pdftex/pdftex.map}{C:/Users/devam/AppData/Local/Programs/MiKTeX/fonts/enc/dvips/base/8r.enc} <./logo/unimi.png> <./logo/unimib.jpg> <./logo/unipv.pdf>]
 File: logo/unimi.png Graphic file (type png)
 <use logo/unimi.png>
-Package pdftex.def Info: logo/unimi.png  used on input line 52.
+Package pdftex.def Info: logo/unimi.png  used on input line 53.
 (pdftex.def)             Requested size: 48.36958pt x 48.36807pt.
 File: logo/unimib.jpg Graphic file (type jpg)
 <use logo/unimib.jpg>
-Package pdftex.def Info: logo/unimib.jpg  used on input line 52.
+Package pdftex.def Info: logo/unimib.jpg  used on input line 53.
 (pdftex.def)             Requested size: 48.36958pt x 51.7585pt.
 File: logo/unipv.pdf Graphic file (type pdf)
 <use logo/unipv.pdf>
-Package pdftex.def Info: logo/unipv.pdf  used on input line 52.
+Package pdftex.def Info: logo/unipv.pdf  used on input line 53.
 (pdftex.def)             Requested size: 48.36958pt x 59.59158pt.
-LaTeX Font Info:    Trying to load font information for T1+FiraSans-OsF on input line 52.
+LaTeX Font Info:    Trying to load font information for T1+FiraSans-OsF on input line 53.
  (C:\Users\devam\AppData\Local\Programs\MiKTeX\tex/latex/fira\t1firasans-osf.fd
 File: T1FiraSans-OsF.fd 2019/10/10 (autoinst) Font definitions for T1/FiraSans-OsF.
 )
 LaTeX Font Info:    Font shape `T1/FiraSans-OsF/m/n' in size <14.4> not available
-(Font)              Font shape `T1/FiraSans-OsF/regular/n' tried instead on input line 52.
+(Font)              Font shape `T1/FiraSans-OsF/regular/n' tried instead on input line 53.
 LaTeX Font Info:    Font shape `T1/FiraSans-OsF/regular/n' will be
-(Font)              scaled to size 14.4pt on input line 52.
+(Font)              scaled to size 14.4pt on input line 53.
 LaTeX Font Info:    Font shape `T1/FiraSans-OsF/m/n' in size <20.74> not available
-(Font)              Font shape `T1/FiraSans-OsF/regular/n' tried instead on input line 52.
+(Font)              Font shape `T1/FiraSans-OsF/regular/n' tried instead on input line 53.
 LaTeX Font Info:    Font shape `T1/FiraSans-OsF/regular/n' will be
-(Font)              scaled to size 20.74pt on input line 52.
+(Font)              scaled to size 20.74pt on input line 53.
 LaTeX Font Info:    Font shape `T1/FiraSans-OsF/sb/n' in size <20.74> not available
-(Font)              Font shape `T1/FiraSans-OsF/semibold/n' tried instead on input line 52.
+(Font)              Font shape `T1/FiraSans-OsF/semibold/n' tried instead on input line 53.
 LaTeX Font Info:    Font shape `T1/FiraSans-OsF/semibold/n' will be
-(Font)              scaled to size 20.74pt on input line 52.
+(Font)              scaled to size 20.74pt on input line 53.
 LaTeX Font Info:    Font shape `T1/FiraSans-OsF/sb/n' in size <10> not available
-(Font)              Font shape `T1/FiraSans-OsF/semibold/n' tried instead on input line 52.
+(Font)              Font shape `T1/FiraSans-OsF/semibold/n' tried instead on input line 53.
 LaTeX Font Info:    Font shape `T1/FiraSans-OsF/semibold/n' will be
-(Font)              scaled to size 10.0pt on input line 52.
+(Font)              scaled to size 10.0pt on input line 53.
 
-Underfull \hbox (badness 10000) in paragraph at lines 52--52
+Underfull \hbox (badness 10000) in paragraph at lines 53--53
 \T1/FiraSans-OsF/semibold/n/10 Da-vide Gerosa, De-part-ment of Physics
  []
 
 LaTeX Font Info:    Font shape `T1/FiraSans-OsF/sb/n' in size <12> not available
-(Font)              Font shape `T1/FiraSans-OsF/semibold/n' tried instead on input line 52.
+(Font)              Font shape `T1/FiraSans-OsF/semibold/n' tried instead on input line 53.
 LaTeX Font Info:    Font shape `T1/FiraSans-OsF/semibold/n' will be
-(Font)              scaled to size 12.0pt on input line 52.
+(Font)              scaled to size 12.0pt on input line 53.
 
 LaTeX Font Warning: Font shape `T1/pplj/sb/n' undefined
-(Font)              using `T1/pplj/m/n' instead on input line 52.
+(Font)              using `T1/pplj/m/n' instead on input line 53.
 
-LaTeX Font Info:    Trying to load font information for TS1+pplj on input line 52.
+LaTeX Font Info:    Trying to load font information for TS1+pplj on input line 53.
 (C:\Users\devam\AppData\Local\Programs\MiKTeX\tex/latex/psnfss\ts1pplj.fd
 File: ts1pplj.fd 2004/09/06 font definitions for TS1/pplj.
 )
 
 LaTeX Font Warning: Font shape `TS1/pplj/sb/n' undefined
 (Font)              using `TS1/pplj/m/n' instead
-(Font)              for symbol `textcopyright' on input line 52.
+(Font)              for symbol `textcopyright' on input line 53.
 
 [2
 
@@ -869,7 +906,7 @@ File: ulasy.fd 1998/08/17 v2.2e LaTeX symbol font definitions
 pdfTeX warning (ext4): destination with the same identifier (name{page.1}) has been already used, duplicate ignored
 <to be read again> 
                    \relax 
-l.52 \include{content/abstract}
+l.53 \include{content/abstract}
                                 [1
 
 
@@ -975,7 +1012,7 @@ File: ufplmbb.fd 2003/10/30 Fontinst v1.914 font definitions for U/fplmbb.
 
  (content/quantization.tex
 Chapter 4.
-<figures/quantization_arms.pdf, id=1116, 520.34402pt x 310.761pt>
+<figures/quantization_arms.pdf, id=1115, 520.34402pt x 310.761pt>
 File: figures/quantization_arms.pdf Graphic file (type pdf)
 <use figures/quantization_arms.pdf>
 Package pdftex.def Info: figures/quantization_arms.pdf  used on input line 41.
@@ -986,13 +1023,13 @@ Package pdftex.def Info: figures/quantization_arms.pdf  used on input line 41.
 
 
 ] [33 <./figures/quantization_arms.pdf>] [34] [35]
-<figures/weight_scale_granularity.pdf, id=1254, 520.34402pt x 216.81pt>
+<figures/weight_scale_granularity.pdf, id=1253, 520.34402pt x 216.81pt>
 File: figures/weight_scale_granularity.pdf Graphic file (type pdf)
 <use figures/weight_scale_granularity.pdf>
 Package pdftex.def Info: figures/weight_scale_granularity.pdf  used on input line 260.
 (pdftex.def)             Requested size: 398.3386pt x 165.9815pt.
  [36 <./figures/weight_scale_granularity.pdf>]
-<figures/membrane_grid.pdf, id=1349, 520.34402pt x 209.58301pt>
+<figures/membrane_grid.pdf, id=1348, 520.34402pt x 209.58301pt>
 File: figures/membrane_grid.pdf Graphic file (type pdf)
 <use figures/membrane_grid.pdf>
 Package pdftex.def Info: figures/membrane_grid.pdf  used on input line 329.
@@ -1006,7 +1043,7 @@ File: ts1pplx.fd 2004/09/06 font definitions for TS1/pplx.
 
  (content/results.tex
 Chapter 5.
-<figures/dead_neuron_sweep.pdf, id=1470, 534.79799pt x 281.85298pt>
+<figures/dead_neuron_sweep.pdf, id=1469, 534.79799pt x 281.85298pt>
 File: figures/dead_neuron_sweep.pdf Graphic file (type pdf)
 <use figures/dead_neuron_sweep.pdf>
 Package pdftex.def Info: figures/dead_neuron_sweep.pdf  used on input line 58.
@@ -1017,7 +1054,7 @@ Package pdftex.def Info: figures/dead_neuron_sweep.pdf  used on input line 58.
 
 
 ] [42 <./figures/dead_neuron_sweep.pdf>] [43]
-<figures/confusion_matrix.pdf, id=1577, 404.712pt x 332.44202pt>
+<figures/confusion_matrix.pdf, id=1576, 404.712pt x 332.44202pt>
 File: figures/confusion_matrix.pdf Graphic file (type pdf)
 <use figures/confusion_matrix.pdf>
 Package pdftex.def Info: figures/confusion_matrix.pdf  used on input line 246.
@@ -1044,256 +1081,63 @@ File: figures/sam_class_stats.png Graphic file (type png)
 <use figures/sam_class_stats.png>
 Package pdftex.def Info: figures/sam_class_stats.png  used on input line 327.
 (pdftex.def)             Requested size: 358.50229pt x 327.12384pt.
-
-
-content/results.tex:346: LaTeX Error: Environment subfigure undefined.
-
-See the LaTeX manual or LaTeX Companion for explanation.
-Type  H <return>  for immediate help.
- ...                                              
-                                                  
-l.346 \begin{subfigure}
-                       {0.49\linewidth}
-Your command was ignored.
-Type  I <command> <return>  to replace it with another command,
-or  <return>  to continue without it.
-
-content/results.tex:346: Missing number, treated as zero.
-<to be read again> 
-                   }
-l.346 \begin{subfigure}{0.49\linewidth}
-                                       
-A number should have been here; I inserted `0'.
-(If you can't figure out why I needed to see a number,
-look up `weird error' in the index to The TeXbook.)
-
-content/results.tex:346: Illegal unit of measure (pt inserted).
-<to be read again> 
-                   }
-l.346 \begin{subfigure}{0.49\linewidth}
-                                       
-Dimensions can be in units of em, ex, in, pt, pc,
-cm, mm, dd, cc, nd, nc, bp, or sp; but yours is a new one!
-I'll assume that you meant to say pt, for printer's points.
-To recover gracefully from this error, it's best to
-delete the erroneous units; e.g., type `2' to delete
-two letters. (See Chapter 27 of The TeXbook.)
-
 <figures/sam_layer_Blip.png, id=1752, 826.287pt x 493.845pt>
 File: figures/sam_layer_Blip.png Graphic file (type png)
 <use figures/sam_layer_Blip.png>
 Package pdftex.def Info: figures/sam_layer_Blip.png  used on input line 347.
-(pdftex.def)             Requested size: 398.3386pt x 238.06772pt.
-
-content/results.tex:349: LaTeX Error: \begin{figure} on input line 344 ended by \end{subfigure}.
-
-See the LaTeX manual or LaTeX Companion for explanation.
-Type  H <return>  for immediate help.
- ...                                              
-                                                  
-l.349 \end{subfigure}
-                     \hfill
-Your command was ignored.
-Type  I <command> <return>  to replace it with another command,
-or  <return>  to continue without it.
-
-
-content/results.tex:350: LaTeX Error: Environment subfigure undefined.
-
-See the LaTeX manual or LaTeX Companion for explanation.
-Type  H <return>  for immediate help.
- ...                                              
-                                                  
-l.350 \begin{subfigure}
-                       {0.49\linewidth}
-Your command was ignored.
-Type  I <command> <return>  to replace it with another command,
-or  <return>  to continue without it.
-
-content/results.tex:350: Missing number, treated as zero.
-<to be read again> 
-                   }
-l.350 \begin{subfigure}{0.49\linewidth}
-                                       
-A number should have been here; I inserted `0'.
-(If you can't figure out why I needed to see a number,
-look up `weird error' in the index to The TeXbook.)
-
-content/results.tex:350: Illegal unit of measure (pt inserted).
-<to be read again> 
-                   }
-l.350 \begin{subfigure}{0.49\linewidth}
-                                       
-Dimensions can be in units of em, ex, in, pt, pc,
-cm, mm, dd, cc, nd, nc, bp, or sp; but yours is a new one!
-I'll assume that you meant to say pt, for printer's points.
-To recover gracefully from this error, it's best to
-delete the erroneous units; e.g., type `2' to delete
-two letters. (See Chapter 27 of The TeXbook.)
-
+(pdftex.def)             Requested size: 195.1881pt x 116.65642pt.
 <figures/sam_layer_Extremely_Loud.png, id=1753, 826.287pt x 493.845pt>
 File: figures/sam_layer_Extremely_Loud.png Graphic file (type png)
 <use figures/sam_layer_Extremely_Loud.png>
 Package pdftex.def Info: figures/sam_layer_Extremely_Loud.png  used on input line 351.
-(pdftex.def)             Requested size: 398.3386pt x 238.06772pt.
-
-content/results.tex:353: LaTeX Error: \begin{figure} on input line 344 ended by \end{subfigure}.
-
-See the LaTeX manual or LaTeX Companion for explanation.
-Type  H <return>  for immediate help.
- ...                                              
-                                                  
-l.353 \end{subfigure}
-                     
-Your command was ignored.
-Type  I <command> <return>  to replace it with another command,
-or  <return>  to continue without it.
-
-
-content/results.tex:355: LaTeX Error: Environment subfigure undefined.
-
-See the LaTeX manual or LaTeX Companion for explanation.
-Type  H <return>  for immediate help.
- ...                                              
-                                                  
-l.355 \begin{subfigure}
-                       {0.49\linewidth}
-Your command was ignored.
-Type  I <command> <return>  to replace it with another command,
-or  <return>  to continue without it.
-
-content/results.tex:355: Missing number, treated as zero.
-<to be read again> 
-                   }
-l.355 \begin{subfigure}{0.49\linewidth}
-                                       
-A number should have been here; I inserted `0'.
-(If you can't figure out why I needed to see a number,
-look up `weird error' in the index to The TeXbook.)
-
-content/results.tex:355: Illegal unit of measure (pt inserted).
-<to be read again> 
-                   }
-l.355 \begin{subfigure}{0.49\linewidth}
-                                       
-Dimensions can be in units of em, ex, in, pt, pc,
-cm, mm, dd, cc, nd, nc, bp, or sp; but yours is a new one!
-I'll assume that you meant to say pt, for printer's points.
-To recover gracefully from this error, it's best to
-delete the erroneous units; e.g., type `2' to delete
-two letters. (See Chapter 27 of The TeXbook.)
-
+(pdftex.def)             Requested size: 195.1881pt x 116.65642pt.
 <figures/sam_layer_Scattered_Light.png, id=1754, 832.5504pt x 493.845pt>
 File: figures/sam_layer_Scattered_Light.png Graphic file (type png)
 <use figures/sam_layer_Scattered_Light.png>
 Package pdftex.def Info: figures/sam_layer_Scattered_Light.png  used on input line 356.
-(pdftex.def)             Requested size: 398.3386pt x 236.28181pt.
-
-content/results.tex:358: LaTeX Error: \begin{figure} on input line 344 ended by \end{subfigure}.
-
-See the LaTeX manual or LaTeX Companion for explanation.
-Type  H <return>  for immediate help.
- ...                                              
-                                                  
-l.358 \end{subfigure}
-                     \hfill
-Your command was ignored.
-Type  I <command> <return>  to replace it with another command,
-or  <return>  to continue without it.
-
-
-content/results.tex:359: LaTeX Error: Environment subfigure undefined.
-
-See the LaTeX manual or LaTeX Companion for explanation.
-Type  H <return>  for immediate help.
- ...                                              
-                                                  
-l.359 \begin{subfigure}
-                       {0.49\linewidth}
-Your command was ignored.
-Type  I <command> <return>  to replace it with another command,
-or  <return>  to continue without it.
-
-content/results.tex:359: Missing number, treated as zero.
-<to be read again> 
-                   }
-l.359 \begin{subfigure}{0.49\linewidth}
-                                       
-A number should have been here; I inserted `0'.
-(If you can't figure out why I needed to see a number,
-look up `weird error' in the index to The TeXbook.)
-
-content/results.tex:359: Illegal unit of measure (pt inserted).
-<to be read again> 
-                   }
-l.359 \begin{subfigure}{0.49\linewidth}
-                                       
-Dimensions can be in units of em, ex, in, pt, pc,
-cm, mm, dd, cc, nd, nc, bp, or sp; but yours is a new one!
-I'll assume that you meant to say pt, for printer's points.
-To recover gracefully from this error, it's best to
-delete the erroneous units; e.g., type `2' to delete
-two letters. (See Chapter 27 of The TeXbook.)
-
+(pdftex.def)             Requested size: 195.1881pt x 115.77477pt.
 <figures/sam_layer_Violin_Mode.png, id=1755, 832.5504pt x 493.845pt>
 File: figures/sam_layer_Violin_Mode.png Graphic file (type png)
 <use figures/sam_layer_Violin_Mode.png>
 Package pdftex.def Info: figures/sam_layer_Violin_Mode.png  used on input line 360.
-(pdftex.def)             Requested size: 398.3386pt x 236.28181pt.
-
-content/results.tex:362: LaTeX Error: \begin{figure} on input line 344 ended by \end{subfigure}.
-
-See the LaTeX manual or LaTeX Companion for explanation.
-Type  H <return>  for immediate help.
- ...                                              
-                                                  
-l.362 \end{subfigure}
-                     
-Your command was ignored.
-Type  I <command> <return>  to replace it with another command,
-or  <return>  to continue without it.
-
-
-LaTeX Warning: Float too large for page by 454.78879pt on input line 366.
-
-[46 <./figures/cv_isi_distributions.pdf> <./figures/sam_visualization.png>] [47 <./figures/sam_class_stats.png>] [48 <./figures/sam_layer_Blip.png> <./figures/sam_layer_Extremely_Loud.png> <./figures/sam_layer_Scattered_Light.png> <./figures/sam_layer_Violin_Mode.png>]
-<figures/gamma_Violin_Mode.png, id=1863, 1003.5894pt x 328.5876pt>
+(pdftex.def)             Requested size: 195.1881pt x 115.77477pt.
+ [46 <./figures/cv_isi_distributions.pdf> <./figures/sam_visualization.png>] [47 <./figures/sam_class_stats.png>] [48 <./figures/sam_layer_Blip.png> <./figures/sam_layer_Extremely_Loud.png> <./figures/sam_layer_Scattered_Light.png> <./figures/sam_layer_Violin_Mode.png>]
+<figures/gamma_Violin_Mode.png, id=1860, 1003.5894pt x 328.5876pt>
 File: figures/gamma_Violin_Mode.png Graphic file (type png)
 <use figures/gamma_Violin_Mode.png>
 Package pdftex.def Info: figures/gamma_Violin_Mode.png  used on input line 434.
 (pdftex.def)             Requested size: 398.3386pt x 130.4199pt.
- [49 <./figures/gamma_Violin_Mode.png>]
-<figures/deletion_metric.pdf, id=1874, 953.96402pt x 260.17201pt>
+<figures/deletion_metric.pdf, id=1864, 953.96402pt x 260.17201pt>
 File: figures/deletion_metric.pdf Graphic file (type pdf)
 <use figures/deletion_metric.pdf>
 Package pdftex.def Info: figures/deletion_metric.pdf  used on input line 470.
 (pdftex.def)             Requested size: 398.3386pt x 108.64027pt.
- [50 <./figures/deletion_metric.pdf>] [51] [52] [53] [54] [55]
-<figures/grid_headline.pdf, id=2025, 520.34402pt x 187.902pt>
+ [49 <./figures/gamma_Violin_Mode.png>] [50 <./figures/deletion_metric.pdf>] [51] [52] [53] [54] [55]
+<figures/grid_headline.pdf, id=2021, 520.34402pt x 187.902pt>
 File: figures/grid_headline.pdf Graphic file (type pdf)
 <use figures/grid_headline.pdf>
 Package pdftex.def Info: figures/grid_headline.pdf  used on input line 945.
 (pdftex.def)             Requested size: 398.3386pt x 143.85063pt.
  [56 <./figures/grid_headline.pdf>] [57] [58]
-<figures/sam_qat_seed3456.png, id=2130, 751.608pt x 766.062pt>
+<figures/sam_qat_seed3456.png, id=2125, 751.608pt x 766.062pt>
 File: figures/sam_qat_seed3456.png Graphic file (type png)
 <use figures/sam_qat_seed3456.png>
 Package pdftex.def Info: figures/sam_qat_seed3456.png  used on input line 1171.
 (pdftex.def)             Requested size: 398.3386pt x 405.99924pt.
  [59] [60 <./figures/sam_qat_seed3456.png>]
-<figures/topk_sweep_seed3456.png, id=2153, 693.792pt x 317.988pt>
+<figures/topk_sweep_seed3456.png, id=2149, 693.792pt x 317.988pt>
 File: figures/topk_sweep_seed3456.png Graphic file (type png)
 <use figures/topk_sweep_seed3456.png>
 Package pdftex.def Info: figures/topk_sweep_seed3456.png  used on input line 1226.
 (pdftex.def)             Requested size: 398.3386pt x 182.56995pt.
  [61 <./figures/topk_sweep_seed3456.png>]
-<figures/spike_statistics_2bit.png, id=2166, 664.884pt x 476.982pt>
+<figures/spike_statistics_2bit.png, id=2162, 664.884pt x 476.982pt>
 File: figures/spike_statistics_2bit.png Graphic file (type png)
 <use figures/spike_statistics_2bit.png>
 Package pdftex.def Info: figures/spike_statistics_2bit.png  used on input line 1336.
 (pdftex.def)             Requested size: 398.3386pt x 285.76198pt.
  [62] [63 <./figures/spike_statistics_2bit.png>]
-<figures/behaviour_vs_explanation.png, id=2181, 809.424pt x 325.215pt>
+<figures/behaviour_vs_explanation.png, id=2177, 809.424pt x 325.215pt>
 File: figures/behaviour_vs_explanation.png Graphic file (type png)
 <use figures/behaviour_vs_explanation.png>
 Package pdftex.def Info: figures/behaviour_vs_explanation.png  used on input line 1442.
@@ -1328,47 +1172,47 @@ Underfull \hbox (badness 1127) in paragraph at lines 269--269
 
 [75]) [76]
 Appendix A.
-<figures/feature_boxplots.png, id=2376, 1399.629pt x 1110.0672pt>
+<figures/feature_boxplots.png, id=2372, 1399.629pt x 1110.0672pt>
 File: figures/feature_boxplots.png Graphic file (type png)
 <use figures/feature_boxplots.png>
 Package pdftex.def Info: figures/feature_boxplots.png  used on input line 23.
 (pdftex.def)             Requested size: 398.3386pt x 315.9151pt.
-<figures/gamma_Blip.png, id=2377, 1003.5894pt x 328.5876pt>
+<figures/gamma_Blip.png, id=2373, 1003.5894pt x 328.5876pt>
 File: figures/gamma_Blip.png Graphic file (type png)
 <use figures/gamma_Blip.png>
 Package pdftex.def Info: figures/gamma_Blip.png  used on input line 32.
 (pdftex.def)             Requested size: 398.3386pt x 130.4199pt.
-<figures/gamma_Extremely_Loud.png, id=2378, 1003.5894pt x 328.5876pt>
+<figures/gamma_Extremely_Loud.png, id=2374, 1003.5894pt x 328.5876pt>
 File: figures/gamma_Extremely_Loud.png Graphic file (type png)
 <use figures/gamma_Extremely_Loud.png>
 Package pdftex.def Info: figures/gamma_Extremely_Loud.png  used on input line 33.
 (pdftex.def)             Requested size: 398.3386pt x 130.4199pt.
-<figures/gamma_Scattered_Light.png, id=2379, 1003.5894pt x 328.5876pt>
+<figures/gamma_Scattered_Light.png, id=2375, 1003.5894pt x 328.5876pt>
 File: figures/gamma_Scattered_Light.png Graphic file (type png)
 <use figures/gamma_Scattered_Light.png>
 Package pdftex.def Info: figures/gamma_Scattered_Light.png  used on input line 34.
 (pdftex.def)             Requested size: 398.3386pt x 130.4199pt.
-<figures/app_sam_comparison_seed1234.png, id=2382, 751.608pt x 766.062pt>
+<figures/app_sam_comparison_seed1234.png, id=2378, 751.608pt x 766.062pt>
 File: figures/app_sam_comparison_seed1234.png Graphic file (type png)
 <use figures/app_sam_comparison_seed1234.png>
 Package pdftex.def Info: figures/app_sam_comparison_seed1234.png  used on input line 45.
 (pdftex.def)             Requested size: 398.3386pt x 405.99924pt.
-<figures/app_divergence_per_class.png, id=2385, 896.148pt x 440.847pt>
+<figures/app_divergence_per_class.png, id=2381, 896.148pt x 440.847pt>
 File: figures/app_divergence_per_class.png Graphic file (type png)
 <use figures/app_divergence_per_class.png>
 Package pdftex.def Info: figures/app_divergence_per_class.png  used on input line 54.
 (pdftex.def)             Requested size: 398.3386pt x 195.95767pt.
-<figures/app_faithfulness_per_class.png, id=2392, 896.148pt x 281.853pt>
+<figures/app_faithfulness_per_class.png, id=2388, 896.148pt x 281.853pt>
 File: figures/app_faithfulness_per_class.png Graphic file (type png)
 <use figures/app_faithfulness_per_class.png>
 Package pdftex.def Info: figures/app_faithfulness_per_class.png  used on input line 66.
 (pdftex.def)             Requested size: 398.3386pt x 125.28441pt.
-<figures/app_stratification_per_class.png, id=2395, 896.148pt x 267.399pt>
+<figures/app_stratification_per_class.png, id=2391, 896.148pt x 267.399pt>
 File: figures/app_stratification_per_class.png Graphic file (type png)
 <use figures/app_stratification_per_class.png>
 Package pdftex.def Info: figures/app_stratification_per_class.png  used on input line 78.
 (pdftex.def)             Requested size: 398.3386pt x 118.85957pt.
-<figures/app_summary_bits.png, id=2398, 505.89pt x 621.522pt>
+<figures/app_summary_bits.png, id=2394, 505.89pt x 621.522pt>
 File: figures/app_summary_bits.png Graphic file (type png)
 <use figures/app_summary_bits.png>
 Package pdftex.def Info: figures/app_summary_bits.png  used on input line 88.
@@ -1401,22 +1245,22 @@ L3 programming layer <2025-12-24>
 LaTeX Font Warning: Some font shapes were not available, defaults substituted.
 
 Package rerunfilecheck Info: File `thesis.out' has not changed.
-(rerunfilecheck)             Checksum: 7AB68DB4AE836E8D8224F09C4473A507;19842.
+(rerunfilecheck)             Checksum: 5FF2C4884D1248E66C886AA3DECCEB52;19844.
 Package rerunfilecheck Info: File `thesis.brf' has not changed.
-(rerunfilecheck)             Checksum: 4E88B656498FE2F203B1EE1BA28E68DE;5138.
+(rerunfilecheck)             Checksum: B838B33E0AC947EDE29413BC5B894A7A;5249.
  ) 
 Here is how much of TeX's memory you used:
- 27201 strings out of 467871
- 515503 string characters out of 5418376
- 1066241 words of memory out of 5000000
- 54916 multiletter control sequences out of 15000+600000
- 843821 words of font info for 219 fonts, out of 8000000 for 9000
+ 28593 strings out of 467871
+ 543288 string characters out of 5418376
+ 1068241 words of memory out of 5000000
+ 56307 multiletter control sequences out of 15000+600000
+ 842469 words of font info for 215 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
- 105i,13n,134p,1036b,652s stack positions out of 10000i,1000n,20000p,200000b,200000s
+ 105i,13n,134p,1042b,808s stack positions out of 10000i,1000n,20000p,200000b,200000s
  <C:\Users\devam\AppData\Local\MiKTeX\fonts/pk/ljfour/jknappen/ec/dpi600\ectt0800.pk> <C:\Users\devam\AppData\Local\MiKTeX\fonts/pk/ljfour/jknappen/ec/dpi600\ectt0900.pk> <C:\Users\devam\AppData\Local\MiKTeX\fonts/pk/ljfour/jknappen/ec/dpi600\ectt1000.pk><C:/Users/devam/AppData/Local/Programs/MiKTeX/fonts/type1/public/fira/FiraSans-Regular.pfb><C:/Users/devam/AppData/Local/Programs/MiKTeX/fonts/type1/public/fira/FiraSans-SemiBold.pfb><C:/Users/devam/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmex10.pfb><C:/Users/devam/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmmi7.pfb><C:/Users/devam/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmsy10.pfb><C:/Users/devam/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmsy7.pfb><C:/Users/devam/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/euler/euex10.pfb><C:/Users/devam/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/euler/eufm10.pfb><C:/Users/devam/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/euler/eufm7.pfb><C:/Users/devam/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/euler/eurm10.pfb><C:/Users/devam/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/euler/eurm7.pfb><C:/Users/devam/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/euler/eusm10.pfb><C:/Users/devam/AppData/Local/Programs/MiKTeX/fonts/type1/public/mathpazo/fplmbb.pfb><C:/Users/devam/AppData/Local/Programs/MiKTeX/fonts/type1/public/fpl/fplrc8a.pfb><C:/Users/devam/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/symbols/msam10.pfb><C:/Users/devam/AppData/Local/Programs/MiKTeX/fonts/type1/urw/palatino/uplb8a.pfb><C:/Users/devam/AppData/Local/Programs/MiKTeX/fonts/type1/urw/palatino/uplr8a.pfb><C:/Users/devam/AppData/Local/Programs/MiKTeX/fonts/type1/urw/palatino/uplri8a.pfb>
-Output written on thesis.pdf (88 pages, 6403681 bytes).
+Output written on thesis.pdf (88 pages, 6400343 bytes).
 PDF statistics:
- 2853 PDF objects out of 2984 (max. 8388607)
- 492 named destinations out of 1000 (max. 500000)
+ 2836 PDF objects out of 2984 (max. 8388607)
+ 488 named destinations out of 1000 (max. 500000)
  1016 words of extra memory for PDF output out of 10000 (max. 10000000)
 
