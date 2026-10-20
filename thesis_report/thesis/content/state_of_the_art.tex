@@ -139,27 +139,26 @@ same problem met by networks with binary activations, and the solutions
 developed for spiking networks are inspired by those~\cite{neftci2019surrogate}.
 
 \paragraph{The surrogate.} A surrogate gradient leaves the model unchanged and
-alters only its derivative. The forward pass keeps the exact binary spike, while in
-the backward pass every occurrence of $\Theta'$ is replaced by the derivative
-$\sigma'$ of a smooth function peaked at the threshold,
+alters only its derivative. The forward pass keeps the exact binary spike; only
+the backward pass changes, where $\Theta'$ gives way to the derivative
+$\sigma'$ of a smooth function centred on the threshold,
 \begin{equation}
 \frac{\partial S[t]}{\partial U[t]} \;\longrightarrow\;
 \sigma'\!\left(U[t] - \theta\right).
 \end{equation}
 Neurons close to threshold, meaning those for which a small change could flip a spike,
 receive the largest gradient, and gradient flows through silent neurons as well.
-The resulting update is the gradient of a
-\emph{virtual} surrogate loss, never computed explicitly, which follows the true
-one while remaining continuous and finite~\cite{neftci2019surrogate}. This
+In effect, the optimiser descends a smoothed loss that is never evaluated: its
+gradient tracks that of the true loss but stays bounded and
+continuous~\cite{neftci2019surrogate}. This
 distinguishes the approach from \emph{smoothed} spiking networks, which involve replacing
 the spike itself with a soft or probabilistic function and so change the model
 that is deployed.
 
 \paragraph{The choice of surrogate.} Piecewise-linear, fast-sigmoid and
-exponential surrogates have all been used successfully, all three nonlinear and monotonically
-increasing towards the threshold. The
-diversity of working choices suggests that the method does not depend
-critically on the exact shape~\cite{neftci2019surrogate}. This work uses the
+exponential surrogates all train successfully, and what they share is only a
+non-linear rise towards the threshold, which suggests that the exact shape
+matters little~\cite{neftci2019surrogate}. This work uses the
 arctangent surrogate~\cite{fang2021plif} as implemented in
 snnTorch~\cite{eshraghian2023},
 \begin{equation}
@@ -360,11 +359,11 @@ added directly, and the multipliers that conventional uniform quantization needs
 to rescale one into the other disappear from the inference loop. At 2 bits,
 MINT reports $90.6\,\%$ accuracy on CIFAR-10 with a VGG-16 and a memory
 reduction of $93.8\,\%$ with respect to full precision.
-HardF-SNN~\cite{liu2026hardfsnn} shows the cost of that sharing: weights have a
-narrow, centred distribution, whereas membrane potentials have a much broader
-one with a long tail, so a scale fitted to the weights compresses the dynamic
-range of the membrane and collapses many distinct potentials onto the same
-level. It therefore scales the membrane in proportion to the weights rather
+HardF-SNN~\cite{liu2026hardfsnn} shows the cost of that sharing. The two
+quantities are distributed very differently, the weights tightly around zero
+and the membrane potentials over a wide, long-tailed range, so a scale chosen
+for the weights clips the membrane and maps many different potentials to the
+same integer level. It therefore scales the membrane in proportion to the weights rather
 than identically, replaces batch normalization with an integer, shift-based
 version, and verifies the result on an FPGA accelerator, noting that most
 quantized spiking networks are still evaluated with simulated quantization, in
