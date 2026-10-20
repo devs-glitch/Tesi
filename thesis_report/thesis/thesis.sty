@@ -27,8 +27,9 @@
 %This needs to be before hyperref
 \usepackage{float}
 
-% This should be after most packages
-\PassOptionsToPackage{%ps2pdf,
+% This should be after most packages. pdfx loads hyperref with these options
+% and makes the output PDF/A-2b (metadata in thesis.xmpdata)
+\PassOptionsToPackage{%ps2pdf, 
 			%debug,
             %pdftitle            = {{e.g. The Title}},
             %pdfsubject          = {e.g. Ph.D. Thesis},
