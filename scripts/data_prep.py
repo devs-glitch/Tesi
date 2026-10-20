@@ -1,224 +1,206 @@
-'''Read Metadata, filter what we need, organize files for Pytorch'''
+'''
+Read the Gravity Spy metadata, select classes and features, balance the classes
+and draw the exploratory figures of Section 3.1
 
-import pandas as pd
+Run from the repository root:  python -m scripts.data_prep
+Inputs:  data/raw/{H1,L1}_{O1,O2,O3a,O3b}.csv  (scripts.dataset_downloader)
+Outputs: data/processed/selected_dataset.csv and, in results/Figures/,
+         label_counts.png, feature_boxplots.png, correlation_matrix.png,
+         pairplot.png, umap.png (the file names used by the thesis)
+
+selected_dataset.csv fixes which spectrogram every glitch_<row>.png is, so it is
+never overwritten silently: if it already exists, the new selection must be
+identical to it, otherwise the script stops (use --force to replace it).
+'''
+
+import argparse
 import os
+from pathlib import Path
+
+import matplotlib
+matplotlib.use('Agg')
 import matplotlib.pyplot as plt
 import numpy as np
+import pandas as pd
 import seaborn as sns
-import math
-import sklearn
-from sklearn.preprocessing import StandardScaler
 import umap
+from sklearn.preprocessing import StandardScaler
 
+RAW_DIR = Path('data/raw')
+OUT_CSV = Path('data/processed/selected_dataset.csv')
+FIG_DIR = Path('results/Figures')
 
-H1_O1 = pd.read_csv(r"C:\Users\devam\OneDrive\Tesi\data\raw\H1_O1.csv")
-H1_O2 = pd.read_csv(r"C:\Users\devam\OneDrive\Tesi\data\raw\H1_O2.csv")
-H1_O3a = pd.read_csv(r"C:\Users\devam\OneDrive\Tesi\data\raw\H1_O3a.csv")
-H1_O3b = pd.read_csv(r"C:\Users\devam\OneDrive\Tesi\data\raw\H1_O3b.csv")
-L1_O1 = pd.read_csv(r"C:\Users\devam\OneDrive\Tesi\data\raw\L1_O1.csv")
-L1_O2 = pd.read_csv(r"C:\Users\devam\OneDrive\Tesi\data\raw\L1_O2.csv")
-L1_O3a = pd.read_csv(r"C:\Users\devam\OneDrive\Tesi\data\raw\L1_O3a.csv")
-L1_O3b = pd.read_csv(r"C:\Users\devam\OneDrive\Tesi\data\raw\L1_O3b.csv")
-
-print(H1_O1)
-print(H1_O2)
-print(H1_O3a)
-print(H1_O3b)
-print(L1_O1)
-print(L1_O2)
-print(L1_O3a)
-print(L1_O3b)
-
-# Unify all datasets in df
-
-base_path = r"C:\Users\devam\OneDrive\Tesi\data\raw"
-file_names = ["H1_O1", "H1_O2", "H1_O3a", "H1_O3b", "L1_O1", "L1_O2", "L1_O3a", "L1_O3b"]
-
-data = {}
-all_data_list = []
-
-for name in file_names:
-    file_path = os.path.join(base_path, f"{name}.csv")
-    df = pd.read_csv(file_path)
-    
-    # Add a column to keep track of which file comes from each string
-    df['detector_run'] = name 
-    
-    data[name] = df
-    all_data_list.append(df)
-
-df = pd.concat(all_data_list, ignore_index=True)
-
-df.head()
-print(f"Dataset shape: {df.shape}")
-df.info()
-
-# Check also unique values and null values
-df.nunique()
-df.isnull().sum()
-
-'''
-We want to perform a little analysis on the labels counts, since we want to keep only the 3 to 4 most frequent ones
-'''
-
-label_column = 'ml_label'
-
-label_counts = df[label_column].value_counts()
-
-print("Class Distribution")
-print(label_counts)
-
-plt.figure(figsize=(10, 6))
-label_counts.plot(kind='bar', color='skyblue', edgecolor='black')
-plt.title('# campioni per label')
-plt.xlabel('label')
-plt.ylabel('# campioni')
-plt.xticks(rotation=45, ha='right')
-plt.tight_layout()
-plt.show()
-
-'''
-FEATURE SELECTION
-'''
-# Generate box plots for numerical features
-# --> how a single feature can separate classes
-
-numeric_columns = ['event_time', 'peak_time', 'peak_time_ns', 'start_time', 'start_time_ns', 'duration', 'peak_frequency', 'central_freq', 'amplitude', 'snr', 'bandwidth', 'q_value']
-
-fig, axes = plt.subplots(nrows=3, ncols=4, figsize=(20, 16))
-axes = axes.flatten()
-
-for i, col in enumerate(numeric_columns):
-    sns.boxplot(y=df[col], ax=axes[i])
-    axes[i].set_title(col, fontsize=12, pad=20)
-    axes[i].set_ylabel("")
-    axes[i].tick_params(axis='y', labelsize=9)
-
-    axes[i].yaxis.get_offset_text().set_fontsize(8)
-    axes[i].yaxis.get_offset_text().set_y(1.02)
-
-plt.tight_layout(pad=3.0, h_pad=4.0, w_pad=2.5)
-plt.savefig("Feature_Box_Plots.png", dpi=150, bbox_inches="tight")
-plt.show()
-
-
-# Compute correlation matrix (numeric columns)
-# --> whether two+ feature mean the same thing
-
-correlation_matrix = df[numeric_columns].corr()
-plt.figure(figsize=(10, 8))
-sns.heatmap(correlation_matrix, annot=True, cmap="coolwarm", fmt=".2f")
-plt.title("Feature Correleation Matrix")
-plt.tight_layout()
-plt.show()
-
-'''
-We now select only our most distiguisable classes, derived from the analysis above.
-we will select: Scattered_Light, Blip, Extremely_Loud, and Violin_Mode.
-'''
-selected_classes = ["Scattered_Light", "Blip", "Extremely_Loud", "Violin_Mode"]
-
-# We want to visualize the relationship between different feature wrt the class label
-selected_features = ['duration', 'peak_frequency', 'snr', 'bandwidth', 'ml_label']
-
-df_pairplot = df[df["ml_label"].isin(selected_classes)][selected_features].copy()
-df_pairplot["snr"] = np.log1p(df_pairplot["snr"])
-df_pairplot["duration"] = np.log1p(df_pairplot["duration"])
-
-g = sns.pairplot(
-    data=df_pairplot,
-    hue="ml_label",
-    palette="Set1",
-    corner=True,
-    height=3.5,
-    plot_kws={'alpha': 0.5, 's': 15, 'linewidth': 0},
-    diag_kws={'fill': True, 'alpha': 0.3}
-)
-
-for ax in g.axes.flatten():
-    if ax is None:
-        continue
-    if ax.get_xlabel() in ("snr", "duration"):
-        ax.set_xlabel(f"log({ax.get_xlabel()} + 1)")
-    if ax.get_ylabel() in ("snr", "duration"):
-        ax.set_ylabel(f"log({ax.get_ylabel()} + 1)")
-
-sns.move_legend(g, "center right", bbox_to_anchor=(1.02, 0.5), title="Class labels", fontsize=10)
-plt.suptitle("Multivariate analysis: duration, peak_frequency, snr, bandwidth vs class labels",
-             y=1.02, fontsize=16)
-plt.savefig("Figure_4_Feature_Pairplots_Selected_Classes.png", dpi=150, bbox_inches="tight")
-plt.show()
-
-'''
-We will pass our selected features to have our final df
-'''
-
-columns_to_keep = [
-    'gravityspy_id',                                            # measurements ID
+FILE_NAMES = ['H1_O1', 'H1_O2', 'H1_O3a', 'H1_O3b',
+              'L1_O1', 'L1_O2', 'L1_O3a', 'L1_O3b']
+SELECTED_CLASSES = ['Scattered_Light', 'Blip', 'Extremely_Loud', 'Violin_Mode']
+NUMERIC_COLUMNS = ['event_time', 'peak_time', 'peak_time_ns', 'start_time',
+                   'start_time_ns', 'duration', 'peak_frequency', 'central_freq',
+                   'amplitude', 'snr', 'bandwidth', 'q_value']
+COLUMNS_TO_KEEP = [
+    'gravityspy_id',                                            # measurement ID
     'duration', 'peak_frequency', 'snr', 'bandwidth',           # numeric features
-    'ml_label',                                                 # labels
-    'url1',                                                     # spectrograms
+    'ml_label',                                                 # label
+    'url1',                                                     # spectrogram
     'Scattered_Light', 'Blip', 'Extremely_Loud', 'Violin_Mode'  # confidence scores
 ]
 
-mask = df["ml_label"].isin(selected_classes)
-
-selected_df = df.loc[mask, columns_to_keep].reset_index(drop=True)
-
-print(f"Dimensions selected dataset: {selected_df.shape}")
-print("\nClass counts:")
-print(selected_df["ml_label"].value_counts())
-print(selected_df.head())
-
-'''
-Handle url=? values
-'''
-
-mask1 = selected_df["url1"] != "?"
-selected_df = selected_df.loc[mask1].reset_index(drop=True)
-
-'''
-Handle class imbalance
-'''
-min_samples = selected_df['ml_label'].value_counts().min()
-selected_df = selected_df.groupby('ml_label').sample(n=min_samples, random_state=42).reset_index(drop=True)
+# one colour per class, the same in every figure
+_SET1 = sns.color_palette('Set1', 4)
+CLASS_COLOURS = {'Blip': _SET1[0], 'Extremely_Loud': _SET1[1],
+                 'Scattered_Light': _SET1[2], 'Violin_Mode': _SET1[3]}
 
 
-'''
-    Clustering
-        1. Standardization: apply `StandardScaler` on numeric data
-        2. UMAP projection: apply a dimensionality reduction algorithm on tabular data
-        3. Plot 2d results
-'''
+def save(fig, name):
+    FIG_DIR.mkdir(parents=True, exist_ok=True)
+    path = FIG_DIR / name
+    fig.savefig(path, dpi=150, bbox_inches='tight')
+    plt.close(fig)
+    print(f'  {path}')
 
-df_sample = selected_df.groupby('ml_label').sample(n=500, random_state=42)
-X = df_sample[['duration', 'peak_frequency', 'snr', 'bandwidth']]
-y = df_sample['ml_label']
 
-scaler = StandardScaler()
-X_scaled = scaler.fit_transform(X)
+def load_release():
+    # the eight CSVs of the release, concatenated in a fixed order
+    frames = []
+    for name in FILE_NAMES:
+        frame = pd.read_csv(RAW_DIR / f'{name}.csv')
+        frame['detector_run'] = name
+        frames.append(frame)
+    return pd.concat(frames, ignore_index=True)
 
-reducer = umap.UMAP(n_components=2, n_neighbors=15, random_state=42)
-embedding = reducer.fit_transform(X_scaled)
 
-df_umap = pd.DataFrame({'UMAP_1': embedding[:, 0], 'UMAP_2': embedding[:, 1], 'Class': y.values})
+def plot_label_counts(df):
+    counts = df['ml_label'].value_counts()
+    print('class distribution\n', counts)
+    fig, ax = plt.subplots(figsize=(10, 6))
+    counts.plot(kind='bar', color='skyblue', edgecolor='black', ax=ax)
+    ax.set_title('Samples per label')
+    ax.set_xlabel('label')
+    ax.set_ylabel('number of samples')
+    ax.tick_params(axis='x', labelrotation=45)
+    plt.setp(ax.get_xticklabels(), ha='right')
+    fig.tight_layout()
+    save(fig, 'label_counts.png')
 
-# plot
-plt.figure(figsize=(10, 8))
-sns.scatterplot(
-    data=df_umap, 
-    x='UMAP_1', 
-    y='UMAP_2', 
-    hue='Class',       
-    palette='Set1',    
-    s=20,              
-    alpha=0.8          
-)
 
-plt.title('UMAP projection on in the 4 selected_classes', fontsize=14)
-plt.legend(bbox_to_anchor=(1.05, 1), loc='upper left')
-plt.tight_layout()
-plt.show()
+def plot_boxplots(df):
+    fig, axes = plt.subplots(nrows=3, ncols=4, figsize=(20, 16))
+    for ax, col in zip(axes.flatten(), NUMERIC_COLUMNS):
+        sns.boxplot(y=df[col], ax=ax)
+        ax.set_title(col, fontsize=12, pad=20)
+        ax.set_ylabel('')
+        ax.tick_params(axis='y', labelsize=9)
+        ax.yaxis.get_offset_text().set_fontsize(8)
+        ax.yaxis.get_offset_text().set_y(1.02)
+    fig.tight_layout(pad=3.0, h_pad=4.0, w_pad=2.5)
+    save(fig, 'feature_boxplots.png')
 
-'''Save new df'''
-selected_df.to_csv("data/processed/selected_dataset.csv", index=False)
+
+def plot_correlation(df):
+    fig, ax = plt.subplots(figsize=(10, 8))
+    sns.heatmap(df[NUMERIC_COLUMNS].corr(), annot=True, cmap='coolwarm',
+                fmt='.2f', ax=ax)
+    ax.set_title('Feature correlation matrix')
+    fig.tight_layout()
+    save(fig, 'correlation_matrix.png')
+
+
+def plot_pairplot(df):
+    features = ['duration', 'peak_frequency', 'snr', 'bandwidth', 'ml_label']
+    data = df[df['ml_label'].isin(SELECTED_CLASSES)][features].copy()
+    data['snr'] = np.log1p(data['snr'])
+    data['duration'] = np.log1p(data['duration'])
+
+    g = sns.pairplot(data=data, hue='ml_label', palette=CLASS_COLOURS,
+                     hue_order=list(CLASS_COLOURS), corner=True, height=3.5,
+                     plot_kws={'alpha': 0.5, 's': 15, 'linewidth': 0},
+                     diag_kws={'fill': True, 'alpha': 0.3})
+    for ax in g.axes.flatten():
+        if ax is None:
+            continue
+        if ax.get_xlabel() in ('snr', 'duration'):
+            ax.set_xlabel(f'log({ax.get_xlabel()} + 1)')
+        if ax.get_ylabel() in ('snr', 'duration'):
+            ax.set_ylabel(f'log({ax.get_ylabel()} + 1)')
+    sns.move_legend(g, 'center right', bbox_to_anchor=(1.02, 0.5),
+                    title='Class', fontsize=10)
+    g.figure.suptitle('Duration, peak frequency, SNR and bandwidth by class',
+                      y=1.02, fontsize=16)
+    save(g.figure, 'pairplot.png')
+
+
+def select(df):
+    selected = df.loc[df['ml_label'].isin(SELECTED_CLASSES),
+                      COLUMNS_TO_KEEP].reset_index(drop=True)
+    print(f'selected: {selected.shape}\n', selected['ml_label'].value_counts())
+
+    # events without a spectrogram address
+    selected = selected.loc[selected['url1'] != '?'].reset_index(drop=True)
+
+    # balance to the smallest class
+    n_min = selected['ml_label'].value_counts().min()
+    return (selected.groupby('ml_label').sample(n=n_min, random_state=42)
+            .reset_index(drop=True))
+
+
+def plot_umap(selected):
+    sample = selected.groupby('ml_label').sample(n=500, random_state=42)
+    X = StandardScaler().fit_transform(
+        sample[['duration', 'peak_frequency', 'snr', 'bandwidth']])
+    embedding = umap.UMAP(n_components=2, n_neighbors=15,
+                          random_state=42).fit_transform(X)
+    frame = pd.DataFrame({'UMAP 1': embedding[:, 0], 'UMAP 2': embedding[:, 1],
+                          'Class': sample['ml_label'].values})
+    fig, ax = plt.subplots(figsize=(10, 8))
+    sns.scatterplot(data=frame, x='UMAP 1', y='UMAP 2', hue='Class',
+                    hue_order=list(CLASS_COLOURS), palette=CLASS_COLOURS,
+                    s=20, alpha=0.8, ax=ax)
+    ax.set_title('UMAP projection of the four selected classes', fontsize=14)
+    ax.legend(bbox_to_anchor=(1.05, 1), loc='upper left')
+    fig.tight_layout()
+    save(fig, 'umap.png')
+
+
+def write_selection(selected, force=False):
+    if OUT_CSV.exists() and not force:
+        existing = pd.read_csv(OUT_CSV)
+        same = (len(existing) == len(selected)
+                and existing['gravityspy_id'].astype(str).tolist()
+                == selected['gravityspy_id'].astype(str).tolist())
+        if not same:
+            raise SystemExit(
+                f'{OUT_CSV} exists and the new selection differs from it: the '
+                'images glitch_<row>.png would no longer match their rows. '
+                'Nothing was written; use --force only to rebuild the corpus.')
+        print(f'{OUT_CSV} already exists and is identical: left untouched')
+        return
+    OUT_CSV.parent.mkdir(parents=True, exist_ok=True)
+    selected.to_csv(OUT_CSV, index=False)
+    print(f'written {OUT_CSV}')
+
+
+def main():
+    parser = argparse.ArgumentParser(description=__doc__,
+                                     formatter_class=argparse.RawDescriptionHelpFormatter)
+    parser.add_argument('--force', action='store_true',
+                        help='overwrite selected_dataset.csv even if it differs')
+    parser.add_argument('--no-figures', action='store_true')
+    args = parser.parse_args()
+
+    df = load_release()
+    print(f'release: {df.shape}')
+
+    if not args.no_figures:
+        print('figures:')
+        plot_label_counts(df)
+        plot_boxplots(df)
+        plot_correlation(df)
+        plot_pairplot(df)
+
+    selected = select(df)
+    if not args.no_figures:
+        plot_umap(selected)
+    write_selection(selected, force=args.force)
+
+
+if __name__ == '__main__':
+    main()

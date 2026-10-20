@@ -91,7 +91,7 @@ layer 4 at every resolution.
 \textbf{The interpretation of this effect is attributed to spatial redundancy.} 
 Layer 4
 contains $25\,088$ neurons at 224\,px and $6\,272$ at 112\,px, so in absolute
-terms the number of \emph{live} neurons falls from roughly $15\,970$ to $4\,789$.
+terms the number of \emph{live} neurons falls from roughly $15\,980$ to $4\,790$.
 Reducing the resolution does not increase usable capacity: it reduces capacity
 while preferentially discarding units that were contributing nothing. At 224\,px
 the deepest layer views a $14 \times 14$ map derived from a largely empty
@@ -319,8 +319,9 @@ Extremely\_Loud instead the attended region is large and saturated, and it cover
 and central part of the spectrogram. For Scattered\_Light the attention lies on
 a horizontal band at low frequency. Violin\_Mode produces the weakest and most
 diffuse mean map, with variability concentrated in a few localized spots along
-the line structure; this attention pattern confirms it being the class with the lowest recall, 
-and the one whose explanations prove most sensitive in every test below.
+the line structure. It is also the class with the lowest recall, and the one
+whose explanations respond most when the kernel or the weights of a fixed
+network are perturbed (Sections~\ref{sec:gamma} and~\ref{sec:perturbation}).
 
 \begin{figure}[htbp]
 \centering
@@ -394,7 +395,7 @@ $t = 1$ is exactly $1.000$ for every $\gamma$.
 Class & Spatial PCC, $\gamma$ 0.1 vs 3.0 & CoM at 0.1 & at 3.0 & Shift \\
 \midrule
 Extremely\_Loud & 0.9993 & 4.973 & 4.144 & 0.829 \\
-Blip & 0.9890 & 5.192 & 4.339 & 0.853 \\
+Blip & 0.9890 & 5.192 & 4.339 & 0.852 \\
 Scattered\_Light & 0.9758 & 5.271 & 4.352 & 0.919 \\
 Violin\_Mode & 0.9598 & 5.260 & 4.327 & 0.933 \\
 \bottomrule
@@ -471,7 +472,11 @@ over the fifteen images (Section~\ref{sec:reading}).}
 \centering
 \includegraphics[width=\linewidth]{deletion_metric.pdf}
 \caption{Deletion curves, SAM order (blue) against random order (grey), 15 validation images
-per class.}
+per class. The curves are drawn by \texttt{xai/deletion\_metric.py}, whose random
+order is drawn with a different generator from the one behind
+Table~\ref{tab:deletion}; the $\Delta$ printed on the panels ($-0.168$,
+$-0.277$, $+0.019$, $-0.001$) differ from the table by at most $0.024$, the
+sampling noise of the random baseline, and lie inside its intervals.}
 \label{fig:deletion}
 \end{figure}
 
@@ -601,7 +606,7 @@ Noise / 8-bit step & Extremely\_Loud & Blip & Scattered\_Light & Violin\_Mode \\
 \midrule
 0.01 & 1.0000 & 0.9997 & 0.9996 & 0.9991 \\
 0.1  & 0.9999 & 0.9981 & 0.9977 & 0.9930 \\
-0.5  & 0.9998 & 0.9949 & 0.9938 & 0.9824 \\
+0.5  & 0.9998 & 0.9948 & 0.9938 & 0.9824 \\
 1.0  & 0.9997 & 0.9921 & 0.9901 & 0.9749 \\
 \bottomrule
 \end{tabular}
@@ -1320,7 +1325,7 @@ three spikes in the quantized models, $18$ to $51\,\%$ in the parents. The two
 controls locate the effect in the 2-bit membrane grid. A 4-bit membrane raises
 the fraction of exactly regular pairs by only $3$ to $6$ points over the parent of
 the same seed, to $45$ to $59\,\%$, with a mean coefficient of $0.133$ to
-$0.179$; while ternary weights alone raise it to $67$ to $77\,\%$, with a mean
+$0.179$, while ternary weights alone raise it to $67$ to $77\,\%$, with a mean
 coefficient of $0.070$ to $0.096$, without making every neuron periodic.
 
 The cause is in the grid of Table~\ref{tab:membrane-grid}. At 2 bits the stored
@@ -1488,7 +1493,8 @@ The Wasserstein-1 distance between the per-neuron firing-rate distributions of a
 quantized model and its parent is read layer by layer against the distance
 between full-precision seeds. At 8 bits every layer stays below $0.015$ on
 average. At 4 bits the values reach $0.030$ in layer 3 and $0.023$ in layer 4,
-inside the range of the seed pairs in every layer and, in layer 4, at its mean.
+never above the largest seed-pair distance, below the whole seed range in
+layer 1 and, in layer 4, at the seed mean.
 The 2-bit membrane stays well below the seed level in layers 1 and 2 ($0.019$
 and $0.032$) and exceeds its mean in layers 3 and 4 ($0.045$ and $0.025$),
 remaining inside the range of the pairs in layer 3 and above it in layer 4. The

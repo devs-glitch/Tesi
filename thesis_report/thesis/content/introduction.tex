@@ -113,11 +113,10 @@ correlation.
 \section{Contributions}
 
 To address the research question, it is necessary to employ a measurement tool.
-However, since the metrics used throughout the work consistently yield values between zero and
-one--regardless of the input data--establishing a reference baseline is essential.
-Indeed, before interpreting the final analysis results, one must determine the values
-these metrics produce in the absence of variations. The thesis is therefore
-structured into two main sections: the first dedicated to the design and calibration
+However, since the metrics used throughout the work yield values between zero and one whatever
+input they are given, a reference baseline is needed: before the results can
+be interpreted, one must know the values these metrics produce in the absence of
+any change. The thesis is therefore structured into two parts: the first dedicated to the design and calibration the first dedicated to the design and calibration
 of the tool, and the second to its operational application to the quantization grid.
 
 The core contributions are therefore:
@@ -164,10 +163,11 @@ the full-precision one by $0.44$, below the numerical floor of every class
 ($0.70$ to $0.84$); a 4-bit weight model of the same accuracy keeps an overlap of
 $0.74$.
 
-The change
-is real but bounded, as for the classes on which SAM is faithful, the
-deletion metric shows that the new explanations still point at evidence the
-model uses, but not at the evidence the original model pointed and looked at.
+The change is real but bounded. Where SAM is faithful, the deletion metric shows that in
+five of seven cases the new explanations still point at evidence the model
+uses, and that the parent's maps explain the quantized model about as well as
+its own: the quantized model highlights a different subset of evidence it still
+relies on.
 
 The hypothesis stated above is not supported. Read against the floor and the
 fine-tuning level of each class, the two effects it orders appear at the same

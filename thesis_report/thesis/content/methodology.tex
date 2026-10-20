@@ -20,9 +20,9 @@ trigger metadata, the per-class confidence of the Gravity Spy classifier, the
 assigned label, and URLs to Omega-scan spectrograms.
 
 \textbf{The labels are the classifications produced by that convolutional
-model}, not a physical ground truth and neither the volunteer-combined label of the
-separate citizen-science release. For this reason, accuracy reported in this thesis is in agreement
-with that reference classifier.
+model}, neither a physical ground truth nor the volunteer-combined label of the
+separate citizen-science release. Accuracy reported in this thesis therefore
+measures agreement with that reference classifier.
 
 \subsection{Class selection}
 
@@ -110,9 +110,9 @@ conformation anticipates a
 result that recurs throughout the thesis analysis and results:
 in the $\log(\text{SNR}+1)$ versus
 $\log(\text{duration}+1)$ plane it overlaps both Blip and Scattered\_Light, being
-separated only in peak frequency. It will indeed be the lowest-recall class at every
-configuration tested and the most sensitive class in every explainability
-measurement.
+separated only in peak frequency. It will be the lowest-recall class, on the mean
+over seeds, in every configuration that classifies, and the most sensitive class
+whenever the kernel or the weights of a fixed network are perturbed.
 
 As a side but dutiful note, restricting the problem to four classes keeps it tractable, but means the results
 are not directly comparable to the full Gravity Spy benchmark.

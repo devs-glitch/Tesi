@@ -116,10 +116,11 @@ def draw_maps(chosen, classes, label, run, cmap):
 
     legend = [Patch(facecolor=BOTH, label='both'),
               Patch(facecolor=ONLY_A, label='full precision only'),
-              Patch(facecolor=ONLY_B, label='quantised only')]
+              Patch(facecolor=ONLY_B, label='quantized only')]
     fig.legend(handles=legend, loc='upper right', ncol=3, fontsize=8,
                bbox_to_anchor=(0.995, 0.995))
-    fig.suptitle(f'SAM maps of {run} against its full-precision parent',
+    seed = run.rsplit('seed', 1)[-1]
+    fig.suptitle(f'SAM maps, {label}, seed {seed}, against the full-precision parent',
                  x=0.008, ha='left', va='top', fontsize=11, weight='bold')
     fig.tight_layout(rect=[0, 0, 1, 1 - 0.5 / fig.get_figheight()])
     out = OUT_DIR / f'sam_comparison_{run}.png'

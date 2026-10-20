@@ -250,8 +250,9 @@ manifest and checked by \texttt{scripts/verify\_manifest.py}.
 
 Partition: 42. Class balancing and UMAP subsample: 42. Training, reference and
 fine-tuning: 1234, 2345, 3456. CV-ISI positions: 42. Weight perturbation of the
-numerical floor: 999. Random deletion order: 42 for the reference deletion
-metric, a seeded generator (seed 0) for cross-faithfulness. Bootstrap
+numerical floor: 999. Random deletion order: a generator seeded with 0 for
+Table~\ref{tab:deletion} and cross-faithfulness, the global seed 42 for the
+curves of Figure~\ref{fig:deletion}. Bootstrap
 resampling: seed 0, $2\,000$ resamples. Image samples for
 every SAM analysis are the first $n$ validation images of each class in loader
 order, so they are identical across models.
@@ -288,8 +289,7 @@ SAM per time step & \texttt{scripts.sam\_visualization} & Fig.~\ref{fig:sam-step
 SAM class and layer statistics & \texttt{xai.sam\_class\_comparison}, \texttt{xai.sam\_layer\_comparison} &
   Figs.~\ref{fig:sam-class}, \ref{fig:sam-layers} \\
 $\gamma$ sensitivity & \texttt{xai.gamma\_sensitivity\_analysis} & \texttt{results/gamma\_sensitivity.json}, Figs.~\ref{fig:gamma}, \ref{fig:gamma-others} \\
-Deletion metric & \texttt{xai.deletion\_metric} & Table~\ref{tab:deletion}, Fig.~\ref{fig:deletion} \\
-Independent solutions & \texttt{xai.noise\_floor} & \texttt{results/noise\_floor.json} \\
+Deletion metric & \texttt{xai.cross\_faithfulness} (table), \texttt{xai.deletion\_metric} (curves) & Table~\ref{tab:deletion}, Fig.~\ref{fig:deletion} \\Independent solutions & \texttt{xai.noise\_floor} & \texttt{results/noise\_floor.json} \\
 Numerical floor & \texttt{xai.perturbation\_floor} & \texttt{results/perturbation\_floor.json} \\
 \bottomrule
 \end{tabular}

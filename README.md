@@ -20,6 +20,16 @@ pip install -e .
 pip install -r requirements.txt
 ```
 
+To reproduce the exact environment of the thesis (torch 2.6.0 + CUDA 12.4,
+snnTorch 1.0.0), install the pinned versions instead of `requirements.txt`:
+
+```bash
+pip install -r requirements-lock.txt --extra-index-url https://download.pytorch.org/whl/cu124
+```
+
+`python -m model.quantization` checks the quantizer properties on whatever
+version is installed and prints `all properties hold`.
+
 Every script is run **from the repository root, as a module**, because paths
 such as `config/baseline_manifest.json` are relative to it:
 

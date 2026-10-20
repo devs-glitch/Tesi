@@ -442,7 +442,7 @@ def spike_figure():
                  for a, (c, mk, ls, name) in ARM_STYLE.items()]
 
     panels = (('mean_rate', 'mean firing rate'),
-              ('dead_fraction', 'silent neurons (fraction)'),
+              ('dead_fraction', 'dead neurons (fraction)'),
               ('cv_isi', 'CV of the inter-spike interval'),
               ('cv_isi_defined_fraction', 'positions with a defined CV'))
     fig, axes = plt.subplots(2, 2, figsize=(9.2, 6.6), sharex=True)
