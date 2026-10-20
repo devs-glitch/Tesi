@@ -251,7 +251,8 @@ manifest and checked by \texttt{scripts/verify\_manifest.py}.
 Partition: 42. Class balancing and UMAP subsample: 42. Training, reference and
 fine-tuning: 1234, 2345, 3456. CV-ISI positions: 42. Weight perturbation of the
 numerical floor: 999. Random deletion order: 42 for the reference deletion
-metric, a seeded generator (seed 0) for cross-faithfulness. Image samples for
+metric, a seeded generator (seed 0) for cross-faithfulness. Bootstrap
+resampling: seed 0, $2\,000$ resamples. Image samples for
 every SAM analysis are the first $n$ validation images of each class in loader
 order, so they are identical across models.
 
@@ -332,6 +333,7 @@ Grid figures and tables & \texttt{scripts.figures.result\_figures} &
 Methods figures & \texttt{scripts.architecture\_figure}, \texttt{scripts.figures.*} &
   Figs.~\ref{fig:architecture}, \ref{fig:arms}, \ref{fig:scale-granularity}, \ref{fig:membrane-grid} \\
 Grid summary figure & \texttt{scripts.figures.grid\_headline\_figure} & Fig.~\ref{fig:headline} \\
+Readout ties, CV controls, bootstrap intervals & \texttt{scripts.robustness\_checks all} & \texttt{results/robustness/} \\
 Test set (opened once) & \texttt{scripts.evaluate\_test} &
   \texttt{results/test/}, \texttt{results/test\_opened.json} \\
 \bottomrule

@@ -404,6 +404,15 @@ reference in Section~\ref{sec:validation} --- 200
 positions per layer, seed 42, a coefficient computed only where at least five
 intervals are available.
 
+Uncertainty is attached to the divergence and faithfulness measurements by a
+percentile bootstrap over images: the twenty (divergence) or fifteen (deletion)
+images of a class-and-seed cell are resampled with replacement $2\,000$ times,
+and the 95\,\% interval is read from the resampled means. An interval on the mean
+of a configuration over its twelve cells resamples each cell independently and
+treats classes and seeds as fixed. The calibration levels themselves are point
+estimates and carry no interval, so a bootstrap interval that reaches a level is
+read as no difference from it.
+
 Five principles, established in Chapter~\ref{ch:results} before the grid was
 run, aid in the reading of those numbers.
 

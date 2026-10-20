@@ -299,7 +299,11 @@ the $T$ time steps and the resulting per-class counts are passed to a
 cross-entropy loss as logits. A readout that counts spikes rewards neurons that
 fire repeatedly, which keeps SAM in the multi-spike regime, where its
 inter-spike-interval formulation remains meaningful. Optimization uses
-Adam~\cite{kingma2015adam}.
+Adam~\cite{kingma2015adam}. The predicted class is the argmax of the counts, and
+a tie, an all-zero count included, goes to the first class in alphabetical
+order, Blip. Ties concern $5$ to $13$ of the $1\,435$ validation images in every
+model of this thesis that classifies at parity; Section~\ref{sec:grid-results}
+reports the models in which they do not stay rare.
  
 \section{Training}
 \label{sec:training}
@@ -310,10 +314,13 @@ Hyperparameters are searched with Optuna~\cite{akiba2019optuna}, maximizing
 validation accuracy. Each trial reports validation accuracy after every epoch
 and is pruned by a Hyperband pruner~\cite{li2018hyperband} (minimum resource 1
 epoch, maximum 15, reduction factor 3), which allocates epochs to promising
-configurations and truncating the others early. Each invocation of the search
-adds $30$ trials to its study, drawn by Optuna's default sampler (TPE), which is
-not seeded, so a repeated search would visit different configurations. Studies are persisted to SQLite, one
-study name per search and resolution.
+configurations and truncating the others early. Trials are drawn by Optuna's
+default sampler (TPE), which is not seeded, so a repeated search would visit
+different configurations. The two studies used in this thesis hold $31$ (v4) and
+$32$ (v5) recorded trials, pruned ones included. The database also keeps three
+earlier studies of two to four trials each and a v5 search at 224\,px stopped
+after six; none of them contributes to any result reported here. Studies are
+persisted to SQLite, one study name per search and resolution.
  
 Two studies were run. The first (v4), at 224\,px resolution, searched the learning rate in
 the interval $[10^{-4}, 3 \times 10^{-3}]$ (log-uniform), $\beta$ in $(0, 1)$ and

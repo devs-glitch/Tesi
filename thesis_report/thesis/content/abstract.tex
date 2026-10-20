@@ -29,10 +29,12 @@ each quantized model is compared only with the full-precision parent it is
 fine-tuned from. Weights, membrane and both arms are quantized at 8, 4 and 2 bits each.
 
 Results show that down to 4 bits accuracy and explanations hold. 
-At 2 bits weights accuracy collapses to about $0.52$, 
+At 2 bits weights the readout falls silent on most images and accuracy
+collapses to about $0.52$,
 while a 2-bit membrane keeps $0.982$ but
 shares a top-20\,\% overlap of only $0.438$ with its parent, below the noise
-floor of every class, on maps that remain faithful by the deletion metric. The
+floor of every class, on maps that mostly remain faithful by the deletion
+metric. The
 latter configuration saves no energy, while a joint 4-bit model keeps accuracy
 with one eighth of the memory and an estimated energy between one sixtieth and
 about one third of the parent's.
