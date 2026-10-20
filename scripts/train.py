@@ -14,7 +14,7 @@ import torch
 
 from model.snn_model import GWGlitchSNN
 from scripts.dataloader import DEFAULT_INPUT_SIZE, build_dataloaders
-from scripts.training_utils import train_one_epoch, validate, validate_per_class, measure_firing_rates
+from scripts.training_utils import deterministic_from_env, train_one_epoch, validate, validate_per_class, measure_firing_rates
 
 HYPERPARAMS_FILE = 'config/best_hyperparams.json'
 
@@ -51,6 +51,7 @@ def run_training(input_size, seed, hyperparams, tag=None, n_epochs=N_EPOCHS,
     torch.manual_seed(seed)
     if torch.cuda.is_available():
         torch.cuda.manual_seed_all(seed)
+    deterministic_from_env()
 
     dataset, train_dl, val_dl, _ = build_dataloaders(input_size=input_size, verbose=False)
 

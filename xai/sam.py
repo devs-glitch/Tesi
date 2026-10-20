@@ -22,7 +22,9 @@ def load_reference_model(device, manifest_path=MANIFEST, checkpoint_index=0):
 
     hp = manifest['hyperparameters']
     net = GWGlitchSNN(beta=hp['beta'], input_size=manifest['input_size']).to(device)
-    net.load_state_dict(torch.load(manifest['checkpoints'][checkpoint_index], map_location=device))
+    # the manifest was written on Windows: normalise the separators for any OS
+    checkpoint = manifest['checkpoints'][checkpoint_index].replace('\\', '/')
+    net.load_state_dict(torch.load(checkpoint, map_location=device))
     net.eval()
 
     return net, hp['time_steps'], manifest['input_size'], manifest['sam']['reference_layer'], manifest['sam']['gamma']

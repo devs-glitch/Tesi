@@ -15,7 +15,7 @@ from model.quantization import apply_quantisation, MEMBRANE_RANGE
 from model.snn_model import GWGlitchSNN
 from scripts.dataloader import build_dataloaders
 from scripts.train import load_hyperparams, RUNS_DIR, INPUT_SIZE
-from scripts.training_utils import (train_one_epoch, validate,
+from scripts.training_utils import (deterministic_from_env, train_one_epoch, validate,
                                     validate_per_class, measure_firing_rates)
 
 # Fine-tuning not training: the model starts from a solution
@@ -87,6 +87,7 @@ def run_qat(input_size, seed, hyperparams, weight_bits=None, membrane_bits=None,
     torch.manual_seed(seed)
     if torch.cuda.is_available():
         torch.cuda.manual_seed_all(seed)
+    deterministic_from_env()
 
     dataset, train_dl, val_dl, _ = build_dataloaders(input_size=input_size,
                                                      verbose=False)

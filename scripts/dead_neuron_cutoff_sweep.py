@@ -13,7 +13,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 import torch
 
-from scripts.dead_neurons_check import (DEAD_THRESHOLD, LAYERS,
+from scripts.dead_neurons_by_resolution import (DEAD_THRESHOLD, LAYERS,
                                         SATURATED_THRESHOLD,
                                         per_neuron_firing_rates)
 
@@ -215,7 +215,8 @@ def main():
         print(f'  layer {l}: ' + '  '.join(f'{run[l]["max_rate"]:.3f}'
                                            for run in per_run))
 
-    # the claim: the dead fraction barely moves around 0.01
+    # a factor of two either side of the adopted cutoff: no plateau, the dead
+    # fraction moves by several points in every layer
     i = DEAD_GRID.index(DEAD_THRESHOLD)
     lo, hi = DEAD_GRID[i - 1], DEAD_GRID[i + 1]
     print(f'\nbetween {lo:g} and {hi:g} the dead fraction moves by, in points:')

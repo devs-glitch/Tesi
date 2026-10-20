@@ -1,5 +1,5 @@
 '''
-Fraction of dead neurons, between risolutions
+Fraction of dead neurons, between resolutions
 The firing rate increases monotonically in the 4th layer, escaping from
 the 224px pathological 4th layer. But a greater mean firing rate can
 derive 1) from more active neurons or 2) same neurons that spike more.

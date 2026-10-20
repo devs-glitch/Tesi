@@ -2,7 +2,21 @@
 Shared training function btw tune.py, train.y and resolution_study.py
 '''
 
+import os
+
 import torch
+
+
+def deterministic_from_env():
+    '''
+    Opt-in bit-reproducible GPU kernels: SNN_DETERMINISTIC=1.
+    Off by default, which is how every run reported in the thesis was trained.
+    '''
+    if os.environ.get('SNN_DETERMINISTIC') == '1':
+        torch.backends.cudnn.deterministic = True
+        torch.backends.cudnn.benchmark = False
+        return True
+    return False
 
 
 def direct_encode(x, time_steps):

@@ -101,8 +101,14 @@ if __name__ == "__main__":
         print("Search space: lr=[1e-4, 3e-3] log | beta [0,1] continuous | T=[5, 15]")
 
 
+    # Unseeded by default, as in the reported searches; OPTUNA_SEED=<int> fixes the sampler
+    sampler_seed = os.environ.get('OPTUNA_SEED')
+    sampler = (optuna.samplers.TPESampler(seed=int(sampler_seed))
+               if sampler_seed is not None else None)
+
     study = optuna.create_study(
         study_name=study_name,
+        sampler=sampler,
         storage="sqlite:///optuna_study.db",
         direction="maximize",
         pruner=optuna.pruners.HyperbandPruner(min_resource=1, max_resource=N_EPOCHS, reduction_factor=3),
