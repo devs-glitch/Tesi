@@ -105,11 +105,12 @@ estimated energy relative to the parent (bottom), mean over three seeds.}
 \endgroup
 \makeatother
 
-The procedures of Algorithms~\ref{alg:divergence}--\ref{alg:energy} are the ones
-implemented in \texttt{xai/divergence\_metrics.py},
-\texttt{xai/perturbation\_floor.py}, \texttt{scripts/evaluate\_model.py},
-\texttt{scripts/per\_image\_cv.py} and \texttt{xai/energy.py}. $\mathrm{SAM}$
-denotes Algorithm~\ref{alg:sam}.
+{\raggedright
+The procedures of Algorithms~\ref{alg:divergence}--\ref{alg:energy} are
+implemented, in order, in \texttt{xai/divergence\_metrics.py},
+\texttt{xai/perturbation\_floor.py}, \texttt{scripts/evaluate\_model.py} together
+with \texttt{scripts/per\_image\_cv.py}, and \texttt{xai/energy.py}.
+$\mathrm{SAM}$ denotes Algorithm~\ref{alg:sam}.\par}
 
 \begin{algorithm}[htbp]
 \caption{Explanation divergence between a quantized model and its parent}
@@ -259,7 +260,8 @@ validation pass onwards needs them.
 \begin{table}[htbp]
 \centering
 \footnotesize
-\begin{tabular}{p{0.27\linewidth}p{0.33\linewidth}p{0.32\linewidth}}
+\renewcommand{\_}{\textunderscore\allowbreak}%
+\begin{tabular}{>{\raggedright\arraybackslash}p{0.26\linewidth}>{\raggedright\arraybackslash}p{0.33\linewidth}>{\raggedright\arraybackslash}p{0.31\linewidth}}
 \toprule
 Result & Module & Output \\
 \midrule
@@ -270,10 +272,9 @@ Spectrogram download & \texttt{scripts.image\_downloader} & \texttt{data/process
 Frozen partition & \texttt{scripts.freeze\_split} & \texttt{data/split\_assignment.csv} \\
 Tabular baseline & \texttt{scripts.tabular\_baseline} & \texttt{results/tabular\_baseline.json} \\
 Resolution study & \texttt{scripts.resolution\_study} & \texttt{runs/resolution\_study.csv}, copied to \texttt{results/} \\
-Dead neurons by resolution & \texttt{scripts.dead\_neurons\_check --out results/dead\_neurons.json} & \texttt{results/dead\_neurons.json} \\
-Hyperparameter search (v4, v5) & \texttt{scripts.tune} & \texttt{config/best\_hyperparams*.json} \\
+Dead neurons by resolution & \texttt{scripts.dead\_neurons\_by\_resolution --out results/dead\_neurons.json} & \texttt{results/dead\_neurons.json} \\Hyperparameter search (v4, v5) & \texttt{scripts.tune} & \texttt{config/best\_hyperparams*.json} \\
 FP32 reference, manifest & \texttt{scripts.fp32\_reference} & \texttt{config/baseline\_manifest.json} \\
-Cutoff sweep & \texttt{scripts.deadneurons\_check} & \texttt{results/tables/dead\_neuron\_sweep.csv}, Fig.~\ref{fig:sweep} \\
+Cutoff sweep & \texttt{scripts.dead\_neuron\_cutoff\_sweep} & \texttt{results/tables/dead\_neuron\_sweep.csv}, Fig.~\ref{fig:sweep} \\
 Confusion matrix, firing rates, CV-ISI & \texttt{scripts.diagnostics\_figures} &
   Figs.~\ref{fig:confusion}, \ref{fig:firing}, \ref{fig:cvisi} \\
 SAM per time step & \texttt{scripts.sam\_visualization} & Fig.~\ref{fig:sam-steps} \\
@@ -295,7 +296,8 @@ manifest.}
 \begin{table}[htbp]
 \centering
 \footnotesize
-\begin{tabular}{p{0.27\linewidth}p{0.33\linewidth}p{0.32\linewidth}}
+\renewcommand{\_}{\textunderscore\allowbreak}%
+\begin{tabular}{>{\raggedright\arraybackslash}p{0.26\linewidth}>{\raggedright\arraybackslash}p{0.33\linewidth}>{\raggedright\arraybackslash}p{0.31\linewidth}}
 \toprule
 Result & Module & Output \\
 \midrule

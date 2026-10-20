@@ -242,7 +242,7 @@ Table~\ref{tab:architecture} gives the layer configuration at the working
 resolution.
  
 \begin{table}[htbp]
-\centering
+\resizebox{\linewidth}{!}{%
 \begin{tabular}{llll}
 \toprule
 Stage & Operation & Output shape & Notes \\
@@ -254,7 +254,7 @@ Block 3 & Conv $32\to64$, k5, s2, p2 + LIF & $[T, B, 64, 14, 14]$ & exposed as \
 Block 4 & Conv $64\to128$, k5, s2, p2 + LIF & $[T, B, 128, 7, 7]$ & exposed as \texttt{spike4} \\
 Readout & Flatten (6\,272) $\to$ Linear $\to$ LIF & $[T, B, 4]$ & one per class, summed over $T$ \\
 \bottomrule
-\end{tabular}
+\end{tabular}}
 \caption{Layer configuration at the working resolution of 112\,px. The flattened
 width is derived from the input size at construction ($25\,088$ at 224\,px,
 $6\,272$ at 112\,px, $2\,048$ at 64\,px).}
@@ -377,9 +377,8 @@ The procedure and its outcome are reported in Section~\ref{sec:resolution}.
 \subsection{Hyperparameter search under deployment constraints}
 \label{sec:constrained-search}
  
-The search uses Optuna~\cite{akiba2019optuna} with a Hyperband
-pruner~\cite{li2018hyperband}, maximizing validation accuracy over three
-hyperparameters chosen because they govern three distinct axes: learning rate
+The v5 search uses the procedure of Section~\ref{sec:training} over the same three
+hyperparameters, chosen because they govern three distinct axes: learning rate
 (optimization stability), $\beta$ (membrane leak and temporal memory), and $T$
 (latency, computation and memory cost).
  
@@ -571,8 +570,6 @@ step and the metric needs one, so the maps are averaged over $t$, and what survi
 that average is an ordering of the pixels: only the ordering enters what
 follows. SAM is class-agnostic, so the tracked class is the one the model
 predicts on the unmodified image, held fixed while the pixels disappear.
-Removed pixels are set to zero in normalized space, which is the ImageNet
-channel mean of the preprocessing rather than black.
  
 The pixel ranking is computed once per image and per ordering, and the mask at
 each fraction takes its first $\lfloor \phi H W \rfloor$ entries. The removed

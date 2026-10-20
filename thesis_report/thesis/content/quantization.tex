@@ -266,8 +266,13 @@ a scale derived from the tensor maximum and from the channel's own.}
 The global 8-bit step used in the calibration ($0.00168$, from the largest
 absolute weight of the network, $0.214$) is therefore an upper bound on the
 per-channel steps actually applied, whose mean is between $0.0005$ (conv4) and
-$0.0013$ (readout) at 8 bits. On the same global grid the 4-bit and 2-bit steps
-are $18$ and $128$ times that unit. The per-channel steps average $0.009$ to
+$0.0013$ (readout) at 8 bits, and the floor it defines is conservative. The
+calibration computes it as $2 w_{\max}/(2^8 - 1)$, which differs from
+Equation~\ref{eq:step} by one unit in the denominator, $0.4\,\%$ at 8 bits; at
+lower widths the two diverge (at 2 bits $w_{\max}$ against $2 w_{\max}/3$), so
+every multiple of the unit quoted in this thesis takes the coarser step from
+Equation~\ref{eq:step}. On the same global grid the 4-bit and 2-bit steps are
+$18$ and $128$ times that unit. The per-channel steps average $0.009$ to
 $0.024$ at 4 bits and $0.061$ to $0.171$ at 2 bits, between $5$ and $15$ and
 between $37$ and $102$ times the unit, and the weakest channel of conv4 still
 has a 2-bit step $26$ times larger.
@@ -451,8 +456,8 @@ a higher bit-width than the one at which the weight arm lowers the spatial
 correlation. A displacement or a decrease is relevant only where it goes beyond both
 the numerical floor and the fine-tuning level of its class (principle 1 above),
 read on the mean over seeds and, as a check, cell by cell against the
-fine-tuning level of the same seed. Both a reverse order or a simultaneous change
-falsify the hypothesis.
+fine-tuning level of the same seed. Either a reverse order or a simultaneous
+change falsifies the hypothesis.
 
 \section{Stratified analysis}
 \label{sec:stratified-method}

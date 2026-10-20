@@ -42,27 +42,10 @@ reduced resolution.}
 \subsection{Network health does discriminate}
 
 Since accuracy is uninformative, the resolution was decided on the internal state
-of the network. For each hidden layer, the mean firing rate of every individual
-neuron is accumulated across the validation partition: a rate below $0.01$
-identifies a \emph{dead} neuron, above $0.80$ a \emph{saturated} one.
-
-The two ends are pathological for different reasons. A neuron firing on fewer
-than one input in a hundred is wasted capacity and, being silent, cannot appear
-in any explanation; its output is near-deterministic, carrying $0.081$ of the
-one bit a binary unit can hold. Saturation is not an information problem itself --- a
-Bernoulli variable at $0.80$ retains $0.722$ bits, as much as one at $0.20$ ---
-but an energy one: the energy of a spiking layer scales with the number of
-spikes it emits~\cite{suetake2023penalty}, so a unit near its ceiling
-is essentially spending the
-sparsity the architecture was chosen for.
-
-Neither cutoff level (dead and saturated) is derived.
-Thresholds of this kind are conventions elsewhere
-too: the pruning literature trims neurons whose fraction of zero activations
-exceeds one standard deviation of the layer mean~\cite{hu2016trimming}, and the
-dormant-neuron analysis treats the cutoff as a tuned hyperparameter, reporting
-values between $0$ and $0.1$~\cite{sokar2023dormant}. Sweeping both cutoffs on
-the adopted configuration shows no plateau (Figure~\ref{fig:sweep}). A factor of
+of the network, with the dead and saturated fractions of
+Section~\ref{sec:diagnostics}: per-neuron rates below $0.01$ and above $0.80$ on
+the validation partition. Neither cutoff is derived, and sweeping both on the
+adopted configuration shows no plateau (Figure~\ref{fig:sweep}). A factor of
 two either side of $0.01$ moves the dead fraction by $11.2$, $9.0$, $6.7$ and
 $11.2$ percentage points in the four layers, so the distribution of rates holds
 no gap separating dead units from live ones. The dead fraction is the value of a
@@ -458,17 +441,11 @@ in the proportions of Table~\ref{tab:gamma}.}
 \subsection{Faithfulness}
 \label{sec:faithfulness}
 
-Robustness to $\gamma$ is necessary but not sufficient, since a stable explanation could
-still be stably wrong. The deletion metric~\cite{petsiuk2018rise} removes pixels in
-decreasing order of SAM score and records the confidence assigned to the class
-predicted on the unmodified image, and comparing against the removal of pixel in random order.
- 
-Deleted pixels are set to zero \emph{in normalized space}, the ImageNet channel
-mean of the preprocessing, a neutral grey rather than black.
-The same map
-is used for both orderings, and the ordering is computed once per image and
-sliced progressively, so the masked sets are nested: what is removed at 50\,\%
-stays removed at 55\,\%.
+Robustness to $\gamma$ is necessary but not sufficient, since a stable explanation
+could still be stably wrong. Faithfulness is measured with the deletion metric of
+Section~\ref{sec:deletion-method}: pixels are removed in decreasing order of SAM
+score, or in random order, and the confidence in the class predicted on the
+unmodified image is recorded at each fraction.
 
 \begin{table}[htbp]
 \centering
@@ -517,16 +494,16 @@ the pattern across the whole image,
 whereas SAM-guided deletion concentrates removal in one region and leaves the
 rest --- which still carries sufficient evidence --- intact.
 
-The random baseline of Extremely\_Loud, $0.8936$, is the highest of the four and
-is independent confirmation of that class's behaviour that its evidence is
-distributed across the whole image.
+The random baseline of Extremely\_Loud, $0.8936$, is the highest of the four: its
+confidence survives the random removal of most of the image, which is consistent
+with evidence distributed across the whole spectrogram.
 
 \section{Calibrating the divergence metrics}
 \label{sec:calibration}
 
-Since the metrics used to compare two explanations return numbers between zero and one
-whatever is fed to them. Three questions must be answered before any quantization
-result can be interpreted: what they report when nothing has changed, when
+The metrics used to compare two explanations return numbers between zero and one
+whatever is fed to them, so a few questions must be answered before any
+quantization result can be interpreted: what they report when nothing has changed, when
 something negligible has changed, and when everything has changed.
 
 All measurements use fifteen validation images per class at layer 2 with
@@ -886,11 +863,9 @@ guarantees that the hook acts on the state the network actually carries, and the
 above are genuine.
 
 The unsigned range $[0, 2]$ is adopted: it is the tightest range tested that
-stays within tolerance, it centres the threshold in the grid, and again it spends no
-levels on negative values. Against the symmetric range $[-2, 2]$, which performs
-identically, that saves one bit of resolution at 8 and 4 bits, and a factor of
-three at 2 bits, where the symmetric grid would leave no level between
-rest and threshold values.
+stays within tolerance and it centres the threshold in the grid. What it saves
+against the symmetric range $[-2, 2]$, which performs identically, is given in
+Section~\ref{sec:membrane-quantizer}.
 
 \section{Energy and memory of the reference}
 \label{sec:energy-fp32}
@@ -986,14 +961,11 @@ fine-tuning, the joint 8-bit model of seed 1234 reaches $0.98328$ validation
 accuracy, which is identical to its parent; indeed, the 8-bit weight arm loses three samples out
 of $1\,435$, so inside the four-sample tolerance.
 
-The control arm, which runs the full fine-tuning procedure with no quantizer,
-returns a spatial correlation of exactly $1$, an IoU of exactly $1$ and a
-centre-of-mass shift of exactly $0$ with its parent, in every class and every
-seed. Also, fine-tuning at one tenth of the reference learning rate never improved on the parent's
-validation accuracy, so the selected control checkpoint is the parent itself:
-the pipeline --- reload, fine-tune, select, re-evaluate --- introduces nothing
-with no quantizer attached. The model at the end of
-fine-tuning does move, by the amount measured in Section~\ref{sec:anchor}.
+On none of the three seeds did fine-tuning with no quantizer improve on the
+parent's validation accuracy, so the selected control checkpoint is the parent
+itself (Section~\ref{sec:grid}) and returns PCC and IoU of exactly $1$ and a
+centre-of-mass shift of exactly $0$ in every class and seed. The model at the end
+of fine-tuning does move, by the amount measured in Section~\ref{sec:anchor}.
 
 The guard of Section~\ref{sec:reading} holds as well: the 8-bit weight arm keeps
 a spatial correlation of at least $0.982$ with its parent in every class at every
@@ -1637,7 +1609,8 @@ optimistic estimate, and the test partition is the only unbiased one.
 \centering
 \begin{tabular}{lcccc}
 \toprule
-Configuration & Blip (359) & Extremely\_Loud (362) & Scattered\_Light (343) & Violin\_Mode (372) \\
+Configuration & Blip & Extremely\_Loud & Scattered\_Light & Violin\_Mode \\
+ & (359) & (362) & (343) & (372) \\
 \midrule
 FP32 reference  & 0.9824 & 0.9724 & 0.9874 & 0.9570 \\
 Joint, 4 bit    & 0.9842 & 0.9724 & 0.9854 & 0.9615 \\
