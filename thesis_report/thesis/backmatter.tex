@@ -230,6 +230,12 @@ from the repository root as a module, \texttt{python -m
 <package>.<script>}. All training and evaluation ran on a single 6\,GB consumer
 GPU; the thirty fine-tuning runs of the grid took $46\,924$\,s ($13.0$\,h).
 
+The exact versions of every package used for the reported runs are recorded in
+\texttt{requirements-lock.txt}; the runs used PyTorch 2.6, whose
+\texttt{torch.clamp} passes a gradient of 1 at the ends of its range. More recent
+versions (2.14 among them) pass 0 there, so the quantizer sets the gradient on
+its grid explicitly, and \texttt{python -m model.quantization} checks it.
+
 The metadata are the Gravity Spy release on Zenodo, record
 5649212~\cite{glanzer2021}. The selected events are written to
 \texttt{data/processed/selected\_dataset.csv} and the spectrograms to

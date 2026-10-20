@@ -46,9 +46,12 @@ def ste_round(x):
 def fake_quantise(x, scale, qmin, qmax):
     '''
     Round to the grid, clamped to the integer bounds
-    Rounding happens before the clamp
+    Rounding happens before the clamp. The gradient is 1 on [qmin, qmax], bounds
+    included, and 0 outside
     '''
-    return torch.clamp(ste_round(x / scale), qmin, qmax) * scale
+    q = ste_round(x / scale)
+    inside = (q >= qmin) & (q <= qmax)
+    return torch.where(inside, q, q.clamp(qmin, qmax).detach()) * scale
 
 
 # Weights
